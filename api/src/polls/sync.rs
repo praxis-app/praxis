@@ -13,7 +13,7 @@ use sea_orm::{
     prelude::Uuid,
     sea_query::{Condition, Expr, JoinType, LockType, Query},
     ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder,
-    QuerySelect, RelationTrait, TransactionTrait,
+    QuerySelect, RelationTrait, Set, TransactionTrait,
 };
 use tokio::time::{self, MissedTickBehavior};
 
@@ -75,6 +75,15 @@ pub(crate) fn spawn_proposal_synchronizer(
         loop {
             interval.tick().await;
 
+            if let Err(error) =
+                super::moderation::restore_expired_proposal_pauses(
+                    &database,
+                    &pub_sub_service,
+                )
+                .await
+            {
+                tracing::warn!("failed to restore proposal pauses: {error}");
+            }
             match synchronize_proposals(&database, &pub_sub_service).await {
                 Ok(summary) if summary.ratified > 0 || summary.closed > 0 => {
                     tracing::info!(
@@ -142,6 +151,7 @@ async fn synchronize_proposals(
         let mut query = polls::Entity::find()
             .filter(polls::Column::PollType.eq(PollType::Proposal))
             .filter(polls::Column::Stage.eq(PollStage::Voting))
+            .filter(polls::Column::HiddenAt.is_null())
             .find_also_related(poll_configs::Entity)
             .filter(poll_configs::Column::ClosingAt.lte(now));
         if let Some(cursor) = cursor {
@@ -261,6 +271,7 @@ async fn expire_stale_event_proposals(
             .join(JoinType::InnerJoin, polls::Relation::Channel.def())
             .filter(polls::Column::PollType.eq(PollType::Proposal))
             .filter(polls::Column::Stage.eq(PollStage::Voting))
+            .filter(polls::Column::HiddenAt.is_null())
             .filter(
                 poll_action_entities::Column::ActionType
                     .eq(PollActionType::PlanEvent),
@@ -339,7 +350,10 @@ async fn expire_stale_event_proposal(
         now,
     )
     .await?;
-    if poll.stage != PollStage::Voting || reason.is_none() {
+    if poll.stage != PollStage::Voting
+        || poll.hidden_at.is_some()
+        || reason.is_none()
+    {
         transaction.commit().await.map_err(internal_error)?;
         return Ok(None);
     }
@@ -368,6 +382,7 @@ async fn close_expired_polls(
             .join(JoinType::InnerJoin, polls::Relation::Config.def())
             .filter(polls::Column::PollType.eq(PollType::Poll))
             .filter(polls::Column::Stage.eq(PollStage::Voting))
+            .filter(polls::Column::HiddenAt.is_null())
             .filter(poll_configs::Column::ClosingAt.lte(now));
         if let Some(cursor) = cursor {
             query = query.filter(polls::Column::Id.gt(cursor));
@@ -386,8 +401,20 @@ async fn close_expired_polls(
         for poll in expired_polls {
             summary.processed += 1;
 
-            match close_poll(database, poll.id).await {
-                Ok(()) => {
+            let result = polls::Entity::update_many()
+                .set(polls::ActiveModel {
+                    stage: Set(PollStage::Closed),
+                    closed_reason: Set(None),
+                    ..Default::default()
+                })
+                .filter(polls::Column::Id.eq(poll.id))
+                .filter(polls::Column::Stage.eq(PollStage::Voting))
+                .filter(polls::Column::HiddenAt.is_null())
+                .exec(database)
+                .await;
+            match result {
+                Ok(result) if result.rows_affected == 0 => continue,
+                Ok(_) => {
                     broadcast_stored_poll_update(
                         database,
                         pub_sub_service,
@@ -427,7 +454,8 @@ async fn synchronize_proposal(
             ApiError::new(StatusCode::NOT_FOUND, "Poll not found.")
         })?;
 
-    if locked_poll.stage != PollStage::Voting {
+    if locked_poll.stage != PollStage::Voting || locked_poll.hidden_at.is_some()
+    {
         transaction.commit().await.map_err(internal_error)?;
         return Ok(ProposalSyncAction::None);
     }

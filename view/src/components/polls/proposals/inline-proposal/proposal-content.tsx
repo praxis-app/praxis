@@ -1,3 +1,4 @@
+import { HiddenPollLabel } from '@/components/moderation/hidden-poll-label';
 import { ProposalMetadata } from '@/components/polls/proposals/inline-proposal/proposal-metadata';
 import { AttachedImageList } from '@/components/images/attached-image-list';
 import { ProposalStatusBadge } from '@/components/polls/proposals/inline-proposal/proposal-status-badge';
@@ -110,6 +111,7 @@ export const ProposalContent = ({
           onViewSettings={() => setIsSettingsDialogOpen(true)}
         />
       )}
+      {poll.hiddenAt && <HiddenPollLabel stage={stage} />}
       <ProposalMetadata
         decisionMakingModel={config.decisionMakingModel ?? 'consensus'}
         actionType={action?.actionType}
@@ -152,11 +154,13 @@ export const ProposalContent = ({
           votes={votes}
           memberCount={memberCount}
           closingAt={config.closingAt}
-          disabled={votingDisabled || sourceCallHasEnded}
+          disabled={votingDisabled || sourceCallHasEnded || !!poll.hiddenAt}
           disabledReason={
-            votingDisabled
-              ? votingDisabledReason
-              : t('proposals.prompts.noVotingAfterCallEnd')
+            poll.hiddenAt && stage === 'voting'
+              ? t('moderation.labels.hiddenVotingPaused')
+              : votingDisabled
+                ? votingDisabledReason
+                : t('proposals.prompts.noVotingAfterCallEnd')
           }
           onVoteSuccess={onPollChange}
           updateCachedProposal={updateCachedProposal}

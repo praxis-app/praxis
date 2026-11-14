@@ -60,6 +60,20 @@ export function expirePollDeadline(pollId: string) {
   expect(output).toContain('UPDATE 1');
 }
 
+export function backdateHiddenPoll(
+  pollId: string,
+  hiddenHoursAgo: number,
+  deadlineHoursAgo: number,
+) {
+  assertUuid(pollId, 'Poll ID');
+
+  const output = runDatabaseCommand(
+    `UPDATE polls SET hidden_at = now() - interval '${hiddenHoursAgo} hours' WHERE id = '${pollId}' AND hidden_at IS NOT NULL; UPDATE poll_configs SET closing_at = now() - interval '${deadlineHoursAgo} hours' WHERE poll_id = '${pollId}';`,
+  );
+
+  expect(output.match(/UPDATE 1/g)).toHaveLength(2);
+}
+
 export async function voteViaApi(
   request: APIRequestContext,
   user: AuthenticatedUser,

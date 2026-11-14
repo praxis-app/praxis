@@ -65,6 +65,7 @@ enum PubSubTopicKind {
     Call,
     ForumPost,
     Notification,
+    Account,
 }
 
 impl PubSubTopicKind {
@@ -75,6 +76,7 @@ impl PubSubTopicKind {
             Self::Call => "new-call",
             Self::ForumPost => "new-forum-post",
             Self::Notification => "notification",
+            Self::Account => "account",
         }
     }
 
@@ -85,6 +87,7 @@ impl PubSubTopicKind {
             "new-call" => Some(Self::Call),
             "new-forum-post" => Some(Self::ForumPost),
             "notification" => Some(Self::Notification),
+            "account" => Some(Self::Account),
             _ => None,
         }
     }
@@ -93,7 +96,7 @@ impl PubSubTopicKind {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct PubSubTopic {
     kind: PubSubTopicKind,
-    server_id: Uuid,
+    server_id: Option<Uuid>,
     channel_id: Option<Uuid>,
     call_id: Option<Uuid>,
     user_id: Uuid,
@@ -109,7 +112,7 @@ impl PubSubTopic {
     ) -> Self {
         Self {
             kind: PubSubTopicKind::Message,
-            server_id,
+            server_id: Some(server_id),
             channel_id: Some(channel_id),
             call_id: None,
             user_id,
@@ -124,7 +127,7 @@ impl PubSubTopic {
     ) -> Self {
         Self {
             kind: PubSubTopicKind::Message,
-            server_id,
+            server_id: Some(server_id),
             channel_id: Some(channel_id),
             call_id: Some(call_id),
             user_id,
@@ -138,7 +141,7 @@ impl PubSubTopic {
     ) -> Self {
         Self {
             kind: PubSubTopicKind::Poll,
-            server_id,
+            server_id: Some(server_id),
             channel_id: Some(channel_id),
             call_id: None,
             user_id,
@@ -152,7 +155,7 @@ impl PubSubTopic {
     ) -> Self {
         Self {
             kind: PubSubTopicKind::Call,
-            server_id,
+            server_id: Some(server_id),
             channel_id: Some(channel_id),
             call_id: None,
             user_id,
@@ -166,7 +169,7 @@ impl PubSubTopic {
     ) -> Self {
         Self {
             kind: PubSubTopicKind::ForumPost,
-            server_id,
+            server_id: Some(server_id),
             channel_id: Some(channel_id),
             call_id: None,
             user_id,
@@ -176,7 +179,17 @@ impl PubSubTopic {
     pub(crate) fn notification(server_id: Uuid, user_id: Uuid) -> Self {
         Self {
             kind: PubSubTopicKind::Notification,
-            server_id,
+            server_id: Some(server_id),
+            channel_id: None,
+            call_id: None,
+            user_id,
+        }
+    }
+
+    pub(crate) fn account(user_id: Uuid) -> Self {
+        Self {
+            kind: PubSubTopicKind::Account,
+            server_id: None,
             channel_id: None,
             call_id: None,
             user_id,
@@ -186,23 +199,31 @@ impl PubSubTopic {
     fn parse(value: &str) -> Option<Self> {
         let parts = value.split(Self::DELIMITER).collect::<Vec<_>>();
         match parts.as_slice() {
+            [kind, user_id] => Some(Self {
+                kind: PubSubTopicKind::parse(kind)
+                    .filter(|kind| *kind == PubSubTopicKind::Account)?,
+                server_id: None,
+                channel_id: None,
+                call_id: None,
+                user_id: user_id.parse().ok()?,
+            }),
             [kind, server_id, user_id] => Some(Self {
                 kind: PubSubTopicKind::parse(kind)?,
-                server_id: server_id.parse().ok()?,
+                server_id: Some(server_id.parse().ok()?),
                 channel_id: None,
                 call_id: None,
                 user_id: user_id.parse().ok()?,
             }),
             [kind, server_id, channel_id, user_id] => Some(Self {
                 kind: PubSubTopicKind::parse(kind)?,
-                server_id: server_id.parse().ok()?,
+                server_id: Some(server_id.parse().ok()?),
                 channel_id: Some(channel_id.parse().ok()?),
                 call_id: None,
                 user_id: user_id.parse().ok()?,
             }),
             [kind, server_id, channel_id, call_id, user_id] => Some(Self {
                 kind: PubSubTopicKind::parse(kind)?,
-                server_id: server_id.parse().ok()?,
+                server_id: Some(server_id.parse().ok()?),
                 channel_id: Some(channel_id.parse().ok()?),
                 call_id: Some(call_id.parse().ok()?),
                 user_id: user_id.parse().ok()?,
@@ -215,12 +236,20 @@ impl PubSubTopic {
 impl fmt::Display for PubSubTopic {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         let delimiter = Self::DELIMITER;
+        let Some(server_id) = self.server_id else {
+            return write!(
+                formatter,
+                "{}{delimiter}{}",
+                self.kind.as_str(),
+                self.user_id
+            );
+        };
         match (self.channel_id, self.call_id) {
             (Some(channel_id), Some(call_id)) => write!(
                 formatter,
                 "{}{delimiter}{}{delimiter}{}{delimiter}{}{delimiter}{}",
                 self.kind.as_str(),
-                self.server_id,
+                server_id,
                 channel_id,
                 call_id,
                 self.user_id
@@ -229,7 +258,7 @@ impl fmt::Display for PubSubTopic {
                 formatter,
                 "{}{delimiter}{}{delimiter}{}{delimiter}{}",
                 self.kind.as_str(),
-                self.server_id,
+                server_id,
                 channel_id,
                 self.user_id
             ),
@@ -237,7 +266,7 @@ impl fmt::Display for PubSubTopic {
                 formatter,
                 "{}{delimiter}{}{delimiter}{}",
                 self.kind.as_str(),
-                self.server_id,
+                server_id,
                 self.user_id
             ),
         }
@@ -299,6 +328,63 @@ impl PubSubService {
         }
 
         Ok(())
+    }
+
+    pub(crate) async fn revoke_server_subscriptions(
+        &self,
+        server_id: Uuid,
+        user_id: Uuid,
+    ) {
+        self.revoke_subscriptions(|topic| {
+            topic.server_id == Some(server_id) && topic.user_id == user_id
+        })
+        .await;
+    }
+
+    pub(crate) async fn evict_user(&self, user_id: Uuid) {
+        let socket_ids = self
+            .revoke_subscriptions(|topic| topic.user_id == user_id)
+            .await;
+
+        for socket_id in socket_ids {
+            if let Some(sender) = self.registry.subscribers.get(&socket_id) {
+                let _ = sender.send(Message::Close(None));
+            }
+        }
+    }
+
+    async fn revoke_subscriptions(
+        &self,
+        matches: impl Fn(&PubSubTopic) -> bool,
+    ) -> HashSet<Uuid> {
+        let revoked = self
+            .registry
+            .socket_channels
+            .iter()
+            .flat_map(|entry| {
+                let socket_id = *entry.key();
+                entry
+                    .value()
+                    .iter()
+                    .filter(|channel| {
+                        PubSubTopic::parse(channel)
+                            .is_some_and(|topic| matches(&topic))
+                    })
+                    .map(|channel| (socket_id, channel.clone()))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+
+        let mut socket_ids = HashSet::new();
+        for (socket_id, channel) in revoked {
+            socket_ids.insert(socket_id);
+            if let Err(error) = self.unsubscribe(socket_id, &channel).await {
+                tracing::warn!(
+                    "failed to revoke websocket subscription: {error}"
+                );
+            }
+        }
+        socket_ids
     }
 
     async fn disconnect(&self, socket_id: Uuid) {
@@ -559,7 +645,7 @@ fn response_message(
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct ChannelAccess {
-    server_id: Uuid,
+    server_id: Option<Uuid>,
     // Notification topics name a user, not a channel; only the latter is checked
     channel_id: Option<Uuid>,
     registered_only: bool,
@@ -580,6 +666,13 @@ async fn is_authorized(
     access: &ChannelAccess,
     user_id: Uuid,
 ) -> bool {
+    if !users::is_active_user(&state.database, user_id)
+        .await
+        .unwrap_or(false)
+    {
+        return false;
+    }
+
     if access.registered_only
         && users::is_anonymous_user(&state.database, user_id)
             .await
@@ -588,17 +681,17 @@ async fn is_authorized(
         return false;
     }
 
-    let Some(channel_id) = access.channel_id else {
-        return servers::is_server_member(
-            &state.database,
-            access.server_id,
-            user_id,
-        )
-        .await
-        .unwrap_or(false);
+    let Some(server_id) = access.server_id else {
+        return true;
     };
 
-    channels::get_channel(&state.database, access.server_id, channel_id)
+    let Some(channel_id) = access.channel_id else {
+        return servers::is_server_member(&state.database, server_id, user_id)
+            .await
+            .unwrap_or(false);
+    };
+
+    channels::get_channel(&state.database, server_id, channel_id)
         .await
         .is_ok()
         && channels::ensure_channel_member(&state.database, channel_id, user_id)

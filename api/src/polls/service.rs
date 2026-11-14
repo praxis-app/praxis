@@ -11,7 +11,7 @@ use entity::{
 };
 use sea_orm::{
     prelude::Uuid,
-    sea_query::{NullOrdering, Order},
+    sea_query::{Expr, NullOrdering, Order},
     ColumnTrait, Condition, DatabaseConnection, DeleteResult, EntityTrait,
     QueryFilter, QueryOrder, QuerySelect, TransactionTrait,
 };
@@ -22,6 +22,8 @@ use std::{
 
 use super::{
     creation::prepare_poll,
+    moderation,
+    outcome::quorum_member_count,
     types::{
         ActiveDecisionResponse, ActiveDecisionsResponse, CallDecisionResponse,
         CreatePollContext, CreatePollRequest, PollActionEventCoverPhotoPath,
@@ -152,7 +154,7 @@ pub(super) async fn create_call_poll(
     request: CreatePollRequest,
     uploads: PollImageUploads,
 ) -> AppResult<PollResponse> {
-    crate::calls::service::get_call(
+    crate::calls::service::get_active_call(
         database,
         context.server_id,
         context.channel_id,
@@ -352,8 +354,8 @@ pub(super) async fn get_poll_action_event_cover_photo(
         poll_id,
         image_id,
     } = path;
-    get_poll(database, server_id, channel_id, poll_id).await?;
-    channels::can_read_channel(
+    let poll = get_poll(database, server_id, channel_id, poll_id).await?;
+    channels::get_readable_channel(
         database,
         server_id,
         channel_id,
@@ -361,6 +363,7 @@ pub(super) async fn get_poll_action_event_cover_photo(
         invite_token,
     )
     .await?;
+    moderation::ensure_can_read_hidden_images(database, &poll, user_id).await?;
     let image = poll_actions::service::get_proposed_event_cover_photo(
         database, poll_id, image_id,
     )
@@ -389,8 +392,8 @@ pub(super) async fn get_poll_image(
         poll_id,
         image_id,
     } = path;
-    get_poll(database, server_id, channel_id, poll_id).await?;
-    channels::can_read_channel(
+    let poll = get_poll(database, server_id, channel_id, poll_id).await?;
+    channels::get_readable_channel(
         database,
         server_id,
         channel_id,
@@ -398,6 +401,7 @@ pub(super) async fn get_poll_image(
         invite_token,
     )
     .await?;
+    moderation::ensure_can_read_hidden_images(database, &poll, user_id).await?;
     let image = poll_images::Entity::find_by_id(image_id)
         .filter(poll_images::Column::PollId.eq(poll_id))
         .one(database)
@@ -586,6 +590,7 @@ pub(super) async fn get_active_decisions(
     let mut polls_query = polls::Entity::find()
         .filter(polls::Column::ChannelId.is_in(channel_ids))
         .filter(polls::Column::Stage.eq(PollStage::Voting))
+        .filter(polls::Column::HiddenAt.is_null())
         .find_also_related(poll_configs::Entity);
     if let Some(cursor) = cursor {
         polls_query =
@@ -850,11 +855,9 @@ async fn shape_polls(
         channels::get_unwrapped_channel_key_map(database, key_ids).await?;
     let mut actions =
         poll_actions::service::shape_poll_actions(database, &poll_ids).await?;
-    let member_counts = get_channel_member_counts(
-        database,
-        polls.iter().map(|poll| poll.channel_id),
-    )
-    .await?;
+    let member_counts =
+        get_poll_member_counts(database, polls.iter().map(|poll| poll.id))
+            .await?;
     let call_statuses = crate::calls::service::get_call_statuses(
         database,
         polls.iter().filter_map(|poll| poll.call_id).collect(),
@@ -862,6 +865,33 @@ async fn shape_polls(
     .await?;
     let ignored_block_vote_ids =
         get_ignored_block_vote_ids(database, &polls, &configs, &votes).await?;
+    let revealed_proposal_channels =
+        moderation::get_channels_with_visible_hidden_polls(
+            database,
+            current_user_id,
+            polls
+                .iter()
+                .filter(|poll| {
+                    poll.hidden_at.is_some()
+                        && poll.poll_type == PollType::Proposal
+                })
+                .map(|poll| poll.channel_id),
+            PollType::Proposal,
+        )
+        .await?;
+    let revealed_poll_channels =
+        moderation::get_channels_with_visible_hidden_polls(
+            database,
+            current_user_id,
+            polls
+                .iter()
+                .filter(|poll| {
+                    poll.hidden_at.is_some() && poll.poll_type == PollType::Poll
+                })
+                .map(|poll| poll.channel_id),
+            PollType::Poll,
+        )
+        .await?;
 
     // Group the loaded rows by poll so each response is an in-memory lookup
     let mut votes_by_poll: HashMap<Uuid, Vec<votes::Model>> = HashMap::new();
@@ -978,8 +1008,7 @@ async fn shape_polls(
                 id: image.id.to_string(),
             })
             .collect();
-        let member_count =
-            member_counts.get(&poll.channel_id).copied().unwrap_or(0);
+        let member_count = member_counts.get(&poll.id).copied().unwrap_or(0);
         let reply_users = reply_participants
             .get(&poll.id)
             .into_iter()
@@ -994,7 +1023,10 @@ async fn shape_polls(
             .collect();
         let reply_summary = reply_summaries.get(&poll.id);
 
-        responses.push(PollResponse {
+        let mut response = PollResponse {
+            moderation_pause_exhausted: moderation::pause_budget_exhausted(
+                &poll,
+            ),
             id: poll.id.to_string(),
             body: decrypt_poll_body(&poll, &key_map),
             poll_type: poll.poll_type,
@@ -1019,8 +1051,18 @@ async fn shape_polls(
             reply_users,
             latest_reply_at: reply_summary
                 .map(|(_, created_at)| serialize_timestamp(*created_at)),
+            hidden_at: poll.hidden_at.map(serialize_timestamp),
+            content_concealed: false,
             created_at: serialize_timestamp(poll.created_at),
-        });
+        };
+        let revealed_channels = match poll.poll_type {
+            PollType::Proposal => &revealed_proposal_channels,
+            PollType::Poll => &revealed_poll_channels,
+        };
+        if !revealed_channels.contains(&poll.channel_id) {
+            response.conceal_hidden_content();
+        }
+        responses.push(response);
     }
 
     Ok(responses)
@@ -1117,21 +1159,26 @@ async fn get_ignored_block_vote_ids(
         .collect())
 }
 
-async fn get_channel_member_counts(
+async fn get_poll_member_counts(
     database: &DatabaseConnection,
-    channel_ids: impl Iterator<Item = Uuid>,
+    poll_ids: impl Iterator<Item = Uuid>,
 ) -> AppResult<HashMap<Uuid, usize>> {
-    let channel_ids: HashSet<Uuid> = channel_ids.collect();
-    if channel_ids.is_empty() {
+    let poll_ids: HashSet<Uuid> = poll_ids.collect();
+    if poll_ids.is_empty() {
         return Ok(HashMap::new());
     }
 
-    let counts = channel_members::Entity::find()
-        .filter(channel_members::Column::ChannelId.is_in(channel_ids))
+    let counts = polls::Entity::find()
+        .filter(polls::Column::Id.is_in(poll_ids))
         .select_only()
-        .column(channel_members::Column::ChannelId)
-        .column_as(channel_members::Column::Id.count(), "member_count")
-        .group_by(channel_members::Column::ChannelId)
+        .column(polls::Column::Id)
+        .column_as(
+            quorum_member_count(
+                Expr::col((polls::Entity, polls::Column::Id)).into(),
+                Expr::col((polls::Entity, polls::Column::ChannelId)).into(),
+            ),
+            "member_count",
+        )
         .into_tuple::<(Uuid, i64)>()
         .all(database)
         .await
@@ -1139,7 +1186,7 @@ async fn get_channel_member_counts(
 
     Ok(counts
         .into_iter()
-        .map(|(channel_id, count)| (channel_id, count as usize))
+        .map(|(poll_id, count)| (poll_id, count as usize))
         .collect())
 }
 

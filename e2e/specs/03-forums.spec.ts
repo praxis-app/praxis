@@ -13,8 +13,9 @@ import {
   openCreateProposalDialog,
   selectRadixOption,
 } from '../lib/polls';
-import { getDefaultServer } from '../lib/servers';
+import { createTestServer } from '../lib/servers';
 import { ChatPage } from '../pages/chat.page';
+import { testTimeout } from '../lib/timeouts';
 
 type ForumPostResponse = {
   post: {
@@ -34,14 +35,15 @@ test('forum post list loads every page when scrolled to the bottom', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const user = await createAuthenticatedUser(
     request,
     context,
     createTestUser('forum-scroll'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, user);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const forumChannel = await createForumChannel(
     request,
@@ -104,14 +106,15 @@ test('user can move a text proposal to a forum, reply, vote, and see it ratified
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('forum-move'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, proposer);
   const forumChannelName = `forum-${proposer.user.suffix}`;
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const forumChannel = await createForumChannel(
@@ -281,14 +284,15 @@ test('user can turn a forum discussion into a ratified proposal', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('forum-discussion'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, proposer);
   const forumChannelName = `forum-${proposer.user.suffix}`;
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const forumChannel = await createForumChannel(

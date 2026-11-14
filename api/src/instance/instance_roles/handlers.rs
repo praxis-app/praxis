@@ -77,11 +77,15 @@ pub(super) async fn get_users_eligible_for_instance_role(
 
 pub(super) async fn create_instance_role(
     State(state): State<InstanceRolesState>,
-    _: CanManageInstanceRolesContext,
+    context: CanManageInstanceRolesContext,
     Json(payload): Json<RoleRequest>,
 ) -> AppResult<Json<InstanceRolePayload>> {
-    let instance_role =
-        service::create_instance_role(&state.database, payload).await?;
+    let instance_role = service::create_instance_role(
+        &state.database,
+        context.user_id,
+        payload,
+    )
+    .await?;
     Ok(Json(InstanceRolePayload { instance_role }))
 }
 
@@ -93,6 +97,7 @@ pub(super) async fn update_instance_role(
     service::update_instance_role(
         &state.database,
         context.instance_role_id,
+        context.user_id,
         payload,
     )
     .await?;
@@ -107,6 +112,7 @@ pub(super) async fn update_instance_role_permissions(
     service::update_instance_role_permissions(
         &state.database,
         context.instance_role_id,
+        context.user_id,
         payload.permissions,
     )
     .await?;
@@ -122,6 +128,7 @@ pub(super) async fn add_instance_role_members(
     service::add_instance_role_members(
         &state.database,
         context.instance_role_id,
+        context.user_id,
         &user_ids,
     )
     .await?;
@@ -136,6 +143,7 @@ pub(super) async fn remove_instance_role_member(
         &state.database,
         context.instance_role_id,
         context.member_user_id,
+        context.user_id,
     )
     .await?;
     Ok(Json(EmptyResponse {}))
@@ -145,8 +153,12 @@ pub(super) async fn delete_instance_role(
     State(state): State<InstanceRolesState>,
     context: CanManageInstanceRoleContext,
 ) -> AppResult<Json<EmptyResponse>> {
-    service::delete_instance_role(&state.database, context.instance_role_id)
-        .await?;
+    service::delete_instance_role(
+        &state.database,
+        context.instance_role_id,
+        context.user_id,
+    )
+    .await?;
     Ok(Json(EmptyResponse {}))
 }
 

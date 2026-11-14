@@ -27,11 +27,12 @@ import { createMessages } from '../lib/messages';
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
   getServerBySlug,
 } from '../lib/servers';
 import { ChatPage } from '../pages/chat.page';
 import { NavigationPage } from '../pages/navigation.page';
+import { testTimeout } from '../lib/timeouts';
 
 type PollResponse = {
   poll: {
@@ -78,12 +79,13 @@ test('sending a message snaps a scrolled channel feed to the bottom', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const user = await createAuthenticatedUser(
     request,
     context,
     createTestUser('send-scroll'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, user);
   const existingMessages = Array.from(
     { length: feedPageSize },
     (_, index) =>
@@ -124,14 +126,15 @@ test('text channel feed preserves its pages and syncs only newer messages when r
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const user = await createAuthenticatedUser(
     request,
     context,
     createTestUser('text-scroll'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, user);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const otherChannelName = `other-${user.user.suffix}`;
   const createChannelResponse = await request.post(
@@ -266,10 +269,12 @@ test('authenticated user can send a chat message with an image', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('chat-image'),
+    server.inviteToken,
   );
   const message = createTestMessage(
     'chat-image',
@@ -375,14 +380,15 @@ test('in-call chat feed preserves its pages and syncs only newer messages when r
   page,
   request,
 }) => {
-  test.setTimeout(90_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(90_000));
 
   const user = await createAuthenticatedUser(
     request,
     context,
     createTestUser('call-scroll'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, user);
 
   try {
     await page.goto(`/s/${server.slug}/c/${server.generalChannelId}`);
@@ -517,7 +523,7 @@ test('authenticated user can create and vote on an in-call proposal', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   // A dedicated server keeps the call's decision panel empty at the start: the
   // call decision falls back to any proposal still open in the channel
@@ -661,47 +667,59 @@ test('authenticated user can create and vote on an in-call proposal', async ({
   }
 });
 
-test('anonymous user can send messages with an image attached', async ({
-  context,
-  page,
-  request,
-}) => {
-  test.setTimeout(60_000);
+const anonymousEntryPoints = [
+  { label: 'explore page', path: () => '/explore' },
+  {
+    label: 'channel page',
+    path: (server: { slug: string; generalChannelId: string }) =>
+      `/s/${server.slug}/c/${server.generalChannelId}`,
+  },
+];
 
-  const { admin, server } = await setupAnonymousInvite(
-    request,
+for (const entryPoint of anonymousEntryPoints) {
+  test(`anonymous user can send messages with an image attached from the ${entryPoint.label}`, async ({
     context,
-    'anon-chat-image',
-  );
-  const message = createTestMessage('anon-chat-image', admin.user.suffix);
-  const chat = new ChatPage(page);
+    page,
+    request,
+  }) => {
+    test.setTimeout(testTimeout(60_000));
 
-  await chat.gotoExplore();
-  await chat.expectChannel('general');
+    const { admin, server } = await setupAnonymousInvite(
+      request,
+      context,
+      'anon-chat-image',
+    );
+    const message = createTestMessage('anon-chat-image', admin.user.suffix);
+    const chat = new ChatPage(page);
 
-  const anonSessionResponse = page.waitForResponse(
-    (response) =>
-      response.request().method() === 'POST' &&
-      response.url().endsWith('/api/auth/anon') &&
-      response.status() === 200,
-  );
-  const messageResponse = page.waitForResponse(
-    (response) =>
-      response.request().method() === 'POST' &&
-      response
-        .url()
-        .includes(`/channels/${server.generalChannelId}/messages`) &&
-      response.status() === 200,
-  );
+    await page.goto(entryPoint.path(server));
+    await chat.expectChannel('general');
 
-  await chat.attachImage();
-  await chat.sendMessage(message);
-  await page.getByRole('button', { name: 'Send anonymously' }).click();
-  await anonSessionResponse;
-  await messageResponse;
-  await expect(chat.messageFeed().getByText(message)).toBeVisible();
-  await chat.expectAttachedImage();
-});
+    const anonSessionResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        response.url().endsWith('/api/auth/anon') &&
+        response.status() === 200,
+    );
+    const messageResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        response
+          .url()
+          .includes(`/channels/${server.generalChannelId}/messages`) &&
+        response.status() === 200,
+    );
+
+    await chat.attachImage();
+    await chat.sendMessage(message);
+    await page.getByRole('button', { name: 'Send anonymously' }).click();
+    await anonSessionResponse;
+    await messageResponse;
+    await expect(page).toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
+    await expect(chat.messageFeed().getByText(message)).toBeVisible();
+    await chat.expectAttachedImage();
+  });
+}
 
 async function leaveCallIfVisible(page: Page) {
   const leaveButton = page.getByRole('button', { name: 'Leave call' });
@@ -731,13 +749,18 @@ async function setupUnreadScenario(
   context: BrowserContext,
   label: string,
 ) {
+  const server = await createTestServer(request);
   const reader = await createAuthenticatedUser(
     request,
     context,
     createTestUser(`${label}-reader`),
+    server.inviteToken,
   );
-  const author = await signUpViaApi(request, createTestUser(`${label}-author`));
-  const server = await getDefaultServer(request, reader);
+  const author = await signUpViaApi(
+    request,
+    createTestUser(`${label}-author`),
+    server.inviteToken,
+  );
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
 
   const channelResponse = await request.post(
@@ -796,14 +819,19 @@ test.describe('mobile thread recovery', () => {
       page,
       request,
     }) => {
-      test.setTimeout(60_000);
+      const server = await createTestServer(request);
+      test.setTimeout(testTimeout(60_000));
       const userA = await createAuthenticatedUser(
         request,
         context,
         createTestUser('reply-reader'),
+        server.inviteToken,
       );
-      const userB = await signUpViaApi(request, createTestUser('reply-sender'));
-      const server = await getDefaultServer(request, userA);
+      const userB = await signUpViaApi(
+        request,
+        createTestUser('reply-sender'),
+        server.inviteToken,
+      );
       const messagesPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/messages`;
       const rootBody = `Message from A ${userA.user.suffix}`;
       const rootResponse = await request.post(messagesPath, {
@@ -915,12 +943,13 @@ test.describe('mobile thread recovery', () => {
     page,
     request,
   }) => {
+    const server = await createTestServer(request);
     const user = await createAuthenticatedUser(
       request,
       context,
       createTestUser('resume'),
+      server.inviteToken,
     );
-    const server = await getDefaultServer(request, user);
     const messagesPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/messages`;
     const rootResponse = await request.post(messagesPath, {
       headers: authorizationHeaders(user),

@@ -8,7 +8,11 @@ import {
   type LoginReq,
   type SignUpReq,
 } from '@/types/auth.types';
-import { type CallDecisionRes, type JoinCallRes } from '@/types/call.types';
+import {
+  type CallArtifactRes,
+  type CallDecisionRes,
+  type JoinCallRes,
+} from '@/types/call.types';
 import {
   type ChannelRes,
   type CreateChannelReq,
@@ -70,7 +74,20 @@ import {
   type SearchPageRes,
   type SearchQueryParams,
 } from '@/types/search.types';
-import { type ServerReq, type ServerRes } from '@/types/server.types';
+import {
+  type AuditLogFilters,
+  type AuditLogRes,
+  type InstanceUsersRes,
+  type ModerationReasonReq,
+  type UserModerationRes,
+} from '@/types/moderation.types';
+import {
+  type ServerAccessRes,
+  type ServerBanRes,
+  type ServerMemberModerationReq,
+  type ServerReq,
+  type ServerRes,
+} from '@/types/server.types';
 import {
   type CurrentUserRes,
   type UpdateUserProfileReq,
@@ -147,6 +164,28 @@ class ApiClient {
     return this.executeRequest<{ user: CurrentUserRes }>('get', path);
   };
 
+  getInstanceUsers = async (before?: string) => {
+    const path = '/users';
+    return this.executeRequest<InstanceUsersRes>('get', path, {
+      params: { before },
+    });
+  };
+
+  suspendUser = async (userId: string, data: ModerationReasonReq) => {
+    const path = `/users/${userId}/suspend`;
+    return this.executeRequest<void>('post', path, { data });
+  };
+
+  restoreUser = async (userId: string, data: ModerationReasonReq) => {
+    const path = `/users/${userId}/restore`;
+    return this.executeRequest<void>('post', path, { data });
+  };
+
+  deleteUser = async (userId: string, data: ModerationReasonReq) => {
+    const path = `/users/${userId}`;
+    return this.executeRequest<void>('delete', path, { data });
+  };
+
   getCurrentUserServers = async () => {
     const path = '/users/me/servers';
     return this.executeRequest<{ servers: ServerRes[] }>('get', path);
@@ -167,6 +206,13 @@ class ApiClient {
   getUserProfile = async (userId: string) => {
     const path = `/users/${userId}/profile`;
     return this.executeRequest<{ user: UserProfileRes }>('get', path);
+  };
+
+  getUserModeration = async (userId: string, serverId?: string) => {
+    const path = `/users/${userId}/moderation`;
+    return this.executeRequest<{ moderation: UserModerationRes }>('get', path, {
+      params: { serverId },
+    });
   };
 
   isFirstUser = async () => {
@@ -376,6 +422,27 @@ class ApiClient {
     return this.executeRequest<{ post: ForumPostRes }>('post', path);
   };
 
+  removeForumPost = async (
+    serverId: string,
+    channelId: string,
+    postId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/forum/posts/${postId}/remove`;
+    return this.executeRequest<{ post: ForumPostRes }>('post', path, { data });
+  };
+
+  removeForumReply = async (
+    serverId: string,
+    channelId: string,
+    postId: string,
+    replyId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/forum/posts/${postId}/replies/${replyId}/remove`;
+    return this.executeRequest<{ reply: MessageRes }>('post', path, { data });
+  };
+
   moveProposalToForum = async (
     serverId: string,
     sourceChannelId: string,
@@ -423,6 +490,76 @@ class ApiClient {
   ) => {
     const path = `/servers/${serverId}/channels/${channelId}/calls/${callId}/leave`;
     return this.executeRequest<void>('post', path);
+  };
+
+  endCall = async (
+    serverId: string,
+    channelId: string,
+    callId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/calls/${callId}/end`;
+    return this.executeRequest<{ call: CallArtifactRes }>('post', path, {
+      data,
+    });
+  };
+
+  removeCallParticipant = async (
+    serverId: string,
+    channelId: string,
+    callId: string,
+    userId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/calls/${callId}/participants/${userId}/remove`;
+    return this.executeRequest<{ call: CallArtifactRes }>('post', path, {
+      data,
+    });
+  };
+
+  removeCallMessage = async (
+    serverId: string,
+    channelId: string,
+    callId: string,
+    messageId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/calls/${callId}/messages/${messageId}/remove`;
+    return this.executeRequest<{ message: MessageRes }>('post', path, {
+      data,
+    });
+  };
+
+  hidePoll = async (
+    serverId: string,
+    channelId: string,
+    pollId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/polls/${pollId}/hide`;
+    return this.executeRequest<{ poll: PollRes }>('post', path, { data });
+  };
+
+  restorePoll = async (
+    serverId: string,
+    channelId: string,
+    pollId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/polls/${pollId}/restore`;
+    return this.executeRequest<{ poll: PollRes }>('post', path, { data });
+  };
+
+  removeMessage = async (
+    serverId: string,
+    channelId: string,
+    messageId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/messages/${messageId}/remove`;
+    return this.executeRequest<{ message: MessageRes }>('post', path, {
+      data,
+    });
   };
 
   sendMessage = async (
@@ -657,6 +794,11 @@ class ApiClient {
     return this.executeRequest<{ server: ServerRes }>('get', path);
   };
 
+  getServerAccess = async (slug: string) => {
+    const path = `/servers/slug/${slug}/access`;
+    return this.executeRequest<{ access: ServerAccessRes }>('get', path);
+  };
+
   getDefaultServer = async () => {
     const path = '/servers/default';
     return this.executeRequest<{ server: ServerRes }>('get', path);
@@ -735,11 +877,36 @@ class ApiClient {
     });
   };
 
-  removeServerMembers = async (serverId: string, userIds: string[]) => {
-    const path = `/servers/${serverId}/members`;
-    return this.executeRequest<void>('delete', path, {
-      data: { userIds },
-    });
+  removeServerMember = async (
+    serverId: string,
+    userId: string,
+    data: ServerMemberModerationReq,
+  ) => {
+    const path = `/servers/${serverId}/members/${userId}/remove`;
+    return this.executeRequest<void>('post', path, { data });
+  };
+
+  banServerMember = async (
+    serverId: string,
+    userId: string,
+    data: ServerMemberModerationReq,
+  ) => {
+    const path = `/servers/${serverId}/members/${userId}/ban`;
+    return this.executeRequest<void>('post', path, { data });
+  };
+
+  unbanServerMember = async (
+    serverId: string,
+    userId: string,
+    data: ServerMemberModerationReq,
+  ) => {
+    const path = `/servers/${serverId}/members/${userId}/ban`;
+    return this.executeRequest<void>('delete', path, { data });
+  };
+
+  getServerBans = async (serverId: string) => {
+    const path = `/servers/${serverId}/bans`;
+    return this.executeRequest<{ bans: ServerBanRes[] }>('get', path);
   };
 
   joinServer = async (serverId: string, inviteToken: string) => {
@@ -1001,6 +1168,25 @@ class ApiClient {
   clearNotifications = async (serverId: string) => {
     const path = `/servers/${serverId}/notifications`;
     return this.executeRequest<void>('delete', path);
+  };
+
+  getInstanceAuditLog = async (
+    params: AuditLogFilters & { cursor?: string; limit?: number },
+  ) => {
+    return this.executeRequest<AuditLogRes>('get', '/audit-log', {
+      params: { ...params },
+    });
+  };
+
+  getServerAuditLog = async (
+    serverId: string,
+    params: AuditLogFilters & { cursor?: string; limit?: number },
+  ) => {
+    return this.executeRequest<AuditLogRes>(
+      'get',
+      `/servers/${serverId}/audit-log`,
+      { params: { ...params } },
+    );
   };
 
   // -------------------------------------------------------------------------

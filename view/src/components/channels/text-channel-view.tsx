@@ -35,12 +35,17 @@ import { type PollRes } from '@/types/poll.types';
 import { type ProposalForumReferenceRes } from '@/types/forum.types';
 import { type PubSubMessage } from '@/types/shared.types';
 import { type RightPanel } from '@/types/right-panel.types';
-import { PubSubMessageType } from '@/constants/pub-sub.constants';
+import {
+  PubSubMessageAction,
+  PubSubMessageType,
+} from '@/constants/pub-sub.constants';
 import {
   preserveFeedImages,
   preserveFeedItemImages,
   replaceProposalWithForumReference,
+  updateFeedPoll,
 } from '@/lib/feed.utils';
+import { patchRemovedMessage } from '@/lib/moderation.utils';
 import { channelPubSubTopic } from '@/lib/pub-sub.utils';
 import { cn } from '@/lib/shared.utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -50,11 +55,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NewMessagePayload {
   type: PubSubMessageType.MESSAGE;
+  action?: PubSubMessageAction;
   message: MessageRes;
 }
 
 interface ThreadReplyPayload {
   type: PubSubMessageType.THREAD_REPLY;
+  action?: PubSubMessageAction;
   rootKind?: ThreadRootKind;
   rootId?: string;
   rootMessageId?: string;
@@ -334,6 +341,18 @@ export const TextChannelView = ({
           return;
         }
 
+        if (body.action === PubSubMessageAction.REMOVED) {
+          patchRemovedMessage(
+            queryClient,
+            serverId,
+            channel?.id,
+            body.type === PubSubMessageType.THREAD_REPLY
+              ? body.reply
+              : body.message,
+          );
+          return;
+        }
+
         if (body.type === PubSubMessageType.THREAD_REPLY) {
           const rootKind = body.rootKind || 'message';
           const rootId = body.rootId || body.rootMessageId;
@@ -482,40 +501,14 @@ export const TextChannelView = ({
           return;
         }
         if (body.type === PubSubMessageType.POLL) {
-          const newFeedItem: FeedItemRes = {
-            ...(body.poll as FeedItemRes & { type: 'poll' }),
-            type: 'poll',
-          };
-          queryClient.setQueryData<FeedQuery>(feedQueryKey, (oldData) => {
-            if (!oldData) {
-              return {
-                pages: [{ feed: [newFeedItem] }],
-                pageParams: [null],
-              };
-            }
-            const pages = oldData.pages.map((page, index): FeedQueryPage => {
-              if (index === 0) {
-                const existingIndex = page.feed.findIndex(
-                  (fi) => fi.type === 'poll' && fi.id === newFeedItem.id,
-                );
-                if (existingIndex !== -1) {
-                  const updatedFeed = [...page.feed];
-                  updatedFeed[existingIndex] = newFeedItem;
-                  return { ...page, feed: updatedFeed };
-                }
-                const updatedFeed = [newFeedItem, ...page.feed];
-                // Sort by createdAt descending (newest first)
-                updatedFeed.sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime(),
-                );
-                return { ...page, feed: updatedFeed };
-              }
-              return page;
-            });
-            return { pages, pageParams: oldData.pageParams };
-          });
+          const poll = { ...body.poll, type: 'poll' } as const;
+          queryClient.setQueriesData<FeedQuery>(
+            { queryKey: [...feedQueryKey, 'around'] },
+            (data) => updateFeedPoll(data, poll),
+          );
+          queryClient.setQueryData<FeedQuery>(feedQueryKey, (data) =>
+            updateFeedPoll(data, poll, true),
+          );
         }
         if (body.type === PubSubMessageType.PROPOSAL_MOVED) {
           queryClient.setQueryData<FeedQuery>(feedQueryKey, (oldData) =>

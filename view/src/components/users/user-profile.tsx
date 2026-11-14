@@ -5,11 +5,13 @@ import { MdEdit } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { api } from '../../client/api-client';
 import { UserSettingsSections } from '../../constants/shared.constants';
-import { getUserSettingsPath } from '../../lib/user-settings.utils';
 import { cn } from '../../lib/shared.utils';
+import { getUserSettingsPath } from '../../lib/user-settings.utils';
 import { LazyLoadImage } from '../images/lazy-load-image';
 import { Button } from '../ui/button';
 import { UserAvatar } from './user-avatar';
+import { UserModerationStatus } from './user-moderation-status';
+import { UserProfileModerationMenu } from './user-profile-moderation-menu';
 
 interface Props {
   userId?: string;
@@ -79,13 +81,28 @@ export const UserProfile = ({ userId, me, className }: Props) => {
       </div>
 
       <div className="-mt-12 flex flex-col gap-3 px-3 pb-6">
-        <UserAvatar
-          name={profileData.user.name}
-          userId={profileData.user.id}
-          imageId={profileData.user.profilePicture?.id}
-          className="border-background size-24 border-4"
-          fallbackClassName="text-4xl"
-        />
+        <div className="flex items-start justify-between gap-2">
+          <UserAvatar
+            name={profileData.user.name}
+            userId={profileData.user.id}
+            imageId={profileData.user.profilePicture?.id}
+            className="border-background size-24 border-4"
+            fallbackClassName="text-4xl"
+          />
+
+          {!isMe && !me.anonymous && (
+            <div className="mt-10 flex items-center gap-2 pr-2">
+              <UserModerationStatus
+                userId={profileData.user.id}
+                className="justify-end"
+              />
+              <UserProfileModerationMenu
+                userId={profileData.user.id}
+                name={resolvedName}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="flex flex-col gap-0.5 px-2">
           <h2 className="text-xl font-medium">{resolvedName}</h2>

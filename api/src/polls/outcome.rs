@@ -9,11 +9,11 @@ use entity::{
         NotificationKind, PollClosedReason, PollDecisionMakingModel, PollStage,
         VoteType,
     },
-    notifications, poll_configs, polls, votes,
+    notifications, poll_configs, polls, users, votes,
 };
 use sea_orm::{
     prelude::Uuid,
-    sea_query::{Query, SimpleExpr},
+    sea_query::{Condition, Expr, Query, SimpleExpr},
     ActiveModelTrait, ColumnTrait, ConnectionTrait, EntityTrait,
     FromQueryResult, IntoActiveModel, QueryFilter, QuerySelect, QueryTrait,
     Set,
@@ -295,18 +295,13 @@ where
         .from(channel_members::Entity)
         .and_where(channel_members::Column::ChannelId.eq(poll.channel_id))
         .to_owned();
-    let member_count_query = Query::select()
-        .expr(channel_members::Column::Id.count())
-        .from(channel_members::Entity)
-        .and_where(channel_members::Column::ChannelId.eq(poll.channel_id))
-        .to_owned();
     let statement = votes::Entity::find()
         .filter(votes::Column::PollId.eq(poll.id))
         .filter(votes::Column::UserId.in_subquery(current_channel_member_ids))
         .column_as(
-            SimpleExpr::SubQuery(
-                None,
-                Box::new(member_count_query.into_sub_query_statement()),
+            quorum_member_count(
+                Expr::val(poll.id).into(),
+                Expr::val(poll.channel_id).into(),
             ),
             "member_count",
         )
@@ -329,6 +324,39 @@ where
         .map_err(internal_error)?;
 
     Ok((votes, member_count))
+}
+
+pub(super) fn quorum_member_count(
+    poll_id: SimpleExpr,
+    channel_id: SimpleExpr,
+) -> SimpleExpr {
+    let active_users = Query::select()
+        .column(users::Column::Id)
+        .from(users::Entity)
+        .and_where(users::Column::Locked.eq(false))
+        .to_owned();
+    let voters = Query::select()
+        .column(votes::Column::UserId)
+        .from(votes::Entity)
+        .and_where(Expr::col(votes::Column::PollId).eq(poll_id))
+        .to_owned();
+    let count = Query::select()
+        .expr(channel_members::Column::Id.count())
+        .from(channel_members::Entity)
+        .and_where(Expr::col(channel_members::Column::ChannelId).eq(channel_id))
+        .cond_where(
+            Condition::any()
+                .add(
+                    Expr::col(channel_members::Column::UserId)
+                        .in_subquery(active_users),
+                )
+                .add(
+                    Expr::col(channel_members::Column::UserId)
+                        .in_subquery(voters),
+                ),
+        )
+        .to_owned();
+    SimpleExpr::SubQuery(None, Box::new(count.into_sub_query_statement()))
 }
 
 fn has_consensus(

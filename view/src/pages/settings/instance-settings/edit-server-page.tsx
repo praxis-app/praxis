@@ -1,8 +1,8 @@
 import { api } from '@/client/api-client';
 import { TopNav } from '@/components/nav/top-nav';
 import { RoleMemberOption } from '@/components/roles/role-member-option';
+import { ManagedServerMember } from '@/components/server-members/managed-server-member';
 import { ServerForm } from '@/components/servers/server-form';
-import { ServerMember } from '@/components/servers/server-member';
 import { DeleteButton } from '@/components/shared/delete-button';
 import { PermissionDenied } from '@/components/shared/permission-denied';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { NavigationPaths } from '@/constants/shared.constants';
 import { useAbility } from '@/hooks/use-ability';
+import { useMeQuery } from '@/hooks/use-me-query';
 import { useServerData } from '@/hooks/use-server-data';
 import { handleError } from '@/lib/error.utils';
 import { type ServerReq, type ServerRes } from '@/types/server.types';
@@ -57,6 +58,7 @@ export const EditServerPage = () => {
   const queryClient = useQueryClient();
   const { server: currentServer } = useServerData();
 
+  const { data: meData } = useMeQuery();
   const { instanceAbility, isLoading: isAbilityLoading } = useAbility();
   const canManageServers = instanceAbility.can('manage', 'Server');
 
@@ -449,13 +451,14 @@ export const EditServerPage = () => {
             </Card>
 
             {!!serverMembersData?.users.length && (
-              <Card className="py-5">
-                <CardContent className="px-5">
+              <Card className="py-4">
+                <CardContent className="flex flex-col gap-4 px-4">
                   {serverMembersData.users.map((member) => (
-                    <ServerMember
+                    <ManagedServerMember
+                      key={member.id}
                       serverId={serverId!}
                       member={member}
-                      key={member.id}
+                      canModerate={member.id !== meData?.user.id}
                     />
                   ))}
                 </CardContent>

@@ -424,26 +424,26 @@ where
     }
 }
 
-pub(crate) async fn can_read_channel(
+pub(crate) async fn get_readable_channel(
     database: &DatabaseConnection,
     server_id: Uuid,
     channel_id: Uuid,
     user_id: Option<Uuid>,
     invite_token: Option<&str>,
-) -> AppResult<()> {
-    get_channel(database, server_id, channel_id).await?;
+) -> AppResult<channels::Model> {
+    let channel = get_channel(database, server_id, channel_id).await?;
 
     // Membership is one way in, not the only one. Signing in must never take
     // away access an anonymous caller would have had, so this falls through to
     // the same public and invite paths as `is_server_audience`
     if let Some(user_id) = user_id {
         if is_channel_member(database, channel_id, user_id).await? {
-            return Ok(());
+            return Ok(channel);
         }
     }
 
     if servers_service::default_server_id(database).await? == server_id {
-        return Ok(());
+        return Ok(channel);
     }
 
     if let Some(invite_token) = invite_token {
@@ -454,7 +454,7 @@ pub(crate) async fn can_read_channel(
         )
         .await?
         {
-            return Ok(());
+            return Ok(channel);
         }
     }
 
@@ -521,8 +521,8 @@ where
     Ok(())
 }
 
-pub(crate) async fn create_general_channel(
-    database: &DatabaseConnection,
+pub(crate) async fn create_general_channel<C: ConnectionTrait>(
+    database: &C,
     server_id: Uuid,
 ) -> AppResult<()> {
     let existing = channels::Entity::find()
@@ -662,8 +662,8 @@ where
     Ok(result)
 }
 
-async fn create_channel_key(
-    database: &DatabaseConnection,
+async fn create_channel_key<C: ConnectionTrait>(
+    database: &C,
     channel_id: Uuid,
 ) -> AppResult<channel_keys::Model> {
     let encrypted = encryption::generate_channel_key()?;

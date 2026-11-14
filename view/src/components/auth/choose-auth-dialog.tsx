@@ -51,11 +51,11 @@ export const ChooseAuthDialog = ({ isOpen, setIsOpen, sendMessage }: Props) => {
     mutationFn: async () => {
       const { access_token } = await api.createAnonSession(inviteToken);
       localStorage.setItem(LocalStorageKeys.AccessToken, access_token);
+      await sendMessage();
       localStorage.removeItem(LocalStorageKeys.InviteToken);
       setAccessToken(access_token);
       setInviteToken(null);
       setIsLoggedIn(true);
-      sendMessage();
     },
     onError(error: Error) {
       handleError(error);

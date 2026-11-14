@@ -187,6 +187,12 @@ pub(crate) async fn move_proposal_to_forum(
             "The proposal changed while it was being moved.",
         ));
     }
+    if proposal.hidden_at.is_some() {
+        return Err(ApiError::new(
+            StatusCode::CONFLICT,
+            "Hidden proposals cannot be moved to a forum.",
+        ));
+    }
     if forum_posts::Entity::find()
         .filter(forum_posts::Column::PollId.eq(poll_id))
         .one(&transaction)
@@ -249,12 +255,13 @@ pub(crate) async fn move_proposal_to_forum(
         user_id: Set(user_id),
         root_message_id: Set(root_message_id),
         poll_id: Set(Some(poll_id)),
-        ciphertext: Set(encrypted_title.ciphertext),
-        iv: Set(encrypted_title.iv),
-        tag: Set(encrypted_title.tag),
+        ciphertext: Set(Some(encrypted_title.ciphertext)),
+        iv: Set(Some(encrypted_title.iv)),
+        tag: Set(Some(encrypted_title.tag)),
         key_id: Set(destination_key.id),
         status: Set(ForumPostStatus::Open),
         latest_activity_at: Set(now),
+        moderated_at: Set(None),
         created_at: Set(now),
         updated_at: Set(now),
     }

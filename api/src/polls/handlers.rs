@@ -6,11 +6,13 @@ use axum::{
     http::{Response, StatusCode},
     response::{IntoResponse, Json},
 };
-use sea_orm::DatabaseConnection;
+use entity::polls;
+use sea_orm::{prelude::Uuid, DatabaseConnection};
 use std::{path::PathBuf, sync::Arc};
 
 use super::{
     extractors::PollDeleteContext,
+    moderation::{self, PollModeration},
     service::{self, PollImageUploads},
     types::{
         ActiveDecisionsResponse, CallDecisionResponse, CreatePollContext,
@@ -31,6 +33,7 @@ use crate::{
         AppResult,
     },
     invites::InviteAccessToken,
+    moderation::ModerationReasonRequest,
     pub_sub::PubSubService,
     servers::types::ServerPath,
 };
@@ -384,4 +387,83 @@ pub(super) async fn delete_poll(
     Ok(Json(DeletePollResponse {
         affected: result.rows_affected,
     }))
+}
+
+pub(super) async fn hide_poll(
+    State(state): State<PollsState>,
+    Path(path): Path<PollPath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<PollPayload>> {
+    let request = poll_moderation(path, user_id, payload);
+    let (poll, notifications) =
+        moderation::hide_poll(&state.database, &request).await?;
+    broadcast_moderated_poll(&state, &request, &poll).await;
+    crate::notifications::publish_notifications(
+        &state.database,
+        &state.pub_sub_service,
+        &notifications,
+    )
+    .await;
+    moderated_poll_response(&state, &request).await
+}
+
+pub(super) async fn restore_poll(
+    State(state): State<PollsState>,
+    Path(path): Path<PollPath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<PollPayload>> {
+    let request = poll_moderation(path, user_id, payload);
+    let poll = moderation::restore_poll(&state.database, &request).await?;
+    broadcast_moderated_poll(&state, &request, &poll).await;
+    moderated_poll_response(&state, &request).await
+}
+
+fn poll_moderation(
+    path: PollPath,
+    user_id: Uuid,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> PollModeration {
+    PollModeration {
+        server_id: path.server_id,
+        channel_id: path.channel_id,
+        poll_id: path.poll_id,
+        actor_user_id: user_id,
+        reason: payload.and_then(|Json(payload)| payload.reason),
+    }
+}
+
+async fn broadcast_moderated_poll(
+    state: &PollsState,
+    request: &PollModeration,
+    poll: &polls::Model,
+) {
+    if let Err(error) = service::broadcast_poll_update(
+        &state.database,
+        &state.pub_sub_service,
+        request.server_id,
+        poll.channel_id,
+        Some(request.actor_user_id),
+        poll.id,
+    )
+    .await
+    {
+        tracing::warn!("failed to broadcast moderated poll: {error}");
+    }
+}
+
+async fn moderated_poll_response(
+    state: &PollsState,
+    request: &PollModeration,
+) -> AppResult<Json<PollPayload>> {
+    let poll = service::get_poll_response(
+        &state.database,
+        request.server_id,
+        request.channel_id,
+        request.poll_id,
+        Some(request.actor_user_id),
+    )
+    .await?;
+    Ok(Json(PollPayload { poll }))
 }

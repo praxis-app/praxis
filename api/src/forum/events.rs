@@ -18,6 +18,8 @@ pub(crate) async fn broadcast_forum_post(
     action: &'static str,
     post: &ForumPostResponse,
 ) {
+    let mut post = post.clone();
+    post.conceal_hidden_content();
     broadcast_event(
         database,
         pub_sub_service,

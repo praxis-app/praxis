@@ -1,8 +1,10 @@
 use axum::http::StatusCode;
-use entity::{forum_posts, messages, users};
+use entity::{forum_posts, messages, polls, users};
 use sea_orm::{
-    prelude::Uuid, sea_query::Expr, ColumnTrait, DatabaseConnection,
-    EntityTrait, FromQueryResult, QueryFilter, QueryOrder, QuerySelect,
+    prelude::{DateTimeWithTimeZone, Uuid},
+    sea_query::Expr,
+    ColumnTrait, DatabaseConnection, EntityTrait, FromQueryResult, QueryFilter,
+    QueryOrder, QuerySelect,
 };
 use std::collections::HashMap;
 
@@ -11,7 +13,7 @@ use crate::{
     channels,
     common::{encryption, ApiError, AppResult},
     messages::{self as messages_service, types::MessageUser},
-    polls::service as polls_service,
+    polls::{moderation as polls_moderation, service as polls_service},
     users as users_service,
 };
 
@@ -72,23 +74,83 @@ pub(super) async fn shape_forum_post_with_replies(
         ),
         None => None,
     };
-    let summary = shape_post_summaries(database, vec![post])
+    let mut summary = post_summaries(database, &[post])
         .await?
         .into_iter()
         .next()
         .ok_or_else(|| internal_consistency_error("Post not found."))?;
 
+    let mut body = root.body.unwrap_or_default();
+    if let Some(proposal) = &proposal {
+        summary.hidden_at.clone_from(&proposal.hidden_at);
+        if proposal.content_concealed {
+            summary.title.clear();
+            body.clear();
+        }
+    }
     Ok(ForumPostResponse {
-        post: summary,
-        body: root.body.unwrap_or_default(),
+        body,
         replies: shaped_messages.collect(),
         proposal,
+        post: summary,
     })
 }
 
 pub(super) async fn shape_post_summaries(
     database: &DatabaseConnection,
     posts: Vec<forum_posts::Model>,
+    user_id: Option<Uuid>,
+) -> AppResult<Vec<ForumPostSummaryResponse>> {
+    let mut summaries = post_summaries(database, &posts).await?;
+    if posts.iter().all(|post| post.poll_id.is_none()) {
+        return Ok(summaries);
+    }
+    let hidden_at_by_poll = polls::Entity::find()
+        .select_only()
+        .column(polls::Column::Id)
+        .column(polls::Column::HiddenAt)
+        .filter(
+            polls::Column::Id
+                .is_in(posts.iter().filter_map(|post| post.poll_id)),
+        )
+        .filter(polls::Column::HiddenAt.is_not_null())
+        .into_tuple::<(Uuid, DateTimeWithTimeZone)>()
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .collect::<HashMap<_, _>>();
+    let revealed_channel_ids =
+        polls_moderation::get_channels_with_visible_hidden_polls(
+            database,
+            user_id,
+            posts
+                .iter()
+                .filter(|post| {
+                    post.poll_id.is_some_and(|poll_id| {
+                        hidden_at_by_poll.contains_key(&poll_id)
+                    })
+                })
+                .map(|post| post.channel_id),
+            entity::enums::PollType::Proposal,
+        )
+        .await?;
+
+    for (summary, post) in summaries.iter_mut().zip(posts) {
+        summary.hidden_at = post
+            .poll_id
+            .and_then(|id| hidden_at_by_poll.get(&id))
+            .map(|at| at.to_rfc3339());
+        if !revealed_channel_ids.contains(&post.channel_id) {
+            summary.conceal_hidden_content();
+        }
+    }
+    Ok(summaries)
+}
+
+async fn post_summaries(
+    database: &DatabaseConnection,
+    posts: &[forum_posts::Model],
 ) -> AppResult<Vec<ForumPostSummaryResponse>> {
     if posts.is_empty() {
         return Ok(vec![]);
@@ -132,9 +194,8 @@ pub(super) async fn shape_post_summaries(
                 .map(|root_id| (root_id, count.reply_count as usize))
         })
         .collect::<HashMap<_, _>>();
-
     posts
-        .into_iter()
+        .iter()
         .map(|post| {
             let user = users.get(&post.user_id).ok_or_else(|| {
                 internal_consistency_error("Post author not found.")
@@ -142,12 +203,12 @@ pub(super) async fn shape_post_summaries(
             let key = key_map.get(&post.key_id).ok_or_else(|| {
                 internal_consistency_error("Post encryption key not found.")
             })?;
-            let title = encryption::decrypt_text(
-                &post.ciphertext,
-                &post.iv,
-                &post.tag,
-                key,
-            )?;
+            let title = match (&post.ciphertext, &post.iv, &post.tag) {
+                (Some(ciphertext), Some(iv), Some(tag)) => {
+                    encryption::decrypt_text(ciphertext, iv, tag, key)?
+                }
+                _ => String::new(),
+            };
             Ok(ForumPostSummaryResponse {
                 id: post.id.to_string(),
                 title,
@@ -165,6 +226,8 @@ pub(super) async fn shape_post_summaries(
                     .copied()
                     .unwrap_or_default(),
                 latest_activity_at: post.latest_activity_at.to_rfc3339(),
+                moderated_at: post.moderated_at.map(|value| value.to_rfc3339()),
+                hidden_at: None,
                 created_at: post.created_at.to_rfc3339(),
                 updated_at: post.updated_at.to_rfc3339(),
             })

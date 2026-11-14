@@ -2,6 +2,7 @@ import { CallChatPanel } from '@/components/calls/call-chat-panel';
 import { CallDecisionBanner } from '@/components/calls/call-decision-panel/call-decision-banner';
 import { CallDecisionPanel } from '@/components/calls/call-decision-panel/call-decision-panel';
 import { CallControls } from '@/components/calls/call-controls';
+import { CallModerationMenu } from '@/components/calls/call-moderation-menu';
 import { api } from '@/client/api-client';
 import { TopNav } from '@/components/nav/top-nav';
 import { ResizablePanel } from '@/components/shared/resizable-panel/resizable-panel';
@@ -16,6 +17,7 @@ import { BrowserEvents, KeyCodes } from '@/constants/shared.constants';
 import { PubSubMessageType } from '@/constants/pub-sub.constants';
 import { useAuthData } from '@/hooks/use-auth-data';
 import { useIsDesktop } from '@/hooks/use-is-desktop';
+import { useModerationAccess } from '@/hooks/use-moderation-access';
 import { useServerData } from '@/hooks/use-server-data';
 import { useSubscription } from '@/hooks/use-subscription';
 import { channelPubSubTopic } from '@/lib/pub-sub.utils';
@@ -84,6 +86,7 @@ export const CallPanel = ({
   const [sidePanel, setSidePanel] = useState<SidePanel>(null);
   const { serverId } = useServerData();
   const { me } = useAuthData();
+  const { canManageCalls } = useModerationAccess();
   const queryClient = useQueryClient();
 
   const participants = useParticipants();
@@ -267,7 +270,7 @@ export const CallPanel = ({
             </div>
 
             <div className="border-t border-[--color-border] px-3 py-3">
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center gap-2">
                 <CallControls
                   onLeave={handleLeave}
                   onOpenChat={() =>
@@ -279,6 +282,13 @@ export const CallPanel = ({
                     )
                   }
                 />
+                {canManageCalls && serverId && (
+                  <CallModerationMenu
+                    serverId={serverId}
+                    channelId={channel.id}
+                    callId={callConfig.call.id}
+                  />
+                )}
               </div>
             </div>
           </div>

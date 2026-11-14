@@ -5,56 +5,47 @@ import { fileURLToPath } from 'node:url';
 import {
   createAuthenticatedUser,
   getOrCreateInstanceAdmin,
-  isFirstUser,
   setupAnonymousSession,
   signUpViaApi,
 } from '../lib/auth';
-import { createTestUser, INSTANCE_ADMIN_USER } from '../lib/data';
+import { createTestUser } from '../lib/data';
 import { createInvite } from '../lib/invites';
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
   joinServer,
 } from '../lib/servers';
 import { AuthPage } from '../pages/auth.page';
 import { ChatPage } from '../pages/chat.page';
 import { NavigationPage } from '../pages/navigation.page';
+import { testTimeout } from '../lib/timeouts';
 
 const fixturePath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../fixtures/valid-image.png',
 );
 
-test('user can sign up from the landing page', async ({ page, request }) => {
-  // Only the very first user can sign up without an invite, so the same
-  // landing page flow is reached through an invite once the instance has one
-  const isFirstSignup = await isFirstUser(request);
-  const user = isFirstSignup
-    ? INSTANCE_ADMIN_USER
-    : createTestUser('landing-signup');
+test('user can sign up from an invite on the landing page', async ({
+  page,
+  request,
+}) => {
+  const server = await createTestServer(request, 'landing-signup');
+  const user = createTestUser('landing-signup');
   const auth = new AuthPage(page);
   const chat = new ChatPage(page);
   const navigation = new NavigationPage(page);
 
-  if (isFirstSignup) {
-    await auth.gotoLanding();
-    await auth.followSignupLink();
-  } else {
-    const admin = await getOrCreateInstanceAdmin(request);
-    const server = await getDefaultServer(request, admin);
-    const inviteToken = await createInvite(request, admin, server.id);
-
-    await page.goto(`/i/${inviteToken}`);
-    await expect(page).toHaveURL('/about');
-    await page
-      .getByRole('link', { name: 'Accept invite', exact: true })
-      .first()
-      .click();
-  }
+  await page.goto(`/i/${server.inviteToken}`);
+  await expect(page).toHaveURL('/about');
+  await page
+    .getByRole('link', { name: 'Accept invite', exact: true })
+    .first()
+    .click();
   await auth.signUp(user);
 
   await auth.expectSignedUp();
+  await expect(page).toHaveURL(new RegExp(`/s/${server.slug}/c/[^/]+/?$`));
   await chat.expectChannel('general');
   await navigation.expectSignedInUser(user);
   await navigation.expectAccessTokenPersisted();
@@ -260,15 +251,15 @@ test('Open Praxis and Explore Praxis both return a logged in user to the server 
   page,
   request,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(testTimeout(90_000));
 
-  await getOrCreateInstanceAdmin(request);
+  const homeServer = await createTestServer(request, 'open-praxis-home');
   const user = await createAuthenticatedUser(
     request,
     context,
     createTestUser('open-praxis'),
+    homeServer.inviteToken,
   );
-  const defaultServer = await getDefaultServer(request, user);
   const serverAdmin = await createServerAdmin(request, 'open-praxis-admin');
 
   const servers: { name: string; slug: string }[] = [];
@@ -281,9 +272,7 @@ test('Open Praxis and Explore Praxis both return a logged in user to the server 
     servers.push({ name, slug });
   }
 
-  await page.goto(
-    `/s/${defaultServer.slug}/c/${defaultServer.generalChannelId}`,
-  );
+  await page.goto(`/s/${homeServer.slug}/c/${homeServer.generalChannelId}`);
   await expect(
     page.getByText('general', { exact: true }).first(),
   ).toBeVisible();

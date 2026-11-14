@@ -10,10 +10,12 @@ export type PermissionRule = {
 export const SERVER_PERMISSIONS = {
   createInvites: { subject: 'Invite', action: ['create'] },
   manageConfig: { subject: 'ServerConfig', action: ['manage'] },
+  viewAuditLog: { subject: 'AuditLog', action: ['read'] },
 } as const satisfies Record<string, PermissionRule>;
 
 export const INSTANCE_PERMISSIONS = {
   manageServers: { subject: 'Server', action: ['manage'] },
+  viewAuditLog: { subject: 'AuditLog', action: ['read'] },
 } as const satisfies Record<string, PermissionRule>;
 
 const GRANT_ROLE_COLOR = '#2196f3';

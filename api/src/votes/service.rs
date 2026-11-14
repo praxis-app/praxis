@@ -29,7 +29,10 @@ use crate::{
     common::{request::parse_uuid, ApiError, AppResult},
     forum, invites,
     notifications::{self as notifications_service, WithNotifications},
-    polls::{service as polls_service, PROPOSAL_BLOCK_SUBJECT},
+    polls::{
+        moderation as polls_moderation, service as polls_service,
+        PROPOSAL_BLOCK_SUBJECT,
+    },
     users as users_service,
 };
 
@@ -554,6 +557,7 @@ async fn ensure_poll_accepts_vote_mutations<C>(
 where
     C: ConnectionTrait,
 {
+    polls_moderation::ensure_voting_not_paused(poll)?;
     if forum_posts::Entity::find()
         .filter(forum_posts::Column::PollId.eq(poll.id))
         .filter(forum_posts::Column::Status.eq(ForumPostStatus::Closed))
