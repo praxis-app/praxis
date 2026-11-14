@@ -71,28 +71,25 @@ export const AuditLogFilters = ({
 
   return (
     <section aria-labelledby="audit-log-filters-heading" className="space-y-3">
+      <h2 id="audit-log-filters-heading" className="sr-only">
+        {t('auditLog.filters.heading')}
+      </h2>
       <div className="flex h-8 items-center justify-between gap-2">
-        <h2
-          id="audit-log-filters-heading"
-          className="text-muted-foreground text-sm font-medium"
-        >
-          {t('auditLog.filters.heading')}
-          {activeCount > 0 && (
-            <span className="text-foreground ml-1.5">
+        {activeCount > 0 && (
+          <>
+            <span className="text-muted-foreground text-sm font-medium">
               {t('auditLog.filters.activeCount', { count: activeCount })}
             </span>
-          )}
-        </h2>
-        {activeCount > 0 && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onChange({})}
-          >
-            <LuX />
-            {t('auditLog.actions.clearFilters')}
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onChange({})}
+            >
+              <LuX />
+              {t('auditLog.actions.clearFilters')}
+            </Button>
+          </>
         )}
       </div>
 

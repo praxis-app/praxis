@@ -80,7 +80,8 @@
     },
     "filters": {
       "heading": "Filters",
-      "activeCount": "({{count}} active)",
+      "activeCount_one": "{{count}} filter active",
+      "activeCount_other": "{{count}} filters active",
       "all": "All",
       "actor": "Actor",
       "targetKind": "Target type",
