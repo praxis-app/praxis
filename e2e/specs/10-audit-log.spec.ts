@@ -183,12 +183,17 @@ test('server and instance viewers see only their authorized audit scope and can 
     '/settings/audit-log',
   );
   const instanceEntries = instanceSession.page.locator('[data-slot="card"]');
+  const selectServer = async (serverName: string) => {
+    await instanceSession.page
+      .getByRole('combobox', { name: /^Server/ })
+      .click();
+    await instanceSession.page
+      .getByRole('option', { name: serverName, exact: true })
+      .click();
+  };
+  await selectServer(serverA.name);
   await expect(instanceEntries.getByText(serverA.name).first()).toBeVisible();
-  await expect(instanceEntries.getByText(serverB.name).first()).toBeVisible();
-  await instanceSession.page.getByRole('combobox', { name: /^Server/ }).click();
-  await instanceSession.page
-    .getByRole('option', { name: serverB.name, exact: true })
-    .click();
+  await selectServer(serverB.name);
   await expect(instanceEntries.getByText(serverB.name).first()).toBeVisible();
   await expect(instanceEntries.getByText(serverA.name)).toHaveCount(0);
 
@@ -202,7 +207,16 @@ test('every audit log entry type renders readable details', async ({
 }) => {
   test.setTimeout(testTimeout(120_000));
 
-  const admin = await getOrCreateInstanceAdmin(request);
+  const admin = await signUpViaApi(
+    request,
+    createTestUser('audit-display-admin'),
+  );
+  await grantInstancePermissions(
+    request,
+    admin,
+    [{ subject: 'all', action: ['manage'] }],
+    'audit-display-admin',
+  );
   const headers = authorizationHeaders(admin);
   const suffix = admin.user.suffix;
   const send = async (
@@ -409,12 +423,35 @@ test('every audit log entry type renders readable details', async ({
   );
   const loadMore = page.getByRole('button', { name: 'Load more' });
   const entries = page.locator('[data-slot="card"]');
-  await expect(entries.first()).toBeVisible();
-  while (await loadMore.isVisible()) {
-    const loadedCount = await entries.count();
-    await loadMore.click();
-    await expect.poll(() => entries.count()).toBeGreaterThan(loadedCount);
-  }
+  const rawJson = /[[{]\s*"|"\s*:/;
+  const uuid = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+  const selectFilter = async (filter: RegExp, option: string) => {
+    await page.getByRole('combobox', { name: filter }).click();
+    await page.getByRole('option', { name: option, exact: true }).click();
+    await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  };
+  const expectAllEntriesReadable = async () => {
+    await expect(entries.first()).toBeVisible();
+    while (await loadMore.isVisible()) {
+      const loadedCount = await entries.count();
+      await loadMore.click();
+      await expect.poll(() => entries.count()).toBeGreaterThan(loadedCount);
+    }
+    for (const text of await entries.allInnerTexts()) {
+      expect(text).not.toMatch(rawJson);
+      expect(text).not.toMatch(uuid);
+    }
+  };
+
+  await selectFilter(/^Server/, `Audit Renamed ${suffix}`.slice(0, 30));
+  await expectAllEntriesReadable();
+  await expect(
+    entries.getByRole('link', { name: 'Approved proposal' }).first(),
+  ).toBeVisible();
+
+  await selectFilter(/^Server/, 'All');
+  await selectFilter(/^Actor/, admin.user.name);
+  await expectAllEntriesReadable();
 
   const expectedActions = [
     'Created server',
@@ -444,13 +481,6 @@ test('every audit log entry type renders readable details', async ({
     await expect(
       entries.getByText(action, { exact: true }).first(),
     ).toBeVisible();
-  }
-
-  const rawJson = /[[{]\s*"|"\s*:/;
-  const uuid = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
-  for (const text of await entries.allInnerTexts()) {
-    expect(text).not.toMatch(rawJson);
-    expect(text).not.toMatch(uuid);
   }
 
   await expect(entries.getByText('60%').first()).toBeVisible();

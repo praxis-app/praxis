@@ -104,7 +104,8 @@ pub(super) async fn get_users_eligible_for_instance_role(
     let member_ids: Vec<Uuid> =
         memberships.iter().map(|item| item.user_id).collect();
 
-    let mut query = users::Entity::find();
+    let mut query =
+        users::Entity::find().filter(users::Column::DeletedAt.is_null());
     if !member_ids.is_empty() {
         query = query.filter(users::Column::Id.is_not_in(member_ids));
     }

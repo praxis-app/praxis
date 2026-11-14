@@ -581,14 +581,22 @@ pub(super) async fn get_users_eligible_for_server(
         .all(database)
         .await
         .map_err(internal_error)?;
-    let member_ids: Vec<Uuid> = memberships
+    let bans = server_bans::Entity::find()
+        .filter(server_bans::Column::ServerId.eq(server_id))
+        .all(database)
+        .await
+        .map_err(internal_error)?;
+    let ineligible_user_ids: Vec<Uuid> = memberships
         .iter()
         .map(|membership| membership.user_id)
+        .chain(bans.iter().map(|ban| ban.user_id))
         .collect();
 
-    let mut query = users::Entity::find();
-    if !member_ids.is_empty() {
-        query = query.filter(users::Column::Id.is_not_in(member_ids));
+    let mut query = users::Entity::find()
+        .filter(users::Column::DeletedAt.is_null())
+        .filter(users::Column::Locked.eq(false));
+    if !ineligible_user_ids.is_empty() {
+        query = query.filter(users::Column::Id.is_not_in(ineligible_user_ids));
     }
 
     let users = query.all(database).await.map_err(internal_error)?;
@@ -629,12 +637,12 @@ where
     get_server(database, server_id).await?;
 
     for user_id in user_ids {
-        if users::Entity::find_by_id(*user_id)
+        let is_active_account = users::Entity::find_by_id(*user_id)
             .one(database)
             .await
             .map_err(internal_error)?
-            .is_none()
-        {
+            .is_some_and(|user| user.deleted_at.is_none());
+        if !is_active_account {
             continue;
         }
 

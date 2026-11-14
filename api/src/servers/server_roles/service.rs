@@ -211,6 +211,7 @@ pub(super) async fn get_users_eligible_for_server_role(
 
     let users = users::Entity::find()
         .filter(users::Column::Id.is_in(user_ids.clone()))
+        .filter(users::Column::DeletedAt.is_null())
         .all(database)
         .await
         .map_err(internal_error)?;
