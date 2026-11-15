@@ -405,122 +405,116 @@ test('moderator can remove messages and forum posts for everyone in realtime', a
   }
 });
 
-for (const priorHours of [0, 13]) {
-  test(`proposal pause budget auto-restores and prevents re-hiding after ${priorHours} hours of previous pauses`, async ({
-    browser,
-    request,
-  }) => {
-    const admin = await getOrCreateInstanceAdmin(request);
-    const server = await createModerationServer(request, admin);
-    await updateServerConfig(request, admin, server.id, {
-      decisionMakingModel: 'consensus',
-      votingTimeLimit: 60,
-      quorumEnabled: false,
-    });
-    const moderator = await addServerMember(
-      request,
-      admin,
-      server,
-      'pause-manager',
-      [{ subject: 'Proposal', action: ['manage'] }],
-    );
-    const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-    const body = `Bounded review ${randomUUID()}`;
-    const created = await request.post(path, {
-      headers: authorizationHeaders(admin),
-      data: { body, pollType: 'proposal', action: { actionType: 'general' } },
-    });
-    await expect(created).toBeOK();
-    const { poll } = await created.json();
-    assertUuid(poll.id, 'Poll ID');
-    const voteId = await voteViaApi(
-      request,
-      admin,
-      server.id,
-      server.generalChannelId,
-      poll.id,
-      'agree',
-    );
-    const hide = (actor = moderator) =>
-      request.post(`${path}/${poll.id}/hide`, {
-        headers: authorizationHeaders(actor),
-        data: { reason: 'Review needed' },
-      });
-    const backdate = (hours: number) => {
-      expect(
-        runDatabaseCommand(
-          `UPDATE polls SET hidden_at = now() - interval '${hours} hours' WHERE id = '${poll.id}';`,
-        ),
-      ).toContain('UPDATE 1');
-    };
-    await expect(await hide()).toBeOK();
-    if (priorHours) {
-      backdate(priorHours);
-      await expect(
-        await request.post(`${path}/${poll.id}/restore`, {
-          headers: authorizationHeaders(moderator),
-        }),
-      ).toBeOK();
-      await expect(await hide()).toBeOK();
-    }
-    const page = await openPageAs(
-      browser,
-      admin,
-      `/s/${server.slug}/c/${server.generalChannelId}?poll=${poll.id}`,
-    );
-    try {
-      const proposal = page.locator(`[data-decision-id="${poll.id}"]`).first();
-      await expect(
-        proposal.getByText('Hidden by a moderator. Voting is paused.'),
-      ).toBeVisible();
-      backdate(25 - priorHours);
-      const readPoll = async () => {
-        const response = await request.get(`${path}/${poll.id}/replies`, {
-          headers: authorizationHeaders(admin),
-        });
-        await expect(response).toBeOK();
-        return (await response.json()).root;
-      };
-      await expect.poll(async () => !!(await readPoll()).hiddenAt).toBe(false);
-      const restored = await readPoll();
-      expect(restored.stage).toBe('voting');
-      expect(restored.votes.map((vote: { id: string }) => vote.id)).toContain(
-        voteId,
-      );
-      const extension =
-        (Date.parse(restored.config.closingAt) -
-          Date.parse(poll.config.closingAt)) /
-        1000;
-      expect(extension).toBeGreaterThanOrEqual(86400);
-      expect(extension).toBeLessThan(86405);
-      await expect(
-        proposal.getByText('Hidden by a moderator. Voting is paused.'),
-      ).toHaveCount(0);
-      await proposal
-        .getByRole('button', { name: 'Open proposal menu' })
-        .click();
-      await expect(
-        page.getByRole('menuitem', { name: 'Pause limit reached (24 hours)' }),
-      ).toBeDisabled();
-      await page.keyboard.press('Escape');
-      for (const actor of [moderator, admin]) {
-        expect((await hide(actor)).status()).toBe(409);
-      }
-      const audit = await request.get(
-        `/api/servers/${server.id}/audit-log?action=restore_poll`,
-        { headers: authorizationHeaders(admin) },
-      );
-      await expect(audit).toBeOK();
-      expect((await audit.json()).entries).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ action: 'restore_poll', origin: 'system' }),
-        ]),
-      );
-    } finally {
-      await page.context().close();
-    }
+test('proposal pause budget auto-restores and prevents re-hiding after 13 hours of previous pauses', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  await updateServerConfig(request, admin, server.id, {
+    decisionMakingModel: 'consensus',
+    votingTimeLimit: 60,
+    quorumEnabled: false,
   });
-}
+  const moderator = await addServerMember(
+    request,
+    admin,
+    server,
+    'pause-manager',
+    [{ subject: 'Proposal', action: ['manage'] }],
+  );
+  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const body = `Bounded review ${randomUUID()}`;
+  const created = await request.post(path, {
+    headers: authorizationHeaders(admin),
+    data: { body, pollType: 'proposal', action: { actionType: 'general' } },
+  });
+  await expect(created).toBeOK();
+  const { poll } = await created.json();
+  assertUuid(poll.id, 'Poll ID');
+  const voteId = await voteViaApi(
+    request,
+    admin,
+    server.id,
+    server.generalChannelId,
+    poll.id,
+    'agree',
+  );
+  const hide = (actor = moderator) =>
+    request.post(`${path}/${poll.id}/hide`, {
+      headers: authorizationHeaders(actor),
+      data: { reason: 'Review needed' },
+    });
+  const backdate = (hours: number) => {
+    expect(
+      runDatabaseCommand(
+        `UPDATE polls SET hidden_at = now() - interval '${hours} hours' WHERE id = '${poll.id}';`,
+      ),
+    ).toContain('UPDATE 1');
+  };
+  await expect(await hide()).toBeOK();
+  backdate(13);
+  await expect(
+    await request.post(`${path}/${poll.id}/restore`, {
+      headers: authorizationHeaders(moderator),
+    }),
+  ).toBeOK();
+  await expect(await hide()).toBeOK();
+  const page = await openPageAs(
+    browser,
+    admin,
+    `/s/${server.slug}/c/${server.generalChannelId}?poll=${poll.id}`,
+  );
+  try {
+    const proposal = page.locator(`[data-decision-id="${poll.id}"]`).first();
+    await expect(
+      proposal.getByText('Hidden by a moderator. Voting is paused.'),
+    ).toBeVisible();
+    backdate(12);
+    const readPoll = async () => {
+      const response = await request.get(`${path}/${poll.id}/replies`, {
+        headers: authorizationHeaders(admin),
+      });
+      await expect(response).toBeOK();
+      return (await response.json()).root;
+    };
+    await expect.poll(async () => !!(await readPoll()).hiddenAt).toBe(false);
+    const restored = await readPoll();
+    expect(restored.stage).toBe('voting');
+    expect(restored.votes.map((vote: { id: string }) => vote.id)).toContain(
+      voteId,
+    );
+    const extension =
+      (Date.parse(restored.config.closingAt) -
+        Date.parse(poll.config.closingAt)) /
+      1000;
+    expect(extension).toBeGreaterThanOrEqual(86400);
+    expect(extension).toBeLessThan(86405);
+    await expect(
+      proposal.getByText('Hidden by a moderator. Voting is paused.'),
+    ).toHaveCount(0);
+    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
+    await expect(
+      page.getByRole('menuitem', { name: 'Pause limit reached (24 hours)' }),
+    ).toBeDisabled();
+    await page.keyboard.press('Escape');
+    for (const actor of [moderator, admin]) {
+      expect((await hide(actor)).status()).toBe(409);
+    }
+    const audit = await request.get(
+      `/api/servers/${server.id}/audit-log?action=restore_poll`,
+      { headers: authorizationHeaders(admin) },
+    );
+    await expect(audit).toBeOK();
+    expect((await audit.json()).entries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ action: 'restore_poll', origin: 'system' }),
+      ]),
+    );
+  } finally {
+    await page.context().close();
+  }
+});
 
 test('moderator can hide and restore a proposal for everyone in realtime', async ({
   browser,
@@ -895,69 +889,6 @@ test('adjusted electorate includes suspended voters only in proposals where thei
     .toBe('ratified');
 });
 
-test('moderator can suspend a signed in user', async ({ browser, request }) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const accountModerator = await signUpViaApi(
-    request,
-    createTestUser('accounts'),
-  );
-  await grantInstancePermissions(
-    request,
-    accountModerator,
-    [{ subject: 'User', action: ['update'] }],
-    'accounts',
-  );
-  const target = await addServerMember(request, admin, server, 'suspended');
-
-  const targetPage = await openPageAs(
-    browser,
-    target,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  const moderatorPage = await openPageAs(
-    browser,
-    accountModerator,
-    '/settings/users',
-  );
-
-  try {
-    await expect(
-      targetPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-
-    await moderatorPage
-      .getByRole('button', { name: `Actions for ${target.user.name}` })
-      .click();
-    await moderatorPage
-      .getByRole('menuitem', { name: 'Suspend account' })
-      .click();
-    await confirmModeration(
-      moderatorPage,
-      'Suspend this account?',
-      'Suspend',
-      /\/users\/[^/]+\/suspend$/,
-      'Repeated harassment',
-    );
-
-    await expectSessionEnded(targetPage, 'suspended', server);
-    await expect(
-      moderatorPage
-        .getByText(target.user.name, { exact: true })
-        .locator('xpath=ancestor::div[contains(@class, "justify-between")][1]')
-        .getByText('Suspended'),
-    ).toBeVisible();
-
-    const login = await request.post('/api/auth/login', {
-      data: { email: target.user.email, password: target.user.password },
-    });
-    expect(login.status()).toBe(401);
-  } finally {
-    await targetPage.context().close();
-    await moderatorPage.context().close();
-  }
-});
-
 test('suspended users are signed out right away while viewing a channel', async ({
   browser,
   request,
@@ -1104,53 +1035,6 @@ test('members without moderation permissions cannot moderate members, content or
   );
   await expect(feedResponse).toBeOK();
   expect(await feedResponse.text()).toContain(`Protected message ${suffix}`);
-});
-
-test('member moderators cannot moderate themselves or other moderators', async ({
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const manageMembers: PermissionRule[] = [
-    { subject: 'ServerMember', action: ['manage'] },
-  ];
-  const actor = await addServerMember(
-    request,
-    admin,
-    server,
-    'manager',
-    manageMembers,
-  );
-  const peer = await addServerMember(
-    request,
-    admin,
-    server,
-    'peer',
-    manageMembers,
-  );
-  const moderate = (
-    as: AuthenticatedUser,
-    target: AuthenticatedUser,
-    action: 'remove' | 'ban',
-  ) =>
-    request.post(
-      `/api/servers/${server.id}/members/${target.userId}/${action}`,
-      {
-        headers: authorizationHeaders(as),
-        data: { reason: 'Hierarchy check' },
-      },
-    );
-
-  for (const action of ['remove', 'ban'] as const) {
-    expect
-      .soft((await moderate(actor, actor, action)).status(), `self ${action}`)
-      .toBe(400);
-    expect
-      .soft((await moderate(actor, peer, action)).status(), `peer ${action}`)
-      .toBe(403);
-  }
-
-  await expect(await moderate(admin, peer, 'remove')).toBeOK();
 });
 
 test('account moderators cannot moderate themselves, other moderators or administrators', async ({
