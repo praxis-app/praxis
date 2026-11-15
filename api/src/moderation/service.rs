@@ -228,7 +228,7 @@ pub(super) async fn get_audit_log(
         .unwrap_or(DEFAULT_AUDIT_LOG_PAGE_SIZE)
         .clamp(1, MAX_AUDIT_LOG_PAGE_SIZE);
     let cursor = query
-        .cursor
+        .before
         .as_deref()
         .map(PaginationCursor::parse)
         .transpose()?;

@@ -10,7 +10,7 @@ pub(crate) struct ModerationReasonRequest {
 #[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(super) struct AuditLogQuery {
-    pub(super) cursor: Option<String>,
+    pub(super) before: Option<String>,
     pub(super) limit: Option<u64>,
     pub(super) action: Option<String>,
     pub(super) actor_id: Option<String>,

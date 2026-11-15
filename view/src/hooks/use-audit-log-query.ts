@@ -29,7 +29,7 @@ export const useAuditLogQuery = ({
     queryFn: ({ pageParam }) => {
       const params = {
         ...filters,
-        cursor: pageParam,
+        before: pageParam,
         limit: AUDIT_LOG_PAGE_SIZE,
       };
       if (scope === 'instance') {

@@ -56,18 +56,18 @@ pub(crate) async fn can<C: ConnectionTrait>(
 
     let allowed = match scope {
         PermissionScope::Instance => {
-            granted(&instance_rules(database, user_id).await?)
+            granted(&get_instance_permissions(database, user_id).await?)
         }
         PermissionScope::Server(server_id) => {
-            server_rules(database, user_id, server_id)
+            get_server_permissions(database, user_id, server_id)
                 .await?
                 .is_some_and(|rules| granted(&rules))
         }
         PermissionScope::ServerOrInstance(server_id) => {
-            server_rules(database, user_id, server_id)
+            get_server_permissions(database, user_id, server_id)
                 .await?
                 .is_some_and(|rules| granted(&rules))
-                || granted(&instance_rules(database, user_id).await?)
+                || granted(&get_instance_permissions(database, user_id).await?)
         }
     };
 
@@ -78,7 +78,7 @@ pub(crate) async fn can<C: ConnectionTrait>(
     }
 }
 
-async fn instance_rules<C: ConnectionTrait>(
+async fn get_instance_permissions<C: ConnectionTrait>(
     database: &C,
     user_id: Uuid,
 ) -> AppResult<Vec<PermissionRule>> {
@@ -88,7 +88,7 @@ async fn instance_rules<C: ConnectionTrait>(
     .await
 }
 
-async fn server_rules<C: ConnectionTrait>(
+async fn get_server_permissions<C: ConnectionTrait>(
     database: &C,
     user_id: Uuid,
     server_id: Uuid,

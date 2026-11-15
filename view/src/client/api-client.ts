@@ -1171,7 +1171,7 @@ class ApiClient {
   };
 
   getInstanceAuditLog = async (
-    params: AuditLogFilters & { cursor?: string; limit?: number },
+    params: AuditLogFilters & { before?: string; limit?: number },
   ) => {
     return this.executeRequest<AuditLogRes>('get', '/audit-log', {
       params: { ...params },
@@ -1180,7 +1180,7 @@ class ApiClient {
 
   getServerAuditLog = async (
     serverId: string,
-    params: AuditLogFilters & { cursor?: string; limit?: number },
+    params: AuditLogFilters & { before?: string; limit?: number },
   ) => {
     return this.executeRequest<AuditLogRes>(
       'get',
