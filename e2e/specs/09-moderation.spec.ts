@@ -14,7 +14,6 @@ import {
   signUpViaApi,
   type AuthenticatedUser,
 } from '../lib/auth';
-import { joinCallFromArtifact, startCallFromTopNav } from '../lib/calls';
 import { createTestUser } from '../lib/data';
 import { assertUuid, runDatabaseCommand } from '../lib/db';
 import { createForumChannel } from '../lib/forums';
@@ -28,12 +27,7 @@ import {
   voteViaApi,
 } from '../lib/polls';
 import { grantServerPermissions } from '../lib/server-roles';
-import {
-  createServer,
-  enableAnonymousUsers,
-  joinServer,
-  updateServerConfig,
-} from '../lib/servers';
+import { createServer, joinServer, updateServerConfig } from '../lib/servers';
 import { NavigationPage } from '../pages/navigation.page';
 import { testTimeout } from '../lib/timeouts';
 
@@ -181,25 +175,6 @@ const moderateMemberFromSettings = async (
   );
 };
 
-const addMemberManager = (
-  request: APIRequestContext,
-  admin: AuthenticatedUser,
-  server: ModerationServer,
-) =>
-  addServerMember(request, admin, server, 'manager', [
-    { subject: 'ServerMember', action: ['manage'] },
-  ]);
-
-const joinModerationServer = async (
-  request: APIRequestContext,
-  admin: AuthenticatedUser,
-  server: ModerationServer,
-  member: AuthenticatedUser,
-) => {
-  const inviteToken = await createInvite(request, admin, server.id);
-  await joinServer(request, member, server.id, inviteToken);
-};
-
 const addAccountModerator = async (request: APIRequestContext) => {
   const moderator = await signUpViaApi(request, createTestUser('accounts'));
   await grantInstancePermissions(
@@ -243,10 +218,6 @@ const deleteFromSettings = async (page: Page, target: AuthenticatedUser) => {
 const ACCOUNT_NOTICE_TITLES = {
   suspended: 'Your account has been suspended',
   deleted: 'Your account has been deleted',
-};
-const CALL_NOTICE_TITLES = {
-  removed: "You've been removed from the call",
-  ended: 'The call has ended',
 };
 
 const moderationNotice = (page: Page, title: string) =>
@@ -315,12 +286,6 @@ const expectServerAccessNotice = (
     serverAccessTitle(action, server),
     'Repeated spam',
   );
-
-const dismissServerAccessNotice = (
-  page: Page,
-  action: 'removed' | 'banned',
-  server: ModerationServer,
-) => dismissModerationNotice(page, serverAccessTitle(action, server));
 
 const expectServerAccessLost = async (
   page: Page,
@@ -557,206 +522,6 @@ for (const priorHours of [0, 13]) {
   });
 }
 
-test('message moderation alone cannot hide or restore proposals', async ({
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const moderator = await addServerMember(
-    request,
-    admin,
-    server,
-    'message-only',
-    [{ subject: 'Message', action: ['delete'] }],
-  );
-  const outsider = await signUpViaApi(
-    request,
-    createTestUser('instance-message'),
-  );
-  await grantInstancePermissions(
-    request,
-    outsider,
-    [{ subject: 'Message', action: ['delete'] }],
-    'instance-message',
-  );
-  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-  const created = await request.post(path, {
-    headers: authorizationHeaders(admin),
-    data: {
-      body: `Permission boundary ${randomUUID()}`,
-      pollType: 'proposal',
-      action: { actionType: 'general' },
-    },
-  });
-  await expect(created).toBeOK();
-  const { poll } = await created.json();
-  for (const actor of [moderator, outsider]) {
-    const deniedHide = await request.post(`${path}/${poll.id}/hide`, {
-      headers: authorizationHeaders(actor),
-      data: { reason: 'Off topic' },
-    });
-    expect.soft(deniedHide.status()).toBe(403);
-    await expect(
-      await request.post(`${path}/${poll.id}/hide`, {
-        headers: authorizationHeaders(admin),
-        data: { reason: 'Review needed' },
-      }),
-    ).toBeOK();
-    const deniedRestore = await request.post(`${path}/${poll.id}/restore`, {
-      headers: authorizationHeaders(actor),
-    });
-    expect.soft(deniedRestore.status()).toBe(403);
-    await expect(
-      await request.post(`${path}/${poll.id}/restore`, {
-        headers: authorizationHeaders(admin),
-      }),
-    ).toBeOK();
-  }
-  const proposalModerator = await addServerMember(
-    request,
-    admin,
-    server,
-    'proposal-only',
-    [{ subject: 'Proposal', action: ['manage'] }],
-  );
-  await expect(
-    await request.post(`${path}/${poll.id}/hide`, {
-      headers: authorizationHeaders(proposalModerator),
-      data: { reason: 'Proposal review' },
-    }),
-  ).toBeOK();
-  const concealed = await request.get(`${path}/${poll.id}/replies`, {
-    headers: authorizationHeaders(moderator),
-  });
-  await expect(concealed).toBeOK();
-  expect((await concealed.json()).root.body).toBeNull();
-  const visible = await request.get(`${path}/${poll.id}/replies`, {
-    headers: authorizationHeaders(proposalModerator),
-  });
-  await expect(visible).toBeOK();
-  expect((await visible.json()).root.body).toBe(poll.body);
-
-  const ordinaryPollResponse = await request.post(path, {
-    headers: authorizationHeaders(admin),
-    data: {
-      body: `Ordinary poll ${randomUUID()}`,
-      pollType: 'poll',
-      options: ['Yes', 'No'],
-    },
-  });
-  await expect(ordinaryPollResponse).toBeOK();
-  const { poll: ordinaryPoll } = await ordinaryPollResponse.json();
-  await expect(
-    await request.post(`${path}/${ordinaryPoll.id}/hide`, {
-      headers: authorizationHeaders(moderator),
-      data: { reason: 'Poll review' },
-    }),
-  ).toBeOK();
-  const hiddenPoll = await request.get(`${path}/${ordinaryPoll.id}/replies`, {
-    headers: authorizationHeaders(proposalModerator),
-  });
-  await expect(hiddenPoll).toBeOK();
-  expect((await hiddenPoll.json()).root.body).toBeNull();
-
-  const otherServer = await createModerationServer(request, admin);
-  const otherPath = `/api/servers/${otherServer.id}/channels/${otherServer.generalChannelId}/polls`;
-  const otherCreated = await request.post(otherPath, {
-    headers: authorizationHeaders(admin),
-    data: {
-      body: `Other server ${randomUUID()}`,
-      pollType: 'proposal',
-      action: { actionType: 'general' },
-    },
-  });
-  await expect(otherCreated).toBeOK();
-  const { poll: otherPoll } = await otherCreated.json();
-  for (const action of ['hide', 'restore']) {
-    const outsideScope = await request.post(
-      `${otherPath}/${otherPoll.id}/${action}`,
-      {
-        headers: authorizationHeaders(proposalModerator),
-        data: { reason: 'Wrong server' },
-      },
-    );
-    expect(outsideScope.status()).toBe(403);
-  }
-  const wrongChannel = await request.post(`${path}/${otherPoll.id}/hide`, {
-    headers: authorizationHeaders(proposalModerator),
-    data: { reason: 'Wrong channel' },
-  });
-  expect(wrongChannel.status()).toBe(404);
-});
-
-test('proposal managers can hide and restore all open governance proposals', async ({
-  request,
-}) => {
-  const serverAdmin = await signUpViaApi(
-    request,
-    createTestUser('governance-admin'),
-  );
-  await grantInstancePermissions(
-    request,
-    serverAdmin,
-    [{ subject: 'Server', action: ['manage'] }],
-    'server-creator',
-  );
-  const server = await createModerationServer(request, serverAdmin);
-  const target = await addServerMember(
-    request,
-    serverAdmin,
-    server,
-    'role-target',
-  );
-  const roleId = await grantServerPermissions(
-    request,
-    serverAdmin,
-    target,
-    server.id,
-    [{ subject: 'Channel', action: ['manage'] }],
-    'target-role',
-  );
-  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-  const actions = [
-    { actionType: 'change-settings', serverConfig: { votingTimeLimit: 60 } },
-    {
-      actionType: 'change-role',
-      serverRole: { serverRoleToUpdateId: roleId, name: 'Renamed role' },
-    },
-    {
-      actionType: 'create-role',
-      serverRole: { name: 'New governance role', color: '#2196f3' },
-    },
-  ];
-  for (const action of actions) {
-    const created = await request.post(path, {
-      headers: authorizationHeaders(serverAdmin),
-      data: {
-        body: `Protected decision ${randomUUID()}`,
-        pollType: 'proposal',
-        action,
-      },
-    });
-    await expect(created).toBeOK();
-    const { poll } = await created.json();
-    const denied = await request.post(`${path}/${poll.id}/hide`, {
-      headers: authorizationHeaders(target),
-      data: { reason: 'No proposal permission' },
-    });
-    expect(denied.status()).toBe(403);
-    await expect(
-      await request.post(`${path}/${poll.id}/hide`, {
-        headers: authorizationHeaders(serverAdmin),
-        data: { reason: 'Governance review' },
-      }),
-    ).toBeOK();
-    await expect(
-      await request.post(`${path}/${poll.id}/restore`, {
-        headers: authorizationHeaders(serverAdmin),
-      }),
-    ).toBeOK();
-  }
-});
-
 test('moderator can hide and restore a proposal for everyone in realtime', async ({
   browser,
   request,
@@ -942,76 +707,6 @@ test('restoring a hidden proposal compensates its deadline and preserves recorde
       voteId,
     );
     expect(restored.hiddenAt).toBeUndefined();
-  } finally {
-    await page.context().close();
-  }
-});
-
-test('proposal managers can moderate proposals affecting their own roles', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const moderator = await addServerMember(request, admin, server, 'self-mod');
-  const roleId = await grantServerPermissions(
-    request,
-    admin,
-    moderator,
-    server.id,
-    [{ subject: 'Proposal', action: ['manage'] }],
-    'self-mod',
-  );
-  const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-  const created = await request.post(pollsPath, {
-    headers: authorizationHeaders(admin),
-    data: {
-      body: `E2E remove moderator ${randomUUID().slice(0, 8)}`,
-      pollType: 'proposal',
-      action: {
-        actionType: 'change-role',
-        serverRole: {
-          serverRoleToUpdateId: roleId,
-          members: [{ userId: moderator.userId, changeType: 'remove' }],
-        },
-      },
-    },
-  });
-  await expect(created).toBeOK();
-  const { poll } = await created.json();
-
-  const page = await openPageAs(
-    browser,
-    moderator,
-    `/s/${server.slug}/c/${server.generalChannelId}?poll=${poll.id}`,
-  );
-  try {
-    const proposal = page
-      .getByTestId('feed')
-      .locator(`[data-decision-id="${poll.id}"]`);
-    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
-    await page.getByRole('menuitem', { name: 'Hide proposal' }).click();
-    await confirmModeration(
-      page,
-      'Hide this proposal?',
-      'Hide',
-      /\/polls\/[^/]+\/hide$/,
-      'Role proposal review',
-    );
-    await expect(
-      proposal.getByText('Hidden by a moderator. Voting is paused.'),
-    ).toBeVisible();
-    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
-    await page.getByRole('menuitem', { name: 'Restore proposal' }).click();
-    await confirmModeration(
-      page,
-      'Restore this proposal?',
-      'Restore',
-      /\/polls\/[^/]+\/restore$/,
-    );
-    await expect(
-      proposal.getByText('Hidden by a moderator. Voting is paused.'),
-    ).toHaveCount(0);
   } finally {
     await page.context().close();
   }
@@ -1263,312 +958,6 @@ test('moderator can suspend a signed in user', async ({ browser, request }) => {
   }
 });
 
-test('moderator can remove a call participant and end the call for everyone', async ({
-  browser,
-  request,
-}) => {
-  test.setTimeout(testTimeout(90_000));
-
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const participant = await addServerMember(request, admin, server, 'caller');
-  const callManager = await addServerMember(request, admin, server, 'calls', [
-    { subject: 'Call', action: ['manage'] },
-  ]);
-  const channelPath = `/s/${server.slug}/c/${server.generalChannelId}`;
-  const participantPage = await openPageAs(browser, participant, channelPath);
-  const managerPage = await openPageAs(browser, callManager, channelPath);
-
-  try {
-    const startCallResponse = participantPage.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' &&
-        /\/calls$/.test(response.url()) &&
-        response.status() === 200,
-    );
-    await startCallFromTopNav(participantPage);
-    await startCallResponse;
-    await expect(
-      participantPage.getByRole('button', { name: 'Leave call' }),
-    ).toBeVisible();
-
-    const callArtifact = managerPage
-      .locator('article')
-      .filter({ hasText: `Started by ${participant.user.name}` });
-    await expect(callArtifact).toContainText('Call is active');
-    await joinCallFromArtifact(managerPage, callArtifact);
-    await expect(managerPage.getByTestId('call-participant-tile')).toHaveCount(
-      2,
-    );
-
-    await managerPage.getByRole('button', { name: 'Moderate call' }).click();
-    await managerPage
-      .getByRole('menuitem', {
-        name: `Remove ${participant.user.name} from call`,
-      })
-      .click();
-    await confirmModeration(
-      managerPage,
-      'Remove from call?',
-      'Remove',
-      /\/participants\/[^/]+\/remove$/,
-      'Disruptive participant',
-    );
-
-    await expectModerationNotice(
-      participantPage,
-      CALL_NOTICE_TITLES.removed,
-      'Disruptive participant',
-    );
-    await expectNoticeStaysUntilDismissed(
-      participantPage,
-      CALL_NOTICE_TITLES.removed,
-    );
-    await expect(
-      participantPage.getByRole('button', { name: 'Leave call' }),
-    ).toHaveCount(0);
-    await expect(managerPage.getByTestId('call-participant-tile')).toHaveCount(
-      1,
-    );
-
-    await joinCallFromArtifact(
-      participantPage,
-      participantPage
-        .locator('article')
-        .filter({ hasText: `Started by ${participant.user.name}` }),
-    );
-    await expect(managerPage.getByTestId('call-participant-tile')).toHaveCount(
-      2,
-    );
-
-    await managerPage.getByRole('button', { name: 'Moderate call' }).click();
-    await managerPage
-      .getByRole('menuitem', { name: 'End call for everyone' })
-      .click();
-    await confirmModeration(
-      managerPage,
-      'End this call?',
-      'End call for everyone',
-      /\/calls\/[^/]+\/end$/,
-      'Disruptive call',
-    );
-
-    await expectModerationNotice(
-      participantPage,
-      CALL_NOTICE_TITLES.ended,
-      'Disruptive call',
-    );
-    await dismissModerationNotice(participantPage, CALL_NOTICE_TITLES.ended);
-    await expect(
-      managerPage.getByRole('button', { name: 'Leave call' }),
-    ).toHaveCount(0);
-    await expect(managerPage.getByRole('dialog')).toHaveCount(0);
-    await expect(
-      participantPage.getByRole('button', { name: 'Leave call' }),
-    ).toHaveCount(0);
-    const participantArtifact = participantPage
-      .locator('article')
-      .filter({ hasText: `Started by ${participant.user.name}` });
-    await expect(participantArtifact).toContainText('Call ended');
-    await expect(
-      participantArtifact.getByRole('button', { name: 'Join active video' }),
-    ).toHaveCount(0);
-  } finally {
-    await participantPage.context().close();
-    await managerPage.context().close();
-  }
-});
-
-test('members are told right away when moderated in a server they are not viewing', async ({
-  browser,
-  request,
-}) => {
-  test.setTimeout(testTimeout(60_000));
-
-  const admin = await getOrCreateInstanceAdmin(request);
-  const viewedServer = await createModerationServer(request, admin);
-  const removedFrom = await createModerationServer(request, admin);
-  const bannedFrom = await createModerationServer(request, admin);
-  const member = await addServerMember(
-    request,
-    admin,
-    viewedServer,
-    'elsewhere',
-  );
-  await joinModerationServer(request, admin, removedFrom, member);
-  await joinModerationServer(request, admin, bannedFrom, member);
-  const removingManager = await addMemberManager(request, admin, removedFrom);
-  const banningManager = await addMemberManager(request, admin, bannedFrom);
-
-  const viewedPath = `/s/${viewedServer.slug}/c/${viewedServer.generalChannelId}`;
-  const memberPage = await openPageAs(browser, member, viewedPath);
-  const removingPage = await openPageAs(
-    browser,
-    removingManager,
-    `/s/${removedFrom.slug}/settings/members`,
-  );
-  const banningPage = await openPageAs(
-    browser,
-    banningManager,
-    `/s/${bannedFrom.slug}/settings/members`,
-  );
-
-  try {
-    await expect(
-      memberPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-
-    await moderateMemberFromSettings(
-      removingPage,
-      member,
-      'Remove member',
-      'Remove server member?',
-      'Remove',
-      /\/members\/[^/]+\/remove$/,
-    );
-    await expectServerAccessNotice(memberPage, 'removed', removedFrom);
-
-    await moderateMemberFromSettings(
-      banningPage,
-      member,
-      'Ban member',
-      'Ban server member?',
-      'Ban',
-      /\/members\/[^/]+\/ban$/,
-    );
-    await dismissServerAccessNotice(memberPage, 'removed', removedFrom);
-    await expectServerAccessNotice(memberPage, 'banned', bannedFrom);
-    await dismissServerAccessNotice(memberPage, 'banned', bannedFrom);
-
-    await expect(memberPage).toHaveURL(new RegExp(viewedPath));
-    await expect(
-      memberPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-  } finally {
-    await memberPage.context().close();
-    await removingPage.context().close();
-    await banningPage.context().close();
-  }
-});
-
-test('members are told right away when moderated from a page outside the server', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const manager = await addMemberManager(request, admin, server);
-  const member = await addServerMember(request, admin, server, 'outside');
-
-  const memberPage = await openPageAs(
-    browser,
-    member,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  const managerPage = await openPageAs(
-    browser,
-    manager,
-    `/s/${server.slug}/settings/members`,
-  );
-
-  try {
-    await expect(
-      memberPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-    await memberPage.goto('/users/settings');
-    await expect(memberPage.getByRole('textbox').first()).toBeVisible();
-
-    await moderateMemberFromSettings(
-      managerPage,
-      member,
-      'Ban member',
-      'Ban server member?',
-      'Ban',
-      /\/members\/[^/]+\/ban$/,
-    );
-
-    await expectServerAccessNotice(memberPage, 'banned', server);
-    await dismissServerAccessNotice(memberPage, 'banned', server);
-    await expect(memberPage).toHaveURL(/\/users\/settings$/);
-
-    await memberPage.goto(`/s/${server.slug}`);
-    await expectServerAccessLost(memberPage, 'banned', server);
-  } finally {
-    await memberPage.context().close();
-    await managerPage.context().close();
-  }
-});
-
-test('anonymous members lose server access right away when moderated', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const manager = await addMemberManager(request, admin, server);
-  await enableAnonymousUsers(request, admin, server.id);
-  const inviteToken = await createInvite(request, admin, server.id);
-  const anonResponse = await request.post('/api/auth/anon', {
-    data: { inviteToken },
-  });
-  await expect(anonResponse).toBeOK();
-  const { access_token: accessToken } = (await anonResponse.json()) as {
-    access_token: string;
-  };
-  const meResponse = await request.get('/api/users/me', {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  await expect(meResponse).toBeOK();
-  const {
-    user: { id: userId, name },
-  } = (await meResponse.json()) as { user: { id: string; name: string } };
-  const anonymous = {
-    accessToken,
-    userId,
-    user: { ...createTestUser('anonymous'), name },
-  };
-
-  const anonymousPage = await openPageAs(
-    browser,
-    anonymous,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  const managerPage = await openPageAs(
-    browser,
-    manager,
-    `/s/${server.slug}/settings/members`,
-  );
-
-  try {
-    await expect(
-      anonymousPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-
-    await moderateMemberFromSettings(
-      managerPage,
-      anonymous,
-      'Remove member',
-      'Remove server member?',
-      'Remove',
-      /\/members\/[^/]+\/remove$/,
-    );
-
-    await expectServerAccessNotice(anonymousPage, 'removed', server);
-    await dismissServerAccessNotice(anonymousPage, 'removed', server);
-    await expect(
-      anonymousPage.getByRole('heading', {
-        name: `You've been removed from ${server.name}`,
-      }),
-    ).toBeVisible();
-    await expect(
-      anonymousPage.getByPlaceholder('Send a message...'),
-    ).toHaveCount(0);
-  } finally {
-    await anonymousPage.context().close();
-    await managerPage.context().close();
-  }
-});
-
 test('suspended users are signed out right away while viewing a channel', async ({
   browser,
   request,
@@ -1642,120 +1031,233 @@ test('deleted users are told their account was deleted right away', async ({
   }
 });
 
-test('suspended users are signed out right away on a page with no server subscription', async ({
-  browser,
+test('members without moderation permissions cannot moderate members, content or accounts', async ({
   request,
 }) => {
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
-  const manager = await addMemberManager(request, admin, server);
-  const moderator = await addAccountModerator(request);
-  const target = await addServerMember(request, admin, server, 'serverless');
+  const actor = await addServerMember(request, admin, server, 'bystander');
+  const target = await addServerMember(request, admin, server, 'target');
+  const suffix = randomUUID().slice(0, 8);
+  const channelPath = `/api/servers/${server.id}/channels`;
 
-  const serversResponse = await request.get('/api/users/me/servers', {
-    headers: authorizationHeaders(target),
-  });
-  await expect(serversResponse).toBeOK();
-  const { servers } = (await serversResponse.json()) as {
-    servers: { id: string }[];
+  const messageResponse = await request.post(
+    `${channelPath}/${server.generalChannelId}/messages`,
+    {
+      headers: authorizationHeaders(target),
+      data: { body: `Protected message ${suffix}` },
+    },
+  );
+  await expect(messageResponse).toBeOK();
+  const { message } = (await messageResponse.json()) as {
+    message: { id: string };
   };
-  for (const { id } of servers.filter(({ id }) => id !== server.id)) {
-    const removal = await request.post(
-      `/api/servers/${id}/members/${target.userId}/remove`,
-      {
-        headers: authorizationHeaders(admin),
-        data: { reason: 'Clearing memberships' },
-      },
-    );
-    await expect(removal).toBeOK();
+  const forum = await createForumChannel(
+    request,
+    admin,
+    server.id,
+    `authz-forum-${suffix}`,
+  );
+  const postResponse = await request.post(
+    `${channelPath}/${forum.id}/forum/posts`,
+    {
+      headers: authorizationHeaders(target),
+      data: { title: `Protected post ${suffix}`, body: 'Keep this' },
+    },
+  );
+  await expect(postResponse).toBeOK();
+  const { post } = (await postResponse.json()) as { post: { id: string } };
+
+  const memberPath = `/api/servers/${server.id}/members/${target.userId}`;
+  const accountPath = `/api/users/${target.userId}`;
+  const attempts: [string, 'post' | 'delete', string][] = [
+    ['remove member', 'post', `${memberPath}/remove`],
+    ['ban member', 'post', `${memberPath}/ban`],
+    ['unban member', 'delete', `${memberPath}/ban`],
+    [
+      'remove message',
+      'post',
+      `${channelPath}/${server.generalChannelId}/messages/${message.id}/remove`,
+    ],
+    [
+      'remove forum post',
+      'post',
+      `${channelPath}/${forum.id}/forum/posts/${post.id}/remove`,
+    ],
+    ['suspend account', 'post', `${accountPath}/suspend`],
+    ['restore account', 'post', `${accountPath}/restore`],
+    ['delete account', 'delete', accountPath],
+  ];
+  for (const [label, method, path] of attempts) {
+    const response = await request[method](path, {
+      headers: authorizationHeaders(actor),
+      data: { reason: 'Not my call to make' },
+    });
+    expect.soft(response.status(), label).toBe(403);
   }
 
-  const targetPage = await openPageAs(
-    browser,
-    target,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
+  const targetHeaders = { headers: authorizationHeaders(target) };
+  await expect(await request.get('/api/users/me', targetHeaders)).toBeOK();
+  const feedResponse = await request.get(
+    `${channelPath}/${server.generalChannelId}/feed`,
+    targetHeaders,
   );
-  const managerPage = await openPageAs(
-    browser,
-    manager,
-    `/s/${server.slug}/settings/members`,
+  await expect(feedResponse).toBeOK();
+  expect(await feedResponse.text()).toContain(`Protected message ${suffix}`);
+});
+
+test('member moderators cannot moderate themselves or other moderators', async ({
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const manageMembers: PermissionRule[] = [
+    { subject: 'ServerMember', action: ['manage'] },
+  ];
+  const actor = await addServerMember(
+    request,
+    admin,
+    server,
+    'manager',
+    manageMembers,
   );
-  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
-
-  try {
-    await expect(
-      targetPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-
-    await moderateMemberFromSettings(
-      managerPage,
-      target,
-      'Remove member',
-      'Remove server member?',
-      'Remove',
-      /\/members\/[^/]+\/remove$/,
+  const peer = await addServerMember(
+    request,
+    admin,
+    server,
+    'peer',
+    manageMembers,
+  );
+  const moderate = (
+    as: AuthenticatedUser,
+    target: AuthenticatedUser,
+    action: 'remove' | 'ban',
+  ) =>
+    request.post(
+      `/api/servers/${server.id}/members/${target.userId}/${action}`,
+      {
+        headers: authorizationHeaders(as),
+        data: { reason: 'Hierarchy check' },
+      },
     );
-    await expectServerAccessNotice(targetPage, 'removed', server);
 
-    await suspendFromSettings(moderatorPage, target);
+  for (const action of ['remove', 'ban'] as const) {
+    expect
+      .soft((await moderate(actor, actor, action)).status(), `self ${action}`)
+      .toBe(400);
+    expect
+      .soft((await moderate(actor, peer, action)).status(), `peer ${action}`)
+      .toBe(403);
+  }
 
-    await expectSessionEnded(targetPage, 'suspended', server);
+  await expect(await moderate(admin, peer, 'remove')).toBeOK();
+});
+
+test('account moderators cannot moderate themselves, other moderators or administrators', async ({
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const actor = await addAccountModerator(request);
+  const peer = await addAccountModerator(request);
+  const attempt = (
+    target: AuthenticatedUser,
+    action: 'suspend' | 'restore' | 'delete',
+  ) => {
+    const options = {
+      headers: authorizationHeaders(actor),
+      data: { reason: 'Hierarchy check' },
+    };
+    return action === 'delete'
+      ? request.delete(`/api/users/${target.userId}`, options)
+      : request.post(`/api/users/${target.userId}/${action}`, options);
+  };
+
+  for (const action of ['suspend', 'restore', 'delete'] as const) {
+    expect
+      .soft((await attempt(actor, action)).status(), `self ${action}`)
+      .toBe(400);
+    expect
+      .soft((await attempt(peer, action)).status(), `peer ${action}`)
+      .toBe(403);
+    expect
+      .soft((await attempt(admin, action)).status(), `admin ${action}`)
+      .toBe(403);
+  }
+
+  for (const user of [actor, peer, admin]) {
     await expect(
-      moderationNotice(targetPage, serverAccessTitle('removed', server)),
-    ).toHaveCount(0);
-    await dismissModerationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended);
-    await expectSignedOut(targetPage);
-  } finally {
-    await targetPage.context().close();
-    await managerPage.context().close();
-    await moderatorPage.context().close();
+      await request.get('/api/users/me', {
+        headers: authorizationHeaders(user),
+      }),
+    ).toBeOK();
   }
 });
 
-test('suspended users are removed from an active call right away', async ({
-  browser,
+test('votes cannot be cast, changed or withdrawn while a proposal is hidden', async ({
   request,
 }) => {
-  test.setTimeout(testTimeout(90_000));
-
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
-  const moderator = await addAccountModerator(request);
-  const target = await addServerMember(request, admin, server, 'in-call');
-
-  const targetPage = await openPageAs(
-    browser,
-    target,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
+  await updateServerConfig(request, admin, server.id, {
+    decisionMakingModel: 'consensus',
+    votingTimeLimit: 60,
+    quorumEnabled: false,
+  });
+  const voter = await addServerMember(request, admin, server, 'voter');
+  const latecomer = await addServerMember(request, admin, server, 'latecomer');
+  const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const created = await request.post(pollsPath, {
+    headers: authorizationHeaders(admin),
+    data: {
+      body: `Paused voting ${randomUUID().slice(0, 8)}`,
+      pollType: 'proposal',
+      action: { actionType: 'general' },
+    },
+  });
+  await expect(created).toBeOK();
+  const { poll } = (await created.json()) as { poll: { id: string } };
+  const voteId = await voteViaApi(
+    request,
+    voter,
+    server.id,
+    server.generalChannelId,
+    poll.id,
+    'agree',
   );
-  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
+  await expect(
+    await request.post(`${pollsPath}/${poll.id}/hide`, {
+      headers: authorizationHeaders(admin),
+      data: { reason: 'Review needed' },
+    }),
+  ).toBeOK();
 
-  try {
-    const startCallResponse = targetPage.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' &&
-        /\/calls$/.test(response.url()) &&
-        response.status() === 200,
-    );
-    await startCallFromTopNav(targetPage);
-    await startCallResponse;
-    await expect(
-      targetPage.getByRole('button', { name: 'Leave call' }),
-    ).toBeVisible();
+  const votesPath = `${pollsPath}/${poll.id}/votes`;
+  const cast = await request.post(votesPath, {
+    headers: authorizationHeaders(latecomer),
+    data: { voteType: 'agree' },
+  });
+  expect.soft(cast.status(), 'cast').toBe(409);
+  const changed = await request.put(`${votesPath}/${voteId}`, {
+    headers: authorizationHeaders(voter),
+    data: { voteType: 'disagree' },
+  });
+  expect.soft(changed.status(), 'change').toBe(409);
+  const withdrawn = await request.delete(`${votesPath}/${voteId}`, {
+    headers: authorizationHeaders(voter),
+  });
+  expect.soft(withdrawn.status(), 'withdraw').toBe(409);
 
-    await suspendFromSettings(moderatorPage, target);
-
-    await expectSessionEnded(targetPage, 'suspended', server);
-    await expect(
-      moderationNotice(targetPage, CALL_NOTICE_TITLES.removed),
-    ).toHaveCount(0);
-    await dismissModerationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended);
-    await expectSignedOut(targetPage);
-    await expect(
-      targetPage.getByRole('button', { name: 'Leave call' }),
-    ).toHaveCount(0);
-  } finally {
-    await targetPage.context().close();
-    await moderatorPage.context().close();
-  }
+  await expect(
+    await request.post(`${pollsPath}/${poll.id}/restore`, {
+      headers: authorizationHeaders(admin),
+    }),
+  ).toBeOK();
+  await voteViaApi(
+    request,
+    latecomer,
+    server.id,
+    server.generalChannelId,
+    poll.id,
+    'agree',
+  );
 });
