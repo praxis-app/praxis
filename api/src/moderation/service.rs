@@ -268,18 +268,23 @@ pub(super) async fn get_audit_log(
             .filter(moderation_actions::Column::TargetKind.eq(target_kind));
     }
     if let Some(search_pattern) = search_pattern {
-        records_query = records_query.filter(
-            Condition::any()
-                .add(matches_search(
-                    moderation_actions::Column::TargetLabel,
-                    &search_pattern,
-                ))
-                .add(matches_search(
-                    moderation_actions::Column::Reason,
-                    &search_pattern,
-                ))
-                .add(moderation_actions::Column::Action.is_in(search_actions)),
-        );
+        let mut search_filter = Condition::any()
+            .add(matches_search(
+                moderation_actions::Column::TargetLabel,
+                &search_pattern,
+            ))
+            .add(matches_search(
+                moderation_actions::Column::Reason,
+                &search_pattern,
+            ))
+            .add(moderation_actions::Column::Action.is_in(search_actions));
+        if server_scope.is_none() {
+            search_filter = search_filter.add(matches_search(
+                moderation_actions::Column::ServerLabel,
+                &search_pattern,
+            ));
+        }
+        records_query = records_query.filter(search_filter);
     }
     if let Some(from) = from {
         records_query = records_query

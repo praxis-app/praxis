@@ -7,11 +7,12 @@ import { LuSearch, LuX } from 'react-icons/lu';
 const MAX_SEARCH_LENGTH = 100;
 
 interface Props {
+  label?: string;
   value?: string;
   onChange: (value?: string) => void;
 }
 
-export const AuditLogSearchInput = ({ value, onChange }: Props) => {
+export const AuditLogSearchInput = ({ label, value, onChange }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -19,7 +20,7 @@ export const AuditLogSearchInput = ({ value, onChange }: Props) => {
       <LuSearch className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
       <Input
         type="search"
-        aria-label={t('auditLog.filters.search')}
+        aria-label={label ?? t('auditLog.filters.search')}
         placeholder={t('auditLog.filters.searchPlaceholder')}
         className={cn(
           'pl-9 [&::-webkit-search-cancel-button]:hidden',

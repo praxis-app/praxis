@@ -96,6 +96,11 @@ export const AuditLogFilters = ({
       <div className="flex flex-wrap gap-2">
         <div className={FIELD_CLASS_NAME}>
           <AuditLogSearchInput
+            label={
+              scope === 'instance'
+                ? t('auditLog.filters.instanceSearch')
+                : undefined
+            }
             value={filters.search}
             onChange={(value) => setFilter('search', value)}
           />

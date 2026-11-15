@@ -86,6 +86,7 @@
       "actor": "Actor",
       "targetKind": "Target type",
       "search": "Search actions, targets and reasons",
+      "instanceSearch": "Search actions, servers, targets and reasons",
       "searchPlaceholder": "Search",
       "clearSearch": "Clear search",
       "server": "Server",
