@@ -22,7 +22,7 @@ use super::{
     },
 };
 use crate::{
-    authz::{self, PermissionScope},
+    authz::{self, LoadedPermissions, PermissionScope},
     calls::{self, LiveKitConfig},
     common::{ApiError, AppResult},
     invites,
@@ -111,16 +111,18 @@ pub(crate) async fn get_member_moderation_state(
     actor_user_id: Uuid,
     target_user_id: Uuid,
     server_id: Uuid,
+    actor_permissions: &LoadedPermissions,
+    target_permissions: &LoadedPermissions,
 ) -> AppResult<Option<MemberModerationState>> {
-    if !authz::is_granted(
-        can_manage_server_members(database, actor_user_id, server_id).await,
-    )? {
+    let scope = PermissionScope::ServerOrInstance(server_id);
+    if !actor_permissions.allows("manage", "ServerMember", scope) {
         return Ok(None);
     }
-
-    let is_protected =
-        is_protected_member(database, actor_user_id, target_user_id, server_id)
-            .await?;
+    let is_protected = is_protected_member_with(
+        actor_permissions,
+        target_permissions,
+        server_id,
+    );
     Ok(Some(MemberModerationState {
         is_member: is_server_member(database, server_id, target_user_id)
             .await?,
@@ -128,6 +130,18 @@ pub(crate) async fn get_member_moderation_state(
             .await?,
         can_be_moderated: actor_user_id != target_user_id && !is_protected,
     }))
+}
+
+fn is_protected_member_with(
+    actor: &LoadedPermissions,
+    target: &LoadedPermissions,
+    server_id: Uuid,
+) -> bool {
+    target.allows(
+        "manage",
+        "ServerMember",
+        PermissionScope::ServerOrInstance(server_id),
+    ) && !actor.allows("manage", "all", PermissionScope::Instance)
 }
 
 pub(super) async fn remove_member(
@@ -390,24 +404,19 @@ async fn is_protected_member(
     target_user_id: Uuid,
     server_id: Uuid,
 ) -> AppResult<bool> {
-    let target_is_moderator = authz::is_granted(
-        can_manage_server_members(database, target_user_id, server_id).await,
-    )?;
-    if !target_is_moderator {
-        return Ok(false);
-    }
-
-    let actor_is_instance_admin = authz::is_granted(
-        authz::can(
-            database,
-            actor_user_id,
-            "manage",
-            "all",
-            PermissionScope::Instance,
-        )
-        .await,
-    )?;
-    Ok(!actor_is_instance_admin)
+    let target = LoadedPermissions::load(
+        database,
+        target_user_id,
+        PermissionScope::ServerOrInstance(server_id),
+    )
+    .await?;
+    let actor = LoadedPermissions::load(
+        database,
+        actor_user_id,
+        PermissionScope::Instance,
+    )
+    .await?;
+    Ok(is_protected_member_with(&actor, &target, server_id))
 }
 
 async fn get_target_user<C>(database: &C, user_id: Uuid) -> AppResult<()>

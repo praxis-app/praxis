@@ -10,10 +10,10 @@ pub(crate) use models::UserRecord;
 pub(crate) use moderation::get_account_moderation;
 pub(crate) use routes::router;
 pub(crate) use service::{
-    authenticate, create_anon_user, create_user, get_account_status,
-    get_user_by_id, get_user_profile_picture, get_user_profile_pictures_map,
-    is_active_user, is_anonymous_user, is_first_user, upgrade_anon_user,
-    AccountStatus,
+    authenticate, can_subscribe, create_anon_user, create_user,
+    get_account_status, get_user_by_id, get_user_profile_picture,
+    get_user_profile_pictures_map, is_anonymous_user, is_first_user,
+    upgrade_anon_user, AccountStatus,
 };
 pub(crate) use types::{CreateUserError, PublicUser, UserImageRef};
 pub(crate) use user_configs::filter_notification_recipients;

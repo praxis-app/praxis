@@ -185,23 +185,47 @@ pub(crate) async fn broadcast_poll_update(
     let members =
         channels::get_channel_member_user_ids(database, channel_id).await?;
 
-    for member_id in members {
-        if Some(member_id) == sender_id {
-            continue;
-        }
-
-        let poll = get_poll_response(
-            database,
-            server_id,
-            channel_id,
-            poll_id,
-            Some(member_id),
+    let members: HashSet<Uuid> = members
+        .into_iter()
+        .filter(|id| Some(*id) != sender_id)
+        .collect();
+    if members.is_empty() {
+        return Ok(());
+    }
+    let stored = get_poll(database, server_id, channel_id, poll_id).await?;
+    let revealed_members = if stored.hidden_at.is_some() {
+        let (action, subject) = match stored.poll_type {
+            PollType::Proposal => ("manage", "Proposal"),
+            PollType::Poll => ("delete", "Message"),
+        };
+        authz::filter_users_who_can_including_instance(
+            database, &members, action, subject, server_id,
         )
-        .await?;
-        let body = serde_json::json!({
-            "type": "poll",
-            "poll": poll,
-        });
+        .await?
+    } else {
+        members.clone()
+    };
+    let mut my_votes = HashMap::new();
+    let revealed = shape_polls_with_visibility(
+        database,
+        vec![stored],
+        None,
+        Some(HashSet::from([channel_id])),
+        Some(&mut my_votes),
+    )
+    .await?
+    .pop()
+    .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "Poll not found."))?;
+    let mut concealed = revealed.clone();
+    concealed.conceal_hidden_content();
+    for member_id in members {
+        let mut poll = if revealed_members.contains(&member_id) {
+            revealed.clone()
+        } else {
+            concealed.clone()
+        };
+        poll.my_vote = my_votes.get(&member_id).cloned();
+        let body = serde_json::json!({ "type": "poll", "poll": poll });
         let topic =
             PubSubTopic::new_poll(server_id, channel_id, member_id).to_string();
         pub_sub_service.publish(&topic, body).await?;
@@ -784,6 +808,19 @@ async fn shape_polls(
     polls: Vec<polls::Model>,
     current_user_id: Option<Uuid>,
 ) -> AppResult<Vec<PollResponse>> {
+    shape_polls_with_visibility(database, polls, current_user_id, None, None)
+        .await
+}
+
+async fn shape_polls_with_visibility(
+    database: &DatabaseConnection,
+    polls: Vec<polls::Model>,
+    current_user_id: Option<Uuid>,
+    revealed_channels: Option<HashSet<Uuid>>,
+    mut recipient_votes: Option<
+        &mut HashMap<Uuid, crate::votes::types::VoteResponse>,
+    >,
+) -> AppResult<Vec<PollResponse>> {
     if polls.is_empty() {
         return Ok(vec![]);
     }
@@ -865,33 +902,41 @@ async fn shape_polls(
     .await?;
     let ignored_block_vote_ids =
         get_ignored_block_vote_ids(database, &polls, &configs, &votes).await?;
-    let revealed_proposal_channels =
-        moderation::get_channels_with_visible_hidden_polls(
-            database,
-            current_user_id,
-            polls
-                .iter()
-                .filter(|poll| {
-                    poll.hidden_at.is_some()
-                        && poll.poll_type == PollType::Proposal
-                })
-                .map(|poll| poll.channel_id),
-            PollType::Proposal,
-        )
-        .await?;
-    let revealed_poll_channels =
-        moderation::get_channels_with_visible_hidden_polls(
-            database,
-            current_user_id,
-            polls
-                .iter()
-                .filter(|poll| {
-                    poll.hidden_at.is_some() && poll.poll_type == PollType::Poll
-                })
-                .map(|poll| poll.channel_id),
-            PollType::Poll,
-        )
-        .await?;
+    let (revealed_proposal_channels, revealed_poll_channels) =
+        match revealed_channels {
+            Some(channels) => (channels.clone(), channels),
+            None => {
+                let proposals =
+                    moderation::get_channels_with_visible_hidden_polls(
+                        database,
+                        current_user_id,
+                        polls
+                            .iter()
+                            .filter(|poll| {
+                                poll.hidden_at.is_some()
+                                    && poll.poll_type == PollType::Proposal
+                            })
+                            .map(|poll| poll.channel_id),
+                        PollType::Proposal,
+                    )
+                    .await?;
+                let polls = moderation::get_channels_with_visible_hidden_polls(
+                    database,
+                    current_user_id,
+                    polls
+                        .iter()
+                        .filter(|poll| {
+                            poll.hidden_at.is_some()
+                                && poll.poll_type == PollType::Poll
+                        })
+                        .map(|poll| poll.channel_id),
+                    PollType::Poll,
+                )
+                .await?;
+
+                (proposals, polls)
+            }
+        };
 
     // Group the loaded rows by poll so each response is an in-memory lookup
     let mut votes_by_poll: HashMap<Uuid, Vec<votes::Model>> = HashMap::new();
@@ -958,6 +1003,11 @@ async fn shape_polls(
                 )
             })
             .collect::<Vec<_>>();
+        if let Some(recipient_votes) = recipient_votes.as_deref_mut() {
+            for (vote, shaped) in poll_votes.iter().zip(&shaped_votes) {
+                recipient_votes.insert(vote.user_id, shaped.clone());
+            }
+        }
         let my_vote = current_user_id.and_then(|user_id| {
             poll_votes
                 .iter()

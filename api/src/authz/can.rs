@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use sea_orm::{prelude::Uuid, ConnectionTrait};
 use std::collections::HashSet;
 
-use super::types::PermissionRule;
+use super::types::{PermissionMap, PermissionRule};
 use crate::common::{ApiError, AppResult};
 
 /// Lets `can` take `"manage"` or `["create", "read"]`
@@ -101,6 +101,61 @@ async fn get_server_permissions<C: ConnectionTrait>(
     Ok(permissions.remove(&server_id.to_string()))
 }
 
+pub(crate) struct LoadedPermissions {
+    instance: Vec<PermissionRule>,
+    servers: PermissionMap,
+}
+
+impl LoadedPermissions {
+    pub(crate) async fn load<C: ConnectionTrait>(
+        database: &C,
+        user_id: Uuid,
+        scope: PermissionScope,
+    ) -> AppResult<Self> {
+        let instance = if matches!(scope, PermissionScope::Server(_)) {
+            vec![]
+        } else {
+            get_instance_permissions(database, user_id).await?
+        };
+        let servers = if matches!(scope, PermissionScope::Instance) {
+            PermissionMap::new()
+        } else {
+            crate::servers::server_roles::service::get_permissions_by_user(
+                database, user_id,
+            )
+            .await?
+        };
+        Ok(Self { instance, servers })
+    }
+
+    pub(crate) fn allows(
+        &self,
+        actions: impl Actions,
+        subject: &str,
+        scope: PermissionScope,
+    ) -> bool {
+        let actions = actions.as_slice();
+        let granted = |rules: &[PermissionRule]| {
+            !actions.is_empty()
+                && actions
+                    .iter()
+                    .all(|action| is_allowed(rules, subject, action))
+        };
+        let server_granted = |id: Uuid| {
+            self.servers
+                .get(&id.to_string())
+                .is_some_and(|rules| granted(rules))
+        };
+        match scope {
+            PermissionScope::Instance => granted(&self.instance),
+            PermissionScope::Server(id) => server_granted(id),
+            PermissionScope::ServerOrInstance(id) => {
+                server_granted(id) || granted(&self.instance)
+            }
+        }
+    }
+}
+
 pub(crate) async fn filter_users_who_can<C: ConnectionTrait>(
     database: &C,
     user_ids: &HashSet<Uuid>,
@@ -125,6 +180,30 @@ pub(crate) async fn filter_users_who_can<C: ConnectionTrait>(
                 .is_some_and(|rules| is_allowed(rules, subject, action))
         })
         .collect())
+}
+
+pub(crate) async fn filter_users_who_can_including_instance<
+    C: ConnectionTrait,
+>(
+    database: &C,
+    user_ids: &HashSet<Uuid>,
+    action: &str,
+    subject: &str,
+    server_id: Uuid,
+) -> AppResult<HashSet<Uuid>> {
+    let mut allowed =
+        filter_users_who_can(database, user_ids, action, subject, server_id)
+            .await?;
+    let remaining: Vec<Uuid> = user_ids.difference(&allowed).copied().collect();
+    let instance =
+        crate::instance::instance_roles::service::get_permissions_by_users(
+            database, &remaining,
+        )
+        .await?;
+    allowed.extend(instance.into_iter().filter_map(|(id, rules)| {
+        is_allowed(&rules, subject, action).then_some(id)
+    }));
+    Ok(allowed)
 }
 
 /// Whether a permission set grants `action` on `subject`. The `"all"` subject

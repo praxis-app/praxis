@@ -57,19 +57,34 @@ pub(crate) async fn get_permissions_by_user<C: ConnectionTrait>(
     database: &C,
     user_id: Uuid,
 ) -> AppResult<Vec<PermissionRule>> {
+    Ok(get_permissions_by_users(database, &[user_id])
+        .await?
+        .remove(&user_id)
+        .unwrap_or_default())
+}
+
+pub(crate) async fn get_permissions_by_users<C: ConnectionTrait>(
+    database: &C,
+    user_ids: &[Uuid],
+) -> AppResult<BTreeMap<Uuid, Vec<PermissionRule>>> {
+    if user_ids.is_empty() {
+        return Ok(BTreeMap::new());
+    }
     let memberships = instance_role_members::Entity::find()
-        .filter(instance_role_members::Column::UserId.eq(user_id))
+        .filter(
+            instance_role_members::Column::UserId
+                .is_in(user_ids.iter().copied()),
+        )
         .all(database)
         .await
         .map_err(internal_error)?;
-    let role_ids: Vec<Uuid> = memberships
+    let role_ids: std::collections::HashSet<Uuid> = memberships
         .iter()
-        .map(|item| item.instance_role_id)
+        .map(|member| member.instance_role_id)
         .collect();
     if role_ids.is_empty() {
-        return Ok(vec![]);
+        return Ok(BTreeMap::new());
     }
-
     let permissions = instance_role_permissions::Entity::find()
         .filter(
             instance_role_permissions::Column::InstanceRoleId.is_in(role_ids),
@@ -77,7 +92,28 @@ pub(crate) async fn get_permissions_by_user<C: ConnectionTrait>(
         .all(database)
         .await
         .map_err(internal_error)?;
-    Ok(group_permissions(permissions))
+    let mut by_role: BTreeMap<Uuid, Vec<instance_role_permissions::Model>> =
+        BTreeMap::new();
+    for permission in permissions {
+        by_role
+            .entry(permission.instance_role_id)
+            .or_default()
+            .push(permission);
+    }
+    let mut by_user: BTreeMap<Uuid, Vec<instance_role_permissions::Model>> =
+        BTreeMap::new();
+    for member in memberships {
+        if let Some(permissions) = by_role.get(&member.instance_role_id) {
+            by_user
+                .entry(member.user_id)
+                .or_default()
+                .extend(permissions.iter().cloned());
+        }
+    }
+    Ok(by_user
+        .into_iter()
+        .map(|(id, permissions)| (id, group_permissions(permissions)))
+        .collect())
 }
 
 pub(super) async fn get_users_eligible_for_instance_role(

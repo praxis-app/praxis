@@ -13,7 +13,7 @@ use sea_orm::{
     EntityTrait, IntoActiveModel, ModelTrait, Order, PaginatorTrait,
     QueryFilter, QueryOrder, QuerySelect, Set, SqlErr, TransactionTrait,
 };
-use std::{path::Path, time::Duration};
+use std::{collections::HashSet, path::Path, time::Duration};
 use uuid::Uuid as NativeUuid;
 
 use super::types::{
@@ -635,22 +635,107 @@ where
     C: ConnectionTrait,
 {
     get_server(database, server_id).await?;
-
-    for user_id in user_ids {
-        let is_active_account = users::Entity::find_by_id(*user_id)
-            .one(database)
-            .await
-            .map_err(internal_error)?
-            .is_some_and(|user| user.deleted_at.is_none());
-        if !is_active_account {
-            continue;
-        }
-
-        add_member_to_server(database, server_id, *user_id).await?;
-        channels_service::add_member_to_all_server_channels(
-            database, server_id, *user_id,
+    if user_ids.is_empty() {
+        return Ok(());
+    }
+    let channel_ids =
+        channels_service::lock_server_electorate(database, server_id).await?;
+    let eligible_ids: HashSet<Uuid> = users::Entity::find()
+        .select_only()
+        .column(users::Column::Id)
+        .filter(users::Column::Id.is_in(user_ids.iter().copied()))
+        .filter(users::Column::DeletedAt.is_null())
+        .into_tuple::<Uuid>()
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .collect();
+    let member_ids: HashSet<Uuid> = server_members::Entity::find()
+        .select_only()
+        .column(server_members::Column::UserId)
+        .filter(server_members::Column::ServerId.eq(server_id))
+        .filter(
+            server_members::Column::UserId.is_in(eligible_ids.iter().copied()),
         )
-        .await?;
+        .into_tuple::<Uuid>()
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .collect();
+    let banned_ids: HashSet<Uuid> = server_bans::Entity::find()
+        .select_only()
+        .column(server_bans::Column::UserId)
+        .filter(server_bans::Column::ServerId.eq(server_id))
+        .filter(server_bans::Column::UserId.is_in(eligible_ids.iter().copied()))
+        .into_tuple::<Uuid>()
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .collect();
+    let new_member_ids: Vec<Uuid> =
+        eligible_ids.difference(&member_ids).copied().collect();
+    if new_member_ids.iter().any(|id| banned_ids.contains(id)) {
+        return Err(ApiError::new(
+            StatusCode::FORBIDDEN,
+            "User is banned from this server.",
+        ));
+    }
+    if !new_member_ids.is_empty() {
+        let memberships = new_member_ids.into_iter().map(|user_id| {
+            server_members::ActiveModel {
+                id: Set(NativeUuid::new_v4()),
+                server_id: Set(server_id),
+                user_id: Set(user_id),
+                ..Default::default()
+            }
+        });
+        server_members::Entity::insert_many(memberships)
+            .exec(database)
+            .await
+            .map_err(internal_error)?;
+    }
+    if !channel_ids.is_empty() && !eligible_ids.is_empty() {
+        let channel_memberships: HashSet<(Uuid, Uuid)> =
+            channel_members::Entity::find()
+                .select_only()
+                .column(channel_members::Column::ChannelId)
+                .column(channel_members::Column::UserId)
+                .filter(
+                    channel_members::Column::ChannelId
+                        .is_in(channel_ids.iter().copied()),
+                )
+                .filter(
+                    channel_members::Column::UserId
+                        .is_in(eligible_ids.iter().copied()),
+                )
+                .into_tuple::<(Uuid, Uuid)>()
+                .all(database)
+                .await
+                .map_err(internal_error)?
+                .into_iter()
+                .collect();
+        let mut memberships = Vec::new();
+        for user_id in eligible_ids {
+            for channel_id in &channel_ids {
+                if !channel_memberships.contains(&(*channel_id, user_id)) {
+                    memberships.push(channel_members::ActiveModel {
+                        id: Set(NativeUuid::new_v4()),
+                        channel_id: Set(*channel_id),
+                        user_id: Set(user_id),
+                        ..Default::default()
+                    });
+                }
+            }
+        }
+        for batch in memberships.chunks(1000) {
+            channel_members::Entity::insert_many(batch.iter().cloned())
+                .exec(database)
+                .await
+                .map_err(internal_error)?;
+        }
     }
 
     Ok(())

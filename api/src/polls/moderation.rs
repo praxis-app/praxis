@@ -147,15 +147,30 @@ where
             .into_iter()
             .collect();
 
+    let Some(server_id) = server_ids_by_channel.values().next().copied() else {
+        return Ok(HashSet::new());
+    };
+    let permissions = authz::LoadedPermissions::load(
+        database,
+        user_id,
+        PermissionScope::ServerOrInstance(server_id),
+    )
+    .await?;
+    let (action, subject) = match poll_type {
+        PollType::Proposal => ("manage", "Proposal"),
+        PollType::Poll => ("delete", "Message"),
+    };
     let mut moderated_server_ids = HashSet::new();
     for server_id in server_ids_by_channel
         .values()
         .copied()
         .collect::<HashSet<_>>()
     {
-        if authz::is_granted(
-            can_moderate_poll(database, user_id, server_id, poll_type).await,
-        )? {
+        if permissions.allows(
+            action,
+            subject,
+            PermissionScope::ServerOrInstance(server_id),
+        ) {
             moderated_server_ids.insert(server_id);
         }
     }

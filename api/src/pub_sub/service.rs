@@ -666,17 +666,9 @@ async fn is_authorized(
     access: &ChannelAccess,
     user_id: Uuid,
 ) -> bool {
-    if !users::is_active_user(&state.database, user_id)
+    if !users::can_subscribe(&state.database, user_id, access.registered_only)
         .await
         .unwrap_or(false)
-    {
-        return false;
-    }
-
-    if access.registered_only
-        && users::is_anonymous_user(&state.database, user_id)
-            .await
-            .unwrap_or(true)
     {
         return false;
     }

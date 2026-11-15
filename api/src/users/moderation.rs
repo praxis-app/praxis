@@ -24,7 +24,7 @@ use super::{
     },
 };
 use crate::{
-    authz::{self, PermissionScope},
+    authz::{LoadedPermissions, PermissionScope},
     calls::{self, LiveKitConfig},
     common::{
         pagination::{finish_page, older_than_cursor, PaginationCursor},
@@ -65,11 +65,10 @@ pub(super) async fn can_moderate_accounts(
     database: &DatabaseConnection,
     user_id: Uuid,
 ) -> AppResult<()> {
-    let can_suspend = can_perform(database, user_id, AccountAction::Suspend);
-    let can_delete = can_perform(database, user_id, AccountAction::Delete);
-    if authz::is_granted(can_suspend.await)?
-        || authz::is_granted(can_delete.await)?
-    {
+    let permissions =
+        LoadedPermissions::load(database, user_id, PermissionScope::Instance)
+            .await?;
+    if can_moderate_accounts_with(&permissions) {
         Ok(())
     } else {
         Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."))
@@ -89,8 +88,19 @@ pub(super) async fn get_user_moderation(
         .ok_or_else(|| {
             ApiError::new(StatusCode::NOT_FOUND, "User not found.")
         })?;
-    let account =
-        get_account_moderation_state(database, actor_user_id, &target).await?;
+    let scope = server_id
+        .map(PermissionScope::ServerOrInstance)
+        .unwrap_or(PermissionScope::Instance);
+    let actor_permissions =
+        LoadedPermissions::load(database, actor_user_id, scope).await?;
+    let target_permissions =
+        LoadedPermissions::load(database, target_user_id, scope).await?;
+    let account = get_account_moderation_state(
+        actor_user_id,
+        &target,
+        &actor_permissions,
+        &target_permissions,
+    );
     let server = match server_id {
         Some(server_id) => {
             servers::get_member_moderation_state(
@@ -98,6 +108,8 @@ pub(super) async fn get_user_moderation(
                 actor_user_id,
                 target.id,
                 server_id,
+                &actor_permissions,
+                &target_permissions,
             )
             .await?
         }
@@ -110,23 +122,39 @@ pub(super) async fn get_user_moderation(
     Ok(UserModerationResponse { account, server })
 }
 
-async fn get_account_moderation_state(
-    database: &DatabaseConnection,
+fn get_account_moderation_state(
     actor_user_id: Uuid,
     target: &users::Model,
-) -> AppResult<Option<AccountModerationState>> {
-    if !authz::is_granted(can_moderate_accounts(database, actor_user_id).await)?
-    {
-        return Ok(None);
+    actor_permissions: &LoadedPermissions,
+    target_permissions: &LoadedPermissions,
+) -> Option<AccountModerationState> {
+    if !can_moderate_accounts_with(actor_permissions) {
+        return None;
     }
-
-    let is_protected =
-        is_protected_account(database, actor_user_id, target.id).await?;
-    Ok(Some(AccountModerationState {
+    Some(AccountModerationState {
         locked: target.locked,
         deleted_at: target.deleted_at.map(|value| value.to_rfc3339()),
-        can_be_moderated: actor_user_id != target.id && !is_protected,
-    }))
+        can_be_moderated: actor_user_id != target.id
+            && !is_protected_account_with(
+                actor_permissions,
+                target_permissions,
+            ),
+    })
+}
+
+fn can_moderate_accounts_with(permissions: &LoadedPermissions) -> bool {
+    permissions.allows("update", "User", PermissionScope::Instance)
+        || permissions.allows("delete", "User", PermissionScope::Instance)
+}
+
+fn is_protected_account_with(
+    actor: &LoadedPermissions,
+    target: &LoadedPermissions,
+) -> bool {
+    let protected = can_moderate_accounts_with(target)
+        || target.allows("manage", "all", PermissionScope::Instance)
+        || target.allows("manage", "InstanceRole", PermissionScope::Instance);
+    protected && !actor.allows("manage", "all", PermissionScope::Instance)
 }
 
 pub(super) async fn list_instance_users(
@@ -335,7 +363,15 @@ async fn ensure_account_can_be_moderated(
     request: &AccountModeration,
     action: AccountAction,
 ) -> AppResult<()> {
-    can_perform(database, request.actor_user_id, action).await?;
+    let actor = LoadedPermissions::load(
+        database,
+        request.actor_user_id,
+        PermissionScope::Instance,
+    )
+    .await?;
+    if !actor.allows(action.permission(), "User", PermissionScope::Instance) {
+        return Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."));
+    }
     users::Entity::find_by_id(request.target_user_id)
         .one(database)
         .await
@@ -351,13 +387,13 @@ async fn ensure_account_can_be_moderated(
         ));
     }
 
-    if is_protected_account(
+    let target = LoadedPermissions::load(
         database,
-        request.actor_user_id,
         request.target_user_id,
+        PermissionScope::Instance,
     )
-    .await?
-    {
+    .await?;
+    if is_protected_account_with(&actor, &target) {
         Err(ApiError::new(
             StatusCode::FORBIDDEN,
             "This account cannot be moderated.",
@@ -365,54 +401,6 @@ async fn ensure_account_can_be_moderated(
     } else {
         Ok(())
     }
-}
-
-async fn is_protected_account(
-    database: &DatabaseConnection,
-    actor_user_id: Uuid,
-    target_user_id: Uuid,
-) -> AppResult<bool> {
-    let target_is_moderator = authz::is_granted(
-        can_moderate_accounts(database, target_user_id).await,
-    )?;
-    let target_is_admin =
-        authz::is_granted(is_instance_admin(database, target_user_id).await)?;
-    if !target_is_moderator && !target_is_admin {
-        return Ok(false);
-    }
-
-    let actor_is_instance_admin =
-        authz::is_granted(is_instance_admin(database, actor_user_id).await)?;
-    Ok(!actor_is_instance_admin)
-}
-
-async fn can_perform(
-    database: &DatabaseConnection,
-    user_id: Uuid,
-    action: AccountAction,
-) -> AppResult<()> {
-    authz::can(
-        database,
-        user_id,
-        action.permission(),
-        "User",
-        PermissionScope::Instance,
-    )
-    .await
-}
-
-async fn is_instance_admin(
-    database: &DatabaseConnection,
-    user_id: Uuid,
-) -> AppResult<()> {
-    authz::can(
-        database,
-        user_id,
-        "manage",
-        "all",
-        PermissionScope::Instance,
-    )
-    .await
 }
 
 async fn ensure_not_last_active_admin<C>(
