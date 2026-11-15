@@ -23,6 +23,7 @@ use crate::{
     pub_sub::PubSubService,
 };
 
+// Share 24h across voting pauses so repeated hides cannot stall proposals forever
 const PROPOSAL_PAUSE_BUDGET_MS: i64 = 24 * 60 * 60 * 1000;
 
 pub(super) fn pause_budget_exhausted(poll: &polls::Model) -> bool {
@@ -275,6 +276,7 @@ fn accounted_pause_ms(
         .map(|at| (now - at).num_milliseconds().max(0))
         .unwrap_or(0);
     if poll.poll_type == PollType::Proposal && poll.stage == PollStage::Voting {
+        // Only the remaining budget extends the deadline, even if restore runs late
         elapsed
             .min((PROPOSAL_PAUSE_BUDGET_MS - poll.moderation_pause_ms).max(0))
     } else {
@@ -314,6 +316,7 @@ async fn extend_deadline_by_hidden_time<C: ConnectionTrait>(
     })
 }
 
+// Auto-restore exhausted voting proposals; further hides are refused
 pub(super) async fn restore_expired_proposal_pauses(
     database: &DatabaseConnection,
     pub_sub: &PubSubService,
