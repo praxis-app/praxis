@@ -114,7 +114,7 @@ pub(super) async fn create_poll_action_role<C: ConnectionTrait>(
     if let Some(permissions) = request.permissions {
         for permission in permissions {
             for action in permission.actions {
-                if !authz::is_valid_action(
+                if !authz::is_valid_action::<PollActionPermissionAbilityAction>(
                     &permission.subject,
                     &action.action,
                     authz::SERVER_CAPABILITY_ACTIONS,

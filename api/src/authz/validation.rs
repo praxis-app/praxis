@@ -1,10 +1,9 @@
+use std::str::FromStr;
+
 use axum::http::StatusCode;
 
 use super::types::PermissionRule;
 use crate::common::{ApiError, AppResult};
-
-const ABILITY_ACTIONS: &[&str] =
-    &["delete", "create", "read", "update", "manage"];
 
 pub(crate) type CapabilityActions =
     &'static [(&'static str, &'static [&'static str])];
@@ -23,13 +22,12 @@ pub(crate) const INSTANCE_CAPABILITY_ACTIONS: CapabilityActions = &[
     ("AuditLog", &["read"]),
 ];
 
-pub(crate) fn validate_permissions(
+pub(crate) fn validate_permissions<Subject: FromStr, Action: FromStr>(
     permissions: &[PermissionRule],
-    subjects: &[&str],
     capability_actions: CapabilityActions,
 ) -> AppResult<()> {
     for permission in permissions {
-        if !subjects.contains(&permission.subject.as_str()) {
+        if permission.subject.parse::<Subject>().is_err() {
             return Err(ApiError::new(
                 StatusCode::BAD_REQUEST,
                 "Permission subject is invalid.",
@@ -38,7 +36,7 @@ pub(crate) fn validate_permissions(
 
         if permission.action.is_empty()
             || permission.action.iter().any(|action| {
-                !is_valid_action(
+                !is_valid_action::<Action>(
                     &permission.subject,
                     action,
                     capability_actions,
@@ -55,14 +53,16 @@ pub(crate) fn validate_permissions(
     Ok(())
 }
 
-pub(crate) fn is_valid_action(
+pub(crate) fn is_valid_action<Action: FromStr>(
     subject: &str,
     action: &str,
     capability_actions: CapabilityActions,
 ) -> bool {
-    let allowed_actions = capability_actions
+    capability_actions
         .iter()
         .find(|(capability_subject, _)| *capability_subject == subject)
-        .map_or(ABILITY_ACTIONS, |(_, actions)| actions);
-    allowed_actions.contains(&action)
+        .map_or_else(
+            || action.parse::<Action>().is_ok(),
+            |(_, actions)| actions.contains(&action),
+        )
 }

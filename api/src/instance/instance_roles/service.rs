@@ -30,17 +30,6 @@ use crate::{
     users as users_service,
 };
 
-const INSTANCE_SUBJECTS: &[&str] = &[
-    "InstanceConfig",
-    "InstanceRole",
-    "Server",
-    "Message",
-    "Call",
-    "User",
-    "AuditLog",
-    "all",
-];
-
 pub(super) async fn get_instance_role(
     database: &DatabaseConnection,
     role_id: Uuid,
@@ -244,9 +233,8 @@ pub(super) async fn update_instance_role_permissions(
     actor_user_id: Uuid,
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
-    validate_permissions(
+    validate_permissions::<InstanceAbilitySubject, InstanceRoleAbilityAction>(
         &permissions,
-        INSTANCE_SUBJECTS,
         authz::INSTANCE_CAPABILITY_ACTIONS,
     )?;
     let transaction = database.begin().await.map_err(internal_error)?;

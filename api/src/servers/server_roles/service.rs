@@ -32,22 +32,6 @@ use crate::{
     users as users_service,
 };
 
-// NOTE: `Message` is reserved for future moderation permissions and is
-// not enforced yet, so granting it currently changes nothing
-const SERVER_SUBJECTS: &[&str] = &[
-    "ServerConfig",
-    "Channel",
-    "Invite",
-    "Message",
-    "ServerRole",
-    "ProposalBlock",
-    "Proposal",
-    "ServerMember",
-    "Call",
-    "AuditLog",
-    "all",
-];
-
 pub(super) async fn get_server_role(
     database: &DatabaseConnection,
     server_id: Uuid,
@@ -377,9 +361,8 @@ pub(super) async fn update_server_role_permissions(
     actor_user_id: Uuid,
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
-    validate_permissions(
+    validate_permissions::<ServerAbilitySubject, ServerRoleAbilityAction>(
         &permissions,
-        SERVER_SUBJECTS,
         authz::SERVER_CAPABILITY_ACTIONS,
     )?;
     let transaction = database.begin().await.map_err(internal_error)?;
