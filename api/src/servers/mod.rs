@@ -11,5 +11,5 @@ pub(crate) use moderation::get_member_moderation_state;
 pub(crate) use routes::router;
 pub(crate) use service::{
     add_member_to_server, default_server_id, ensure_server, get_server,
-    is_server_audience, is_server_member,
+    is_banned_from_server, is_server_audience, is_server_member,
 };

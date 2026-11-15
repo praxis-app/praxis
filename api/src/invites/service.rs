@@ -215,27 +215,56 @@ pub(super) async fn delete_invite(
     else {
         return Ok(());
     };
-    let inviter = get_user(&transaction, invite.user_id).await?;
+    delete_invite_record(&transaction, invite, actor_user_id).await?;
+    transaction.commit().await.map_err(internal_error)?;
+    Ok(())
+}
+
+pub(crate) async fn revoke_user_invites<C: ConnectionTrait>(
+    database: &C,
+    server_id: Uuid,
+    user_id: Uuid,
+    actor_user_id: Uuid,
+) -> AppResult<()> {
+    let user_invites = invites::Entity::find()
+        .filter(invites::Column::ServerId.eq(server_id))
+        .filter(invites::Column::UserId.eq(user_id))
+        .order_by_asc(invites::Column::Id)
+        .lock_exclusive()
+        .all(database)
+        .await
+        .map_err(internal_error)?;
+    for invite in user_invites {
+        delete_invite_record(database, invite, actor_user_id).await?;
+    }
+    Ok(())
+}
+
+async fn delete_invite_record<C: ConnectionTrait>(
+    database: &C,
+    invite: invites::Model,
+    actor_user_id: Uuid,
+) -> AppResult<()> {
+    let inviter = get_user(database, invite.user_id).await?;
     let before = invite_snapshot(&invite);
     invites::Entity::delete_by_id(invite.id)
-        .exec(&transaction)
+        .exec(database)
         .await
         .map_err(internal_error)?;
     moderation::record_action(
-        &transaction,
+        database,
         ModerationRecord::direct(
             actor_user_id,
             ModerationAction::DeleteInvite,
             ModerationTargetKind::Invite,
             invite.id,
-            Some(server_id),
+            Some(invite.server_id),
             None,
         )
         .with_target_label(display_name(inviter))
         .with_values(Some(before), None),
     )
     .await?;
-    transaction.commit().await.map_err(internal_error)?;
     Ok(())
 }
 

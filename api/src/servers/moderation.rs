@@ -25,6 +25,7 @@ use crate::{
     authz::{self, PermissionScope},
     calls::{self, LiveKitConfig},
     common::{ApiError, AppResult},
+    invites,
     moderation::{self, ModerationRecord},
     pub_sub::{PubSubService, PubSubTopic},
     users as users_service,
@@ -171,6 +172,13 @@ pub(super) async fn ban_member(
         &transaction,
         request.server_id,
         &[request.target_user_id],
+    )
+    .await?;
+    invites::service::revoke_user_invites(
+        &transaction,
+        request.server_id,
+        request.target_user_id,
+        request.actor_user_id,
     )
     .await?;
     let banned = server_bans::Entity::insert(server_bans::ActiveModel {

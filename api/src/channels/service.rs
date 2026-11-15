@@ -440,6 +440,11 @@ pub(crate) async fn get_readable_channel(
         if is_channel_member(database, channel_id, user_id).await? {
             return Ok(channel);
         }
+        if servers_service::is_banned_from_server(database, server_id, user_id)
+            .await?
+        {
+            return Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."));
+        }
     }
 
     if servers_service::default_server_id(database).await? == server_id {
