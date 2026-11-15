@@ -11,8 +11,8 @@ use entity::{
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder,
-    QuerySelect, Set, TransactionTrait,
+    DatabaseConnection, DatabaseTransaction, EntityTrait, IntoActiveModel,
+    QueryFilter, QueryOrder, QuerySelect, Set, Statement, TransactionTrait,
 };
 use std::path::Path;
 
@@ -39,6 +39,7 @@ use crate::{
 
 const DELETED_USER_DISPLAY_NAME: &str = "Deleted user";
 const MAX_USERS_PAGE_SIZE: u64 = 100;
+const ACCOUNT_MODERATION_LOCK_KEY: i64 = 0x707261786973;
 
 pub(super) struct AccountModeration {
     pub(super) actor_user_id: Uuid,
@@ -219,6 +220,7 @@ pub(super) async fn suspend_user(
         .await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
+    lock_account_moderation(&transaction).await?;
     let user = lock_user(&transaction, request.target_user_id).await?;
     ensure_not_last_active_admin(&transaction, user.id).await?;
     if !user.locked {
@@ -247,6 +249,7 @@ pub(super) async fn restore_user(
         .await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
+    lock_account_moderation(&transaction).await?;
     let user = lock_user(&transaction, request.target_user_id).await?;
     if user.deleted_at.is_some() {
         return Err(ApiError::new(
@@ -280,6 +283,7 @@ pub(super) async fn delete_user(
         .await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
+    lock_account_moderation(&transaction).await?;
     let user = lock_user(&transaction, request.target_user_id).await?;
     if user.deleted_at.is_some() {
         transaction.commit().await.map_err(internal_error)?;
@@ -401,6 +405,20 @@ async fn ensure_account_can_be_moderated(
     } else {
         Ok(())
     }
+}
+
+async fn lock_account_moderation(
+    transaction: &DatabaseTransaction,
+) -> AppResult<()> {
+    transaction
+        .query_one(Statement::from_sql_and_values(
+            transaction.get_database_backend(),
+            "SELECT pg_advisory_xact_lock($1)",
+            [ACCOUNT_MODERATION_LOCK_KEY.into()],
+        ))
+        .await
+        .map_err(internal_error)?;
+    Ok(())
 }
 
 async fn ensure_not_last_active_admin<C>(
