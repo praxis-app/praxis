@@ -58,7 +58,7 @@ export const SwitchServerDialog = ({ open, onOpenChange, onSelect }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:w-xl">
+      <DialogContent className="md:max-h-[calc(100dvh-4rem)] md:w-xl">
         <DialogHeader>
           <DialogTitle>{t('navigation.labels.switchServers')}</DialogTitle>
           <DialogDescription>
