@@ -2,6 +2,7 @@
 
 import { getJsonOrFormData } from '@/client/form-data.utils';
 import { LocalStorageKeys } from '@/constants/shared.constants';
+import { useAuthStore } from '@/store/auth.store';
 import { type UploadProgressHandler } from '@/types/api.types';
 import {
   type AuthRes,
@@ -1226,7 +1227,7 @@ class ApiClient {
   ): Promise<T> {
     try {
       const token = localStorage.getItem(LocalStorageKeys.AccessToken);
-      const inviteToken = localStorage.getItem(LocalStorageKeys.InviteToken);
+      const { inviteToken } = useAuthStore.getState();
       const headers = {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(inviteToken ? { 'X-Invite-Token': inviteToken } : {}),

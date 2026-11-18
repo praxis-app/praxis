@@ -24,11 +24,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken });
   },
   setInviteToken(inviteToken) {
-    if (inviteToken) {
-      localStorage.setItem(LocalStorageKeys.InviteToken, inviteToken);
-    } else {
-      localStorage.removeItem(LocalStorageKeys.InviteToken);
-    }
     set({ inviteToken });
   },
 }));
