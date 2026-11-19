@@ -13,7 +13,7 @@ use entity::{
 };
 use sea_orm::{
     prelude::Uuid,
-    sea_query::{Condition, Expr, Query, SimpleExpr},
+    sea_query::{Alias, Condition, Expr, Query, SimpleExpr},
     ActiveModelTrait, ColumnTrait, ConnectionTrait, EntityTrait,
     FromQueryResult, IntoActiveModel, QueryFilter, QuerySelect, QueryTrait,
     Set,
@@ -330,30 +330,45 @@ pub(super) fn quorum_member_count(
     poll_id: SimpleExpr,
     channel_id: SimpleExpr,
 ) -> SimpleExpr {
-    let active_users = Query::select()
-        .column(users::Column::Id)
-        .from(users::Entity)
-        .and_where(users::Column::Locked.eq(false))
-        .to_owned();
-    let voters = Query::select()
-        .column(votes::Column::UserId)
-        .from(votes::Entity)
-        .and_where(Expr::col(votes::Column::PollId).eq(poll_id))
-        .to_owned();
+    let voter = Alias::new("quorum_voter");
+    let has_voted =
+        Query::select()
+            .expr(Expr::val(1))
+            .from_as(votes::Entity, voter.clone())
+            .and_where(
+                Expr::col((voter.clone(), votes::Column::PollId)).eq(poll_id),
+            )
+            .and_where(Expr::col((voter, votes::Column::UserId)).equals((
+                channel_members::Entity,
+                channel_members::Column::UserId,
+            )))
+            .to_owned();
     let count = Query::select()
-        .expr(channel_members::Column::Id.count())
+        .expr(
+            Expr::col((channel_members::Entity, channel_members::Column::Id))
+                .count(),
+        )
         .from(channel_members::Entity)
-        .and_where(Expr::col(channel_members::Column::ChannelId).eq(channel_id))
+        .inner_join(
+            users::Entity,
+            Expr::col((users::Entity, users::Column::Id)).equals((
+                channel_members::Entity,
+                channel_members::Column::UserId,
+            )),
+        )
+        .and_where(
+            Expr::col((
+                channel_members::Entity,
+                channel_members::Column::ChannelId,
+            ))
+            .eq(channel_id),
+        )
         .cond_where(
             Condition::any()
                 .add(
-                    Expr::col(channel_members::Column::UserId)
-                        .in_subquery(active_users),
+                    Expr::col((users::Entity, users::Column::Locked)).eq(false),
                 )
-                .add(
-                    Expr::col(channel_members::Column::UserId)
-                        .in_subquery(voters),
-                ),
+                .add(Expr::exists(has_voted)),
         )
         .to_owned();
     SimpleExpr::SubQuery(None, Box::new(count.into_sub_query_statement()))

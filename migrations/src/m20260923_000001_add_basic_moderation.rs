@@ -55,6 +55,7 @@ const NOTIFICATION_KINDS: [&str; 6] = [
     "member_banned",
     "call_participant_removed",
 ];
+const CHANNEL_MEMBERS_CHANNEL_ID_INDEX: &str = "channel-members-channel-id-idx";
 const NOTIFICATION_TARGET_CHECK: &str = "notifications_one_target_check";
 const NOTIFICATION_MODERATION_ACTION_KEY: &str =
     "notifications-moderation-action-key";
@@ -104,10 +105,27 @@ impl MigrationTrait for Migration {
         create_moderation_enums(manager).await?;
         create_moderation_actions(manager).await?;
         add_moderation_columns(manager).await?;
-        add_moderation_notifications(manager).await
+        add_moderation_notifications(manager).await?;
+        manager
+            .create_index(
+                Index::create()
+                    .name(CHANNEL_MEMBERS_CHANNEL_ID_INDEX)
+                    .table(ChannelMembers::Table)
+                    .col(ChannelMembers::ChannelId)
+                    .to_owned(),
+            )
+            .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_index(
+                Index::drop()
+                    .name(CHANNEL_MEMBERS_CHANNEL_ID_INDEX)
+                    .table(ChannelMembers::Table)
+                    .to_owned(),
+            )
+            .await?;
         drop_moderation_notifications(manager).await?;
         drop_moderation_columns(manager).await?;
         manager
@@ -822,4 +840,10 @@ enum Polls {
 enum Channels {
     Table,
     Id,
+}
+
+#[derive(DeriveIden)]
+enum ChannelMembers {
+    Table,
+    ChannelId,
 }
