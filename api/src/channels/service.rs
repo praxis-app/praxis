@@ -356,7 +356,7 @@ pub(crate) async fn get_channel(
         })
 }
 
-pub(crate) async fn is_channel_member<C>(
+async fn is_channel_member<C>(
     database: &C,
     channel_id: Uuid,
     user_id: Uuid,

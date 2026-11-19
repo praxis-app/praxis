@@ -503,17 +503,6 @@ pub(super) async fn delete_poll(
     Ok(result)
 }
 
-pub(crate) async fn is_public_channel_poll(
-    database: &DatabaseConnection,
-    server_id: Uuid,
-    channel_id: Uuid,
-    poll_id: Uuid,
-) -> AppResult<bool> {
-    get_poll(database, server_id, channel_id, poll_id).await?;
-    let default_server_id = servers::default_server_id(database).await?;
-    Ok(default_server_id == server_id)
-}
-
 pub(crate) async fn get_poll(
     database: &DatabaseConnection,
     server_id: Uuid,

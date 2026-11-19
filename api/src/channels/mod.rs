@@ -10,5 +10,5 @@ pub(crate) use service::{
     ensure_channel_member, general_channel_id, get_channel,
     get_channel_member_user_ids, get_readable_channel,
     get_unwrapped_channel_key, get_unwrapped_channel_key_map,
-    is_channel_member, lock_channel_electorate, lock_server_electorate,
+    lock_channel_electorate, lock_server_electorate,
 };

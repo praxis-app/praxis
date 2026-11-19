@@ -27,7 +27,7 @@ use crate::{
     authz::{self, PermissionScope},
     channels,
     common::{request::parse_uuid, ApiError, AppResult},
-    forum, invites,
+    forum,
     notifications::{self as notifications_service, WithNotifications},
     polls::{
         moderation as polls_moderation, service as polls_service,
@@ -350,43 +350,6 @@ pub(super) async fn get_voters_by_poll_option(
             profile_picture: profile_pictures.get(&user.id).cloned(),
         })
         .collect())
-}
-
-pub(super) async fn can_read_poll_option(
-    database: &DatabaseConnection,
-    server_id: Uuid,
-    channel_id: Uuid,
-    poll_id: Uuid,
-    current_user_id: Option<Uuid>,
-    invite_token: Option<&str>,
-) -> AppResult<()> {
-    if let Some(user_id) = current_user_id {
-        if channels::is_channel_member(database, channel_id, user_id).await? {
-            return Ok(());
-        }
-    }
-
-    if polls_service::is_public_channel_poll(
-        database, server_id, channel_id, poll_id,
-    )
-    .await?
-    {
-        return Ok(());
-    }
-
-    if let Some(invite_token) = invite_token {
-        if invites::service::is_valid_invite_for_server(
-            database,
-            invite_token,
-            server_id,
-        )
-        .await?
-        {
-            return Ok(());
-        }
-    }
-
-    Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."))
 }
 
 pub(super) async fn ensure_poll_option_exists(
