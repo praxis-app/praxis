@@ -315,7 +315,10 @@ pub(super) async fn get_audit_log(
             id: record.id,
         });
 
-    let filter_values = load_filter_values(database, server_scope).await?;
+    let filter_values = match cursor {
+        Some(_) => None,
+        None => Some(load_filter_values(database, server_scope).await?),
+    };
     let entries = shape_audit_log_entries(database, user_id, records).await?;
     Ok(AuditLogResponse {
         entries,

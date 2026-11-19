@@ -105,5 +105,5 @@ export interface AuditLogRes {
   entries: AuditLogEntryRes[];
   nextCursor: string | null;
   hasMore: boolean;
-  filterValues: AuditLogFilterValuesRes;
+  filterValues?: AuditLogFilterValuesRes;
 }

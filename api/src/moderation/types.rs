@@ -28,7 +28,8 @@ pub(super) struct AuditLogResponse {
     pub(super) entries: Vec<AuditLogEntryResponse>,
     pub(super) next_cursor: Option<String>,
     pub(super) has_more: bool,
-    pub(super) filter_values: AuditLogFilterValues,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) filter_values: Option<AuditLogFilterValues>,
 }
 
 #[derive(Debug, Serialize)]
