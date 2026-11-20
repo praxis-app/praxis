@@ -38,6 +38,7 @@ impl SearchKind {
         Self::ForumReply,
     ];
 
+    // TODO: Convert to kebab-case for search kind values
     pub(super) fn as_str(self) -> &'static str {
         match self {
             Self::Message => "message",

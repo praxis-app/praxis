@@ -33,6 +33,7 @@ export interface UnreadChannelsRes {
   channelIds: string[];
 }
 
+// TODO: Convert to kebab-case for feed item types
 export type FeedItemRes =
   | (MessageRes & { type: 'message' })
   | (PollRes & { type: 'poll' })

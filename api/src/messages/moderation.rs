@@ -227,8 +227,7 @@ pub(super) async fn broadcast_removed_message(
             call_id,
             request.actor_user_id,
             serde_json::json!({
-                "type": "message",
-                "action": "removed",
+                "type": "message-removed",
                 "message": removed.message,
             }),
         )
@@ -243,8 +242,7 @@ pub(super) async fn broadcast_removed_message(
             request.channel_id,
             request.actor_user_id,
             serde_json::json!({
-                "type": "message",
-                "action": "removed",
+                "type": "message-removed",
                 "message": removed.message,
             }),
         )
@@ -252,8 +250,7 @@ pub(super) async fn broadcast_removed_message(
     };
 
     let body = serde_json::json!({
-        "type": "threadReply",
-        "action": "removed",
+        "type": "thread-reply-removed",
         "rootKind": thread.root_kind,
         "rootId": thread.root_id,
         "rootMessageId": (thread.root_kind == "message").then_some(thread.root_id),

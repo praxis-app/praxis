@@ -312,7 +312,7 @@ pub(super) async fn broadcast_reply(
     created: &CreatedReply,
 ) -> AppResult<()> {
     let body = serde_json::json!({
-        "type": "threadReply",
+        "type": "thread-reply",
         "rootKind": "poll",
         "rootId": poll_id,
         "reply": created.reply,

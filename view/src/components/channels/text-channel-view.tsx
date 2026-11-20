@@ -35,10 +35,7 @@ import { type PollRes } from '@/types/poll.types';
 import { type ProposalForumReferenceRes } from '@/types/forum.types';
 import { type PubSubMessage } from '@/types/shared.types';
 import { type RightPanel } from '@/types/right-panel.types';
-import {
-  PubSubMessageAction,
-  PubSubMessageType,
-} from '@/constants/pub-sub.constants';
+import { PubSubMessageType } from '@/constants/pub-sub.constants';
 import {
   preserveFeedImages,
   preserveFeedItemImages,
@@ -55,13 +52,21 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NewMessagePayload {
   type: PubSubMessageType.MESSAGE;
-  action?: PubSubMessageAction;
   message: MessageRes;
+}
+
+interface RemovedMessagePayload {
+  type: PubSubMessageType.MESSAGE_REMOVED;
+  message: MessageRes;
+}
+
+interface RemovedThreadReplyPayload {
+  type: PubSubMessageType.THREAD_REPLY_REMOVED;
+  reply: MessageRes;
 }
 
 interface ThreadReplyPayload {
   type: PubSubMessageType.THREAD_REPLY;
-  action?: PubSubMessageAction;
   rootKind?: ThreadRootKind;
   rootId?: string;
   rootMessageId?: string;
@@ -335,21 +340,24 @@ export const TextChannelView = ({
         });
       },
       onMessage: (event) => {
-        const { body }: PubSubMessage<NewMessagePayload | ThreadReplyPayload> =
-          JSON.parse(event.data);
+        const {
+          body,
+        }: PubSubMessage<
+          | NewMessagePayload
+          | RemovedMessagePayload
+          | ThreadReplyPayload
+          | RemovedThreadReplyPayload
+        > = JSON.parse(event.data);
         if (!body) {
           return;
         }
 
-        if (body.action === PubSubMessageAction.REMOVED) {
-          patchRemovedMessage(
-            queryClient,
-            serverId,
-            channel?.id,
-            body.type === PubSubMessageType.THREAD_REPLY
-              ? body.reply
-              : body.message,
-          );
+        if (body.type === PubSubMessageType.MESSAGE_REMOVED) {
+          patchRemovedMessage(queryClient, serverId, channel?.id, body.message);
+          return;
+        }
+        if (body.type === PubSubMessageType.THREAD_REPLY_REMOVED) {
+          patchRemovedMessage(queryClient, serverId, channel?.id, body.reply);
           return;
         }
 

@@ -27,7 +27,7 @@ pub(crate) async fn broadcast_forum_post(
         channel_id,
         sender_id,
         serde_json::json!({
-            "type": "forumPost",
+            "type": "forum-post",
             "action": action,
             "post": post,
         }),
@@ -56,7 +56,7 @@ pub(crate) async fn broadcast_proposal_forum_reference(
         }
     };
     let body = serde_json::json!({
-        "type": "proposalMoved",
+        "type": "proposal-moved",
         "reference": reference,
     });
     for member_id in members {
@@ -93,7 +93,7 @@ pub(super) async fn broadcast_forum_reply(
         channel_id,
         sender_id,
         serde_json::json!({
-            "type": "forumReply",
+            "type": "forum-reply",
             "action": action,
             "postId": post_id,
             "reply": reply,

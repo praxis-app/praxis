@@ -1,3 +1,4 @@
+// TODO: Convert to kebab-case for right panel types
 export type StandaloneRightPanel = {
   type: 'activeDecisions';
 };

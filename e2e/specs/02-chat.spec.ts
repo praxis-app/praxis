@@ -869,7 +869,7 @@ test.describe('mobile thread recovery', () => {
         const upstream = socket.connectToServer();
         upstream.onMessage((message) => {
           if (away) {
-            if (JSON.parse(message.toString()).body?.type === 'threadReply')
+            if (JSON.parse(message.toString()).body?.type === 'thread-reply')
               missedReplies++;
           } else socket.send(message);
         });
