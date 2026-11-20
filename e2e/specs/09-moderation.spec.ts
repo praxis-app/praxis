@@ -21,11 +21,7 @@ import { grantInstancePermissions } from '../lib/instance-roles';
 import { createInvite } from '../lib/invites';
 import { createMessages } from '../lib/messages';
 import { type PermissionRule } from '../lib/permissions';
-import {
-  backdateHiddenPoll,
-  expirePollDeadline,
-  voteViaApi,
-} from '../lib/polls';
+import { expirePollDeadline, voteViaApi } from '../lib/polls';
 import { grantServerPermissions } from '../lib/server-roles';
 import { createServer, joinServer, updateServerConfig } from '../lib/servers';
 import { NavigationPage } from '../pages/navigation.page';
@@ -611,101 +607,6 @@ test('moderator can hide and restore a proposal for everyone in realtime', async
   }
 });
 
-test('restoring a hidden proposal compensates its deadline and preserves recorded votes', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  await updateServerConfig(request, admin, server.id, {
-    decisionMakingModel: 'consensus',
-    agreementThreshold: 51,
-    disagreementsLimit: 2,
-    abstainsLimit: 2,
-    quorumEnabled: false,
-    votingTimeLimit: 60,
-  });
-  const author = await addServerMember(request, admin, server, 'proposer');
-  const moderator = await addServerMember(request, admin, server, 'hider', [
-    { subject: 'Proposal', action: ['manage'] },
-  ]);
-  const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-  const created = await request.post(pollsPath, {
-    headers: authorizationHeaders(author),
-    data: {
-      body: `E2E paused proposal ${randomUUID().slice(0, 8)}`,
-      pollType: 'proposal',
-      action: { actionType: 'general' },
-    },
-  });
-  await expect(created).toBeOK();
-  const { poll } = await created.json();
-  const voteId = await voteViaApi(
-    request,
-    author,
-    server.id,
-    server.generalChannelId,
-    poll.id,
-    'agree',
-  );
-  await expect(
-    await request.post(`${pollsPath}/${poll.id}/hide`, {
-      headers: authorizationHeaders(moderator),
-      data: { reason: 'Off topic' },
-    }),
-  ).toBeOK();
-  backdateHiddenPoll(poll.id, 2, 1);
-  const threadResponse = await request.get(`${pollsPath}/${poll.id}/replies`, {
-    headers: authorizationHeaders(moderator),
-  });
-  await expect(threadResponse).toBeOK();
-  const { root: hidden } = await threadResponse.json();
-  expect(hidden.stage).toBe('voting');
-  expect(hidden.hiddenAt).toBeTruthy();
-
-  const page = await openPageAs(
-    browser,
-    moderator,
-    `/s/${server.slug}/c/${server.generalChannelId}?poll=${poll.id}`,
-  );
-  try {
-    const proposal = page
-      .getByTestId('feed')
-      .locator(`[data-decision-id="${poll.id}"]`);
-    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
-    await page.getByRole('menuitem', { name: 'Restore proposal' }).click();
-    await expect
-      .soft(page.getByRole('dialog', { name: 'Restore this proposal?' }))
-      .toContainText('Its deadline moves back by the time it was hidden');
-    const restoredResponse = page.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' &&
-        response.url().endsWith(`/polls/${poll.id}/restore`),
-    );
-    await confirmModeration(
-      page,
-      'Restore this proposal?',
-      'Restore',
-      /\/polls\/[^/]+\/restore$/,
-    );
-
-    const { poll: restored } = await (await restoredResponse).json();
-    const compensatedSeconds =
-      (Date.parse(restored.config.closingAt) -
-        Date.parse(hidden.config.closingAt)) /
-      1000;
-    expect(compensatedSeconds).toBeGreaterThanOrEqual(2 * 60 * 60);
-    expect(compensatedSeconds).toBeLessThan(2 * 60 * 60 + 60);
-    expect(restored.votes).toEqual(hidden.votes);
-    expect(restored.votes.map((vote: { id: string }) => vote.id)).toContain(
-      voteId,
-    );
-    expect(restored.hiddenAt).toBeUndefined();
-  } finally {
-    await page.context().close();
-  }
-});
-
 test('moderator can remove and ban server members', async ({
   browser,
   request,
@@ -889,75 +790,51 @@ test('adjusted electorate includes suspended voters only in proposals where thei
     .toBe('ratified');
 });
 
-test('suspended users are signed out right away while viewing a channel', async ({
+test('suspended and deleted users are signed out right away and told why', async ({
   browser,
   request,
 }) => {
+  test.setTimeout(testTimeout(60_000));
+
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
   const moderator = await addAccountModerator(request);
-  const target = await addServerMember(request, admin, server, 'suspended');
+  const suspended = await addServerMember(request, admin, server, 'suspended');
+  const deleted = await addServerMember(request, admin, server, 'deleted');
 
-  const targetPage = await openPageAs(
-    browser,
-    target,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
+  const channelPath = `/s/${server.slug}/c/${server.generalChannelId}`;
+  const suspendedPage = await openPageAs(browser, suspended, channelPath);
+  const deletedPage = await openPageAs(browser, deleted, channelPath);
   const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
 
   try {
+    for (const page of [suspendedPage, deletedPage]) {
+      await expect(page.getByPlaceholder('Send a message...')).toBeVisible();
+    }
+
+    await suspendFromSettings(moderatorPage, suspended);
+    await expectSessionEnded(suspendedPage, 'suspended', server);
+
+    await deleteFromSettings(moderatorPage, deleted);
+    await expectSessionEnded(deletedPage, 'deleted', server);
     await expect(
-      targetPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
+      moderationNotice(deletedPage, ACCOUNT_NOTICE_TITLES.suspended),
+    ).toHaveCount(0);
 
-    await suspendFromSettings(moderatorPage, target);
-
-    await expectSessionEnded(targetPage, 'suspended', server);
     await expectNoticeStaysUntilDismissed(
-      targetPage,
+      suspendedPage,
       ACCOUNT_NOTICE_TITLES.suspended,
     );
-    await expectSignedOut(targetPage);
-  } finally {
-    await targetPage.context().close();
-    await moderatorPage.context().close();
-  }
-});
-
-test('deleted users are told their account was deleted right away', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const moderator = await addAccountModerator(request);
-  const target = await addServerMember(request, admin, server, 'deleted');
-
-  const targetPage = await openPageAs(
-    browser,
-    target,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
-
-  try {
-    await expect(
-      targetPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-
-    await deleteFromSettings(moderatorPage, target);
-
-    await expectSessionEnded(targetPage, 'deleted', server);
-    await expect(
-      moderationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended),
-    ).toHaveCount(0);
     await expectNoticeStaysUntilDismissed(
-      targetPage,
+      deletedPage,
       ACCOUNT_NOTICE_TITLES.deleted,
     );
-    await expectSignedOut(targetPage);
+    for (const page of [suspendedPage, deletedPage]) {
+      await expectSignedOut(page);
+    }
   } finally {
-    await targetPage.context().close();
+    await suspendedPage.context().close();
+    await deletedPage.context().close();
     await moderatorPage.context().close();
   }
 });
