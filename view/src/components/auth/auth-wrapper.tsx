@@ -12,8 +12,10 @@ export const AuthWrapper = ({ children }: Props) => {
   const { data: meData, error: meError } = useMeQuery({
     retry: import.meta.env.PROD ? 1 : 0,
   });
+
   useAccountAccess(meData?.user.id, meError);
   useRecordServerVisit();
+
   return (
     <>
       {children}
