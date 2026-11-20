@@ -171,6 +171,9 @@ where
     })
 }
 
+/// Whether a user's account may open a websocket subscription. It must exist
+/// and be neither suspended nor deleted, and `registered_only` topics also
+/// refuse anonymous users
 pub(crate) async fn can_subscribe<C: ConnectionTrait>(
     database: &C,
     user_id: Uuid,

@@ -814,6 +814,7 @@ async fn shape_polls_with_visibility(
         return Ok(vec![]);
     }
 
+    // Collect authors and reply participants so their users load together
     let poll_ids: Vec<Uuid> = polls.iter().map(|poll| poll.id).collect();
     let reply_summaries =
         crate::messages::get_poll_reply_summaries(database, poll_ids.clone())
@@ -875,6 +876,7 @@ async fn shape_polls_with_visibility(
         .all(database)
         .await
         .map_err(internal_error)?;
+    // Derive keys, actions, quorum counts, call statuses and ignored blocks
     let key_ids: Vec<Uuid> =
         polls.iter().filter_map(|poll| poll.key_id).collect();
     let key_map =
@@ -891,6 +893,7 @@ async fn shape_polls_with_visibility(
     .await?;
     let ignored_block_vote_ids =
         get_ignored_block_vote_ids(database, &polls, &configs, &votes).await?;
+    // Channels where the viewer sees hidden content, unless the caller decides
     let (revealed_proposal_channels, revealed_poll_channels) =
         match revealed_channels {
             Some(channels) => (channels.clone(), channels),
@@ -992,6 +995,7 @@ async fn shape_polls_with_visibility(
                 )
             })
             .collect::<Vec<_>>();
+        // Return each voter's shaped vote so broadcasts can set `my_vote`
         if let Some(recipient_votes) = recipient_votes.as_deref_mut() {
             for (vote, shaped) in poll_votes.iter().zip(&shaped_votes) {
                 recipient_votes.insert(vote.user_id, shaped.clone());
@@ -1035,6 +1039,7 @@ async fn shape_polls_with_visibility(
         } else {
             0
         };
+        // Shape the author, images, member count and reply summary
         let shaped_user = PollUserResponse {
             id: user.id.to_string(),
             name: user.name.clone(),
@@ -1094,6 +1099,7 @@ async fn shape_polls_with_visibility(
             content_concealed: false,
             created_at: serialize_timestamp(poll.created_at),
         };
+        // Conceal hidden content unless the viewer moderates this channel
         let revealed_channels = match poll.poll_type {
             PollType::Proposal => &revealed_proposal_channels,
             PollType::Poll => &revealed_poll_channels,
