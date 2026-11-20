@@ -4,6 +4,7 @@ import { MessageForm } from '@/components/messages/message-form';
 import { MESSAGES_PAGE_SIZE } from '@/constants/message.constants';
 import { PubSubMessageType } from '@/constants/pub-sub.constants';
 import { preserveFeedImages, preserveFeedItemImages } from '@/lib/feed.utils';
+import { patchRemovedMessage } from '@/lib/moderation.utils';
 import { callPubSubTopic } from '@/lib/pub-sub.utils';
 import { useAuthData } from '@/hooks/use-auth-data';
 import { feedQueryKeyFor, useFeedQuery } from '@/hooks/use-feed-query';
@@ -19,6 +20,16 @@ import { useTranslation } from 'react-i18next';
 interface NewMessagePayload {
   type: PubSubMessageType.MESSAGE;
   message: MessageRes;
+}
+
+interface RemovedMessagePayload {
+  type: PubSubMessageType.MESSAGE_REMOVED;
+  message: MessageRes;
+}
+
+interface RemovedThreadReplyPayload {
+  type: PubSubMessageType.THREAD_REPLY_REMOVED;
+  reply: MessageRes;
 }
 
 interface Props {
@@ -149,10 +160,21 @@ export const CallChatPanel = ({
     callPubSubTopic('new-message', serverId, channel.id, callId, me?.id),
     {
       onMessage: (event) => {
-        const { body }: PubSubMessage<NewMessagePayload> = JSON.parse(
-          event.data,
-        );
+        const {
+          body,
+        }: PubSubMessage<
+          NewMessagePayload | RemovedMessagePayload | RemovedThreadReplyPayload
+        > = JSON.parse(event.data);
         if (!body) {
+          return;
+        }
+
+        if (body.type === PubSubMessageType.MESSAGE_REMOVED) {
+          patchRemovedMessage(queryClient, serverId, channel.id, body.message);
+          return;
+        }
+        if (body.type === PubSubMessageType.THREAD_REPLY_REMOVED) {
+          patchRemovedMessage(queryClient, serverId, channel.id, body.reply);
           return;
         }
 
@@ -227,6 +249,7 @@ export const CallChatPanel = ({
       </div>
       <Feed
         channel={channel}
+        callId={callId}
         feedBoxRef={feedBoxRef}
         onLoadMore={fetchNextPage}
         feed={feed}

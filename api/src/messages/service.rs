@@ -237,8 +237,10 @@ pub(super) async fn create_call_message(
         call_id,
         user_id,
     } = context;
-    crate::calls::service::get_call(database, server_id, channel_id, call_id)
-        .await?;
+    crate::calls::service::get_active_call(
+        database, server_id, channel_id, call_id,
+    )
+    .await?;
     create_message_record(
         database,
         upload_root,
@@ -606,7 +608,7 @@ pub(super) async fn get_message_image(
         return Err(ApiError::new(StatusCode::NOT_FOUND, "Message not found."));
     }
 
-    channels::can_read_channel(
+    channels::get_readable_channel(
         database,
         server_id,
         channel_id,
@@ -662,7 +664,7 @@ pub(super) async fn get_call_message_image(
     } = path;
     get_call_message(database, server_id, channel_id, call_id, message_id)
         .await?;
-    channels::can_read_channel(
+    channels::get_readable_channel(
         database,
         server_id,
         channel_id,
@@ -758,6 +760,7 @@ fn shape_message<'a>(
             .collect(),
         latest_reply_at: reply_summary
             .map(|(_, created_at)| serialize_timestamp(*created_at)),
+        moderated_at: message.moderated_at.map(serialize_timestamp),
         created_at: serialize_timestamp(message.created_at),
     }
 }
@@ -836,7 +839,7 @@ pub(super) fn internal_consistency_error(message: &'static str) -> ApiError {
     ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Internal server error.")
 }
 
-async fn broadcast_to_call_members(
+pub(super) async fn broadcast_to_call_members(
     database: &DatabaseConnection,
     pub_sub_service: &PubSubService,
     server_id: Uuid,
@@ -863,7 +866,7 @@ async fn broadcast_to_call_members(
     Ok(())
 }
 
-async fn broadcast_to_channel_members(
+pub(super) async fn broadcast_to_channel_members(
     database: &DatabaseConnection,
     pub_sub_service: &PubSubService,
     server_id: Uuid,

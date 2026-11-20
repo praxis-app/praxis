@@ -59,6 +59,7 @@ export async function createForumPostWithProposal(
   channelId: string,
   title: string,
   proposalBody: string,
+  action: Record<string, unknown> = { actionType: 'test' },
 ) {
   const response = await request.post(
     `/api/servers/${serverId}/channels/${channelId}/forum/posts`,
@@ -70,7 +71,7 @@ export async function createForumPostWithProposal(
         proposal: {
           body: proposalBody,
           pollType: 'proposal',
-          action: { actionType: 'test' },
+          action,
         },
       },
     },

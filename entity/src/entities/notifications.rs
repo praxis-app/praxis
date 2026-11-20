@@ -16,6 +16,7 @@ pub struct Model {
     pub poll_id: Option<Uuid>,
     pub server_role_id: Option<Uuid>,
     pub event_id: Option<Uuid>,
+    pub moderation_action_id: Option<Uuid>,
     pub vote_type: Option<VoteType>,
     pub unread_count: Option<i32>,
     pub read_at: Option<DateTimeWithTimeZone>,
@@ -88,6 +89,14 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     ServerRole,
+    #[sea_orm(
+        belongs_to = "super::moderation_actions::Entity",
+        from = "Column::ModerationActionId",
+        to = "super::moderation_actions::Column::Id",
+        on_update = "Cascade",
+        on_delete = "Cascade"
+    )]
+    ModerationAction,
 }
 
 impl Related<super::servers::Entity> for Entity {
@@ -123,6 +132,12 @@ impl Related<super::events::Entity> for Entity {
 impl Related<super::server_roles::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::ServerRole.def()
+    }
+}
+
+impl Related<super::moderation_actions::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::ModerationAction.def()
     }
 }
 

@@ -10,6 +10,7 @@ interface Props {
   server: Pick<ServerRes, 'id' | 'name' | 'image'>;
   imageSrc?: string;
   className?: string;
+  imageClassName?: string;
   fallbackClassName?: string;
   fallback?: 'initial' | 'icon';
 }
@@ -18,6 +19,7 @@ export const ServerAvatar = ({
   server,
   imageSrc,
   className,
+  imageClassName,
   fallbackClassName,
   fallback = 'initial',
 }: Props) => {
@@ -38,6 +40,7 @@ export const ServerAvatar = ({
         className={cn(
           (imageSrc || server.image?.id) &&
             'min-h-full min-w-full rounded-full',
+          imageClassName,
         )}
       />
       {!imageSrc && !server.image?.id && (

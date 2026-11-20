@@ -109,11 +109,10 @@ impl FromRequestParts<PollsState> for ReadablePollOptionContext {
 
         // Authorize before resolving the option, so a refused caller cannot
         // tell an option that exists from one that does not
-        service::can_read_poll_option(
+        channels::get_readable_channel(
             &state.database,
             path.server_id,
             path.channel_id,
-            path.poll_id,
             current_user_id,
             invite_token.as_deref(),
         )

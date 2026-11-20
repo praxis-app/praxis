@@ -1,9 +1,11 @@
 mod handlers;
+mod moderation;
 mod replies;
 mod routes;
 mod service;
 pub(crate) mod types;
 
+pub(crate) use moderation::{erase_messages, erase_user_messages};
 pub(crate) use replies::{
     get_poll_reply_participants, get_poll_reply_summaries, paginate_replies,
     paginate_replies_around, reply_recipient_ids, CreatedReply,

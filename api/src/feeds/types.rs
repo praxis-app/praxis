@@ -42,6 +42,7 @@ impl FeedProposalForumReferenceResponse {
         reference: forum::types::ProposalForumReferenceResponse,
     ) -> Self {
         Self {
+            // TODO: Convert to kebab-case for this feed item kind
             kind: "proposalMoved",
             reference,
         }

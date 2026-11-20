@@ -12,6 +12,7 @@ mod instance;
 mod invites;
 mod logging;
 mod messages;
+mod moderation;
 mod notifications;
 mod poll_actions;
 mod polls;
@@ -126,12 +127,15 @@ fn build_router_with_pub_sub(
             database.clone(),
             jwt_secret.clone(),
             cache_service.clone(),
+            pub_sub_service.clone(),
+            livekit_config.clone(),
         ))
         .merge(instance::router(
             database.clone(),
             jwt_secret.clone(),
             livekit_config.is_some(),
         ))
+        .merge(moderation::router(database.clone(), jwt_secret.clone()))
         .merge(servers::router(
             database.clone(),
             jwt_secret.clone(),
@@ -140,9 +144,13 @@ fn build_router_with_pub_sub(
             livekit_config.clone(),
         ))
         .merge(calls::livekit_webhook_router(
-            database,
-            jwt_secret,
+            database.clone(),
+            jwt_secret.clone(),
             livekit_config,
+        ))
+        .layer(axum::middleware::from_fn_with_state(
+            auth::ActiveAccountState::new(database, jwt_secret),
+            auth::require_active_account,
         ));
 
     view::attach(ws.nest("/api", api))

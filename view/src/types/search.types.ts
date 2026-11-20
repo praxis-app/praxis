@@ -1,3 +1,4 @@
+// TODO: Convert to kebab-case for search kind values
 export type SearchKind =
   | 'message'
   | 'threadReply'

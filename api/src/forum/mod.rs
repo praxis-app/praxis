@@ -1,6 +1,7 @@
 pub(crate) mod events;
 mod extractors;
 mod handlers;
+pub(crate) mod moderation;
 pub(crate) mod proposal_moves;
 mod responses;
 mod routes;

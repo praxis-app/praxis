@@ -1,5 +1,6 @@
 import { TopNav } from '@/components/nav/top-nav';
 import { PermissionDenied } from '@/components/shared/permission-denied';
+import { CurrentServerCard } from '@/components/settings/current-server-card';
 import { SettingsNavItem } from '@/components/settings/settings-nav-item';
 import { Container } from '@/components/ui/container';
 import { NavigationPaths } from '@/constants/shared.constants';
@@ -9,24 +10,31 @@ import { getSettingsAccess } from '@/lib/role.utils';
 import { useTranslation } from 'react-i18next';
 import {
   MdAdminPanelSettings,
+  MdHistory,
   MdClose,
   MdEmojiPeople,
   MdGroups,
   MdLink,
+  MdManageAccounts,
+  MdPeople,
   MdSettings,
 } from 'react-icons/md';
 
 export const Settings = () => {
   const { t } = useTranslation();
-  const { serverPath } = useServerData();
+  const { server, serverPath } = useServerData();
   const { serverAbility, instanceAbility, isLoading } = useAbility();
 
   const {
     canAccessInvites,
     canManageInstanceRoles,
     canManageServers,
+    canManageServerMembers,
     canManageServerRoles,
     canManageServerSettings,
+    canManageUsers,
+    canViewInstanceAuditLog,
+    canViewServerAuditLog,
     hasInstanceSettingsAccess,
     hasServerSettingsAccess,
     hasSettingsAccess,
@@ -61,6 +69,16 @@ export const Settings = () => {
             <p className="text-muted-foreground mt-1 mb-4 text-sm">
               {t('settings.descriptions.serverSection')}
             </p>
+            {server && (
+              <CurrentServerCard
+                server={server}
+                membersPath={
+                  canManageServerMembers
+                    ? `${serverPath}${NavigationPaths.Members}`
+                    : undefined
+                }
+              />
+            )}
             <div className="flex flex-col gap-3">
               {canManageServerSettings && (
                 <>
@@ -83,11 +101,25 @@ export const Settings = () => {
                   to={`${serverPath}${NavigationPaths.Roles}`}
                 />
               )}
+              {canManageServerMembers && (
+                <SettingsNavItem
+                  Icon={MdPeople}
+                  label={t('navigation.labels.members')}
+                  to={`${serverPath}${NavigationPaths.Members}`}
+                />
+              )}
               {canAccessInvites && (
                 <SettingsNavItem
                   Icon={MdLink}
                   label={t('navigation.labels.invites')}
                   to={`${serverPath}${NavigationPaths.Invites}`}
+                />
+              )}
+              {canViewServerAuditLog && (
+                <SettingsNavItem
+                  Icon={MdHistory}
+                  label={t('navigation.labels.serverAuditLog')}
+                  to={`${serverPath}${NavigationPaths.AuditLog}`}
                 />
               )}
             </div>
@@ -118,6 +150,20 @@ export const Settings = () => {
                   Icon={MdGroups}
                   label={t('settings.headers.manageServers')}
                   to={NavigationPaths.ManageServers}
+                />
+              )}
+              {canManageUsers && (
+                <SettingsNavItem
+                  Icon={MdManageAccounts}
+                  label={t('navigation.labels.users')}
+                  to={NavigationPaths.ManageUsers}
+                />
+              )}
+              {canViewInstanceAuditLog && (
+                <SettingsNavItem
+                  Icon={MdHistory}
+                  label={t('navigation.labels.instanceAuditLog')}
+                  to={NavigationPaths.AuditLog}
                 />
               )}
             </div>

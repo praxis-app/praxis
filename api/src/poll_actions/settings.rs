@@ -2,11 +2,14 @@
 //! implementation, and response shaping
 
 use axum::http::StatusCode;
-use entity::{channels, poll_action_server_configs, polls, server_configs};
+use entity::{
+    channels,
+    enums::{ModerationAction, ModerationTargetKind},
+    poll_action_server_configs, polls, server_configs,
+};
 use sea_orm::{
-    prelude::Uuid, sea_query::LockType, ActiveModelTrait, ColumnTrait,
-    ConnectionTrait, DatabaseConnection, DatabaseTransaction, EntityTrait,
-    QueryFilter, QuerySelect, Set,
+    prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
+    DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter, Set,
 };
 use std::collections::HashMap;
 use uuid::Uuid as NativeUuid;
@@ -14,6 +17,7 @@ use uuid::Uuid as NativeUuid;
 use super::types::PollActionServerConfigResponse;
 use crate::{
     common::{ApiError, AppResult},
+    moderation::{self, ModerationRecord},
     servers,
 };
 
@@ -176,15 +180,11 @@ pub(super) async fn implement_change_server_config(
         .ok_or_else(|| {
             ApiError::new(StatusCode::NOT_FOUND, "Channel not found.")
         })?;
-    let config = server_configs::Entity::find()
-        .filter(server_configs::Column::ServerId.eq(channel.server_id))
-        .lock(LockType::Update)
-        .one(database)
-        .await
-        .map_err(internal_error)?
-        .ok_or_else(|| {
-            ApiError::new(StatusCode::NOT_FOUND, "Server config not found.")
-        })?;
+    let config = servers::server_configs::service::lock_server_config(
+        database,
+        channel.server_id,
+    )
+    .await?;
     let request = crate::servers::types::ServerConfigRequest {
         anonymous_users_enabled: change.anonymous_users_enabled,
         decision_making_model: change.decision_making_model,
@@ -196,10 +196,37 @@ pub(super) async fn implement_change_server_config(
         voting_time_limit: change.voting_time_limit,
         blocks_open_to_all: change.blocks_open_to_all,
     };
+    let before = servers::server_configs::service::config_snapshot(&config);
+    let config_id = config.id;
     servers::server_configs::service::apply_server_config(
         database, config, &request,
     )
-    .await
+    .await?;
+    let updated = server_configs::Entity::find_by_id(config_id)
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Server config not found.")
+        })?;
+    let after = servers::server_configs::service::config_snapshot(&updated);
+    if before != after {
+        moderation::record_action(
+            database,
+            ModerationRecord::proposal(
+                poll_id,
+                ModerationAction::UpdateServerConfig,
+                ModerationTargetKind::ServerConfig,
+                config_id,
+                channel.server_id,
+            )
+            .with_channel(channel.id)
+            .with_target_label("Server settings")
+            .with_values(Some(before), Some(after)),
+        )
+        .await?;
+    }
+    Ok(())
 }
 
 pub(super) async fn shape_poll_action_settings_map(

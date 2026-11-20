@@ -31,3 +31,6 @@ export const notificationPubSubTopic = (
   serverId: string | undefined,
   userId: string | undefined,
 ) => ['notification', serverId, userId].join(PUB_SUB_TOPIC_DELIMITER);
+
+export const accountPubSubTopic = (userId: string | undefined) =>
+  ['account', userId].join(PUB_SUB_TOPIC_DELIMITER);

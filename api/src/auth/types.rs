@@ -31,6 +31,14 @@ pub(super) struct SessionResponse {
     pub(super) access_token: Option<String>,
 }
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct AccountRevokedResponse {
+    pub(super) error: &'static str,
+    pub(super) reason: Option<String>,
+    pub(super) moderated_at: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(super) struct Claims {
     pub(super) sub: String,

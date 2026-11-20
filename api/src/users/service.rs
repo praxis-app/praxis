@@ -3,7 +3,7 @@ use entity::{channel_members, server_members, user_images, users};
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DatabaseConnection, DbErr, EntityTrait, IntoActiveModel, PaginatorTrait,
-    QueryFilter, QueryOrder, Set, SqlErr, TransactionTrait,
+    QueryFilter, QueryOrder, QuerySelect, Set, SqlErr, TransactionTrait,
 };
 use std::{collections::BTreeMap, path::Path};
 use uuid::Uuid as NativeUuid;
@@ -140,6 +140,55 @@ pub(crate) async fn is_anonymous_user(
         })?;
 
     Ok(user.anonymous)
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum AccountStatus {
+    Active,
+    Suspended,
+    Deleted,
+}
+
+pub(crate) async fn get_account_status<C>(
+    database: &C,
+    user_id: Uuid,
+) -> AppResult<AccountStatus>
+where
+    C: ConnectionTrait,
+{
+    let user = users::Entity::find_by_id(user_id)
+        .select_only()
+        .column(users::Column::Locked)
+        .column(users::Column::DeletedAt)
+        .into_tuple::<(bool, Option<sea_orm::prelude::DateTimeWithTimeZone>)>()
+        .one(database)
+        .await
+        .map_err(internal_error)?;
+    Ok(match user {
+        Some((_, Some(_))) => AccountStatus::Deleted,
+        Some((false, None)) => AccountStatus::Active,
+        _ => AccountStatus::Suspended,
+    })
+}
+
+/// Whether a user's account may open a websocket subscription. It must exist
+/// and be neither suspended nor deleted, and `registered_only` topics also
+/// refuse anonymous users
+pub(crate) async fn can_subscribe<C: ConnectionTrait>(
+    database: &C,
+    user_id: Uuid,
+    registered_only: bool,
+) -> AppResult<bool> {
+    let user = users::Entity::find_by_id(user_id)
+        .select_only()
+        .column(users::Column::Locked)
+        .column(users::Column::DeletedAt)
+        .column(users::Column::Anonymous)
+        .into_tuple::<(bool, Option<sea_orm::prelude::DateTimeWithTimeZone>, bool)>()
+        .one(database).await.map_err(internal_error)?;
+    Ok(user.is_some_and(|(locked, deleted_at, anonymous)| {
+        !locked && deleted_at.is_none() && (!registered_only || !anonymous)
+    }))
 }
 
 pub(crate) async fn authenticate(
@@ -672,7 +721,7 @@ fn api_error_to_create_user_error(error: ApiError) -> CreateUserError {
     CreateUserError::Database(DbErr::Custom(error.to_string()))
 }
 
-fn internal_error(error: impl std::fmt::Display) -> ApiError {
+pub(super) fn internal_error(error: impl std::fmt::Display) -> ApiError {
     tracing::error!("users request failed: {error}");
     ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Internal server error.")
 }

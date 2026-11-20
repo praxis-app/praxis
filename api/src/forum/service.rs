@@ -43,6 +43,7 @@ pub(super) async fn list_forum_posts(
     status: Option<&str>,
     before: Option<&str>,
     limit: u64,
+    user_id: Option<Uuid>,
 ) -> AppResult<ForumPostsResponse> {
     let status = parse_status_filter(status)?;
     let sort = parse_sort(sort)?;
@@ -83,7 +84,7 @@ pub(super) async fn list_forum_posts(
         }
         .encode()
     });
-    let posts = shape_post_summaries(database, posts).await?;
+    let posts = shape_post_summaries(database, posts, user_id).await?;
 
     Ok(ForumPostsResponse {
         posts,
@@ -175,12 +176,13 @@ pub(super) async fn create_forum_post(
         user_id: Set(user_id),
         root_message_id: Set(root_message_id),
         poll_id: Set(proposal.as_ref().map(|proposal| proposal.id)),
-        ciphertext: Set(encrypted_title.ciphertext),
-        iv: Set(encrypted_title.iv),
-        tag: Set(encrypted_title.tag),
+        ciphertext: Set(Some(encrypted_title.ciphertext)),
+        iv: Set(Some(encrypted_title.iv)),
+        tag: Set(Some(encrypted_title.tag)),
         key_id: Set(key.id),
         status: Set(ForumPostStatus::Open),
         latest_activity_at: Set(now),
+        moderated_at: Set(None),
         created_at: Set(now),
         updated_at: Set(now),
     }
@@ -347,14 +349,15 @@ pub(super) async fn update_forum_post(
     let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     ensure_owner(post.user_id, user_id, "Only the post author can edit it.")?;
     ensure_post_is_open(&post, "Closed forum posts cannot be edited.")?;
+    ensure_post_not_moderated(&post)?;
     let root_message_id = post.root_message_id;
     let now = Utc::now().fixed_offset();
     let mut active = post.into_active_model();
     if let Some((key_id, Some(encrypted_title), _)) = encrypted.as_ref() {
         active.key_id = Set(*key_id);
-        active.ciphertext = Set(encrypted_title.ciphertext.clone());
-        active.iv = Set(encrypted_title.iv.clone());
-        active.tag = Set(encrypted_title.tag.clone());
+        active.ciphertext = Set(Some(encrypted_title.ciphertext.clone()));
+        active.iv = Set(Some(encrypted_title.iv.clone()));
+        active.tag = Set(Some(encrypted_title.tag.clone()));
     }
     active.updated_at = Set(now);
     active.update(&transaction).await.map_err(internal_error)?;
@@ -587,7 +590,7 @@ pub(super) async fn create_forum_reply(
         .next()
         .ok_or_else(|| internal_consistency_error("Reply not found."))?;
     let post = get_post(database, channel_id, post_id).await?;
-    let summary = shape_post_summaries(database, vec![post])
+    let summary = shape_post_summaries(database, vec![post], None)
         .await?
         .into_iter()
         .next()
@@ -671,7 +674,7 @@ pub(super) async fn delete_forum_reply(
     transaction.commit().await.map_err(internal_error)?;
 
     let post = get_post(database, channel_id, post_id).await?;
-    shape_post_summaries(database, vec![post])
+    shape_post_summaries(database, vec![post], None)
         .await?
         .into_iter()
         .next()
@@ -763,7 +766,7 @@ fn latest_forum_activity(
         .expect("post creation always provides forum activity")
 }
 
-async fn get_post<C>(
+pub(super) async fn get_post<C>(
     database: &C,
     channel_id: Uuid,
     post_id: Uuid,
@@ -779,7 +782,7 @@ where
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "Post not found."))
 }
 
-async fn get_post_for_update<C>(
+pub(super) async fn get_post_for_update<C>(
     database: &C,
     channel_id: Uuid,
     post_id: Uuid,
@@ -874,6 +877,17 @@ fn ensure_post_is_open(
     }
 }
 
+fn ensure_post_not_moderated(post: &forum_posts::Model) -> AppResult<()> {
+    if post.moderated_at.is_none() {
+        Ok(())
+    } else {
+        Err(ApiError::new(
+            StatusCode::CONFLICT,
+            "Removed forum posts cannot be changed.",
+        ))
+    }
+}
+
 async fn ensure_post_can_close<C>(
     database: &C,
     post: &forum_posts::Model,
@@ -909,6 +923,7 @@ fn ensure_post_accepts_proposal(
         user_id,
         "Only the post author can create its proposal.",
     )?;
+    ensure_post_not_moderated(post)?;
     if post.status == ForumPostStatus::Closed {
         return Err(ApiError::new(
             StatusCode::CONFLICT,

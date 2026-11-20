@@ -30,7 +30,7 @@ export const ProposePermissionToggle = ({
   };
 
   return (
-    <div className="flex items-center justify-between space-x-2 py-2">
+    <div className="flex items-center justify-between gap-4 px-5 py-4">
       <div className="space-y-1">
         <Label
           htmlFor={`permission-${permissionName}`}
@@ -38,7 +38,9 @@ export const ProposePermissionToggle = ({
         >
           {displayName}
         </Label>
-        <p className="text-muted-foreground text-xs">{description}</p>
+        <p className="text-muted-foreground text-xs text-pretty">
+          {description}
+        </p>
       </div>
 
       <Switch

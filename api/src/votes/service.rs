@@ -27,9 +27,12 @@ use crate::{
     authz::{self, PermissionScope},
     channels,
     common::{request::parse_uuid, ApiError, AppResult},
-    forum, invites,
+    forum,
     notifications::{self as notifications_service, WithNotifications},
-    polls::{service as polls_service, PROPOSAL_BLOCK_SUBJECT},
+    polls::{
+        moderation as polls_moderation, service as polls_service,
+        PROPOSAL_BLOCK_SUBJECT,
+    },
     users as users_service,
 };
 
@@ -349,43 +352,6 @@ pub(super) async fn get_voters_by_poll_option(
         .collect())
 }
 
-pub(super) async fn can_read_poll_option(
-    database: &DatabaseConnection,
-    server_id: Uuid,
-    channel_id: Uuid,
-    poll_id: Uuid,
-    current_user_id: Option<Uuid>,
-    invite_token: Option<&str>,
-) -> AppResult<()> {
-    if let Some(user_id) = current_user_id {
-        if channels::is_channel_member(database, channel_id, user_id).await? {
-            return Ok(());
-        }
-    }
-
-    if polls_service::is_public_channel_poll(
-        database, server_id, channel_id, poll_id,
-    )
-    .await?
-    {
-        return Ok(());
-    }
-
-    if let Some(invite_token) = invite_token {
-        if invites::service::is_valid_invite_for_server(
-            database,
-            invite_token,
-            server_id,
-        )
-        .await?
-        {
-            return Ok(());
-        }
-    }
-
-    Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."))
-}
-
 pub(super) async fn ensure_poll_option_exists(
     database: &DatabaseConnection,
     poll_id: Uuid,
@@ -554,6 +520,7 @@ async fn ensure_poll_accepts_vote_mutations<C>(
 where
     C: ConnectionTrait,
 {
+    polls_moderation::ensure_voting_not_paused(poll)?;
     if forum_posts::Entity::find()
         .filter(forum_posts::Column::PollId.eq(poll.id))
         .filter(forum_posts::Column::Status.eq(ForumPostStatus::Closed))

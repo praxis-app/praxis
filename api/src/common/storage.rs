@@ -11,3 +11,18 @@ pub(crate) fn upload_root() -> PathBuf {
                 .join("content")
         })
 }
+
+pub(crate) async fn remove_stored_files(
+    upload_root: &Path,
+    storage_keys: &[String],
+) {
+    for storage_key in storage_keys {
+        match tokio::fs::remove_file(upload_root.join(storage_key)).await {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => {
+                tracing::warn!("failed to remove stored file: {error}");
+            }
+        }
+    }
+}

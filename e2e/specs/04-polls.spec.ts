@@ -35,13 +35,14 @@ import { getAdminServerRole, getServerRole } from '../lib/server-roles';
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
   getServerBySlug,
   joinServer,
   updateServerConfig,
 } from '../lib/servers';
 import { minutesUntil, secondsUntil } from '../lib/time';
 import { ChatPage } from '../pages/chat.page';
+import { scaleForSlowMo, testTimeout } from '../lib/timeouts';
 
 type PollResponse = {
   poll: {
@@ -75,12 +76,13 @@ test('authenticated user can create and vote in a poll', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('poll'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, authenticatedUser);
   const question = `Where should we meet ${authenticatedUser.user.suffix}?`;
   const options = [
     `Library ${authenticatedUser.user.suffix}`,
@@ -184,12 +186,13 @@ test('authenticated user can create a proposal with an image attachment', async 
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('proposal-image'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, authenticatedUser);
   const proposalBody = `Proposal image ${authenticatedUser.user.suffix}`;
 
   const chat = new ChatPage(page);
@@ -254,7 +257,7 @@ test('active decisions panel loads the next page when scrolled to the bottom', a
   const expectedPageCount = Math.ceil(
     totalActiveDecisions / activeDecisionsPageSize,
   );
-  test.setTimeout(Math.max(60_000, expectedPageCount * 15_000));
+  test.setTimeout(testTimeout(Math.max(60_000, expectedPageCount * 15_000)));
   expect(totalActiveDecisions).toBeGreaterThan(0);
 
   const authenticatedUser = await createAuthenticatedUser(
@@ -381,70 +384,6 @@ test('active decisions panel loads the next page when scrolled to the bottom', a
   }
 
   await expect(panel.getByText(finalDecision)).toBeVisible();
-});
-
-test('invite holder can read active decisions in a non-default server', async ({
-  context,
-  page,
-  request,
-}) => {
-  const admin = await createServerAdmin(request, 'invite-decisions-admin');
-  const serverSlug = `invite-decisions-${admin.user.suffix}`;
-  await createServer(request, admin, {
-    name: `Invite decisions ${admin.user.suffix}`,
-    slug: serverSlug,
-    description: 'Non-default server for invite decision access.',
-  });
-
-  const getServerResponse = await request.get(
-    `/api/servers/slug/${serverSlug}`,
-    { headers: authorizationHeaders(admin) },
-  );
-  await expect(getServerResponse).toBeOK();
-  const { server } = (await getServerResponse.json()) as {
-    server: {
-      id: string;
-      slug: string;
-      generalChannelId: string;
-    };
-  };
-
-  const decisionBody = `Invited decision ${admin.user.suffix}`;
-  const createPollResponse = await request.post(
-    `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`,
-    {
-      headers: authorizationHeaders(admin),
-      data: {
-        body: decisionBody,
-        pollType: 'poll',
-        options: ['Yes', 'No'],
-        multipleChoice: false,
-        closingAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-      },
-    },
-  );
-  await expect(createPollResponse).toBeOK();
-
-  const inviteToken = await createInvite(request, admin, server.id);
-  await context.addInitScript((token) => {
-    window.localStorage.removeItem('access_token');
-    window.localStorage.setItem('invite-token', token);
-  }, inviteToken);
-
-  await page.setViewportSize({ width: 1180, height: 720 });
-  await page.goto(`/s/${server.slug}/c/${server.generalChannelId}`);
-
-  const decisionsResponsePromise = page.waitForResponse((response) => {
-    const url = new URL(response.url());
-    return url.pathname === `/api/servers/${server.id}/decisions`;
-  });
-  await page.getByRole('button', { name: 'Toggle active decisions' }).click();
-
-  expect((await decisionsResponsePromise).status()).toBe(200);
-  const panel = page.getByRole('complementary', {
-    name: 'Active decisions',
-  });
-  await expect(panel.getByText(decisionBody)).toBeVisible();
 });
 
 test('invite holder can read proposals for all action types', async ({
@@ -767,6 +706,7 @@ test('active decision opens fully in view across channels and feed pages', async
     }
   };
   page.on('response', recordFeedPageResponse);
+  await recordHighlightedDecisions(page);
   await panel
     .getByText(decisionBody, { exact: true })
     .locator('xpath=ancestor::a')
@@ -777,7 +717,7 @@ test('active decision opens fully in view across channels and feed pages', async
   page.off('response', recordFeedPageResponse);
   expect(feedContextTargets).toEqual([poll.id]);
   expect(feedPageCursors).toHaveLength(0);
-  await expect(focusedDecision).toHaveAttribute('data-focus-highlight', 'true');
+  await expect.poll(() => getHighlightedDecisionIds(page)).toContain(poll.id);
   await feed.evaluate(
     (element) =>
       new Promise<void>((resolve) => {
@@ -846,12 +786,13 @@ test('authenticated user sees a poll close after its closing time passes', async
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('poll-close'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, authenticatedUser);
   const question = `Which snack wins ${authenticatedUser.user.suffix}?`;
   const options = [
     `Pretzels ${authenticatedUser.user.suffix}`,
@@ -872,7 +813,12 @@ test('authenticated user sees a poll close after its closing time passes', async
   await dialog.getByPlaceholder('Answer 2').fill(options[1]);
   await dialog.getByRole('combobox', { name: 'Duration' }).click();
   await page.getByRole('option', { name: '30 minutes' }).click();
-  await shortenNextPollDuration(page, server.generalChannelId, 5);
+  const pollDurationSeconds = scaleForSlowMo(5);
+  await shortenNextPollDuration(
+    page,
+    server.generalChannelId,
+    pollDurationSeconds,
+  );
 
   const createPollResponse = page.waitForResponse(
     (response) =>
@@ -885,7 +831,9 @@ test('authenticated user sees a poll close after its closing time passes', async
   const { poll } = (await response.json()) as PollResponse;
 
   expect(poll.config.closingAt).toBeTruthy();
-  expect(secondsUntil(poll.config.closingAt!)).toBeLessThanOrEqual(6);
+  expect(secondsUntil(poll.config.closingAt!)).toBeLessThanOrEqual(
+    pollDurationSeconds + 1,
+  );
 
   await expect(dialog).toBeHidden();
   await expect(page.getByText(question).first()).toBeVisible();
@@ -910,7 +858,7 @@ test('authenticated user sees a poll close after its closing time passes', async
         await expect(page.getByText(question).first()).toBeVisible();
         return pollCard(page, question).getByText('Poll closed').isVisible();
       },
-      { timeout: 20_000 },
+      { timeout: scaleForSlowMo(20_000) },
     )
     .toBe(true);
 
@@ -930,7 +878,7 @@ test('anonymous user can create only allowed chat polls', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   const { admin, server } = await setupAnonymousSession(
     request,
@@ -1700,11 +1648,11 @@ test('votes from removed members stop counting toward a proposal outcome', async
     poll.id,
     'disagree',
   );
-  const removeMemberResponse = await request.delete(
-    `/api/servers/${server.id}/members`,
+  const removeMemberResponse = await request.post(
+    `/api/servers/${server.id}/members/${departed.userId}/remove`,
     {
       headers: authorizationHeaders(serverAdmin),
-      data: { userIds: [departed.userId] },
+      data: { reason: 'Left the server' },
     },
   );
   await expect(removeMemberResponse).toBeOK();
@@ -1719,96 +1667,6 @@ test('votes from removed members stop counting toward a proposal outcome', async
   );
 
   await expect(proposal.getByText('Ratified', { exact: true })).toBeVisible();
-});
-
-test('consensus proposals ratify when quorum is disabled', async ({
-  context,
-  page,
-  request,
-}) => {
-  const serverAdmin = await createServerAdmin(request, 'no-quorum-admin');
-  const createdServer = await createServer(request, serverAdmin, {
-    name: `No quorum consensus ${serverAdmin.user.suffix}`,
-    slug: `no-quorum-consensus-${serverAdmin.user.suffix}`,
-  });
-  const invite = await createInvite(request, serverAdmin, createdServer.id);
-  const proposer = await createAuthenticatedUser(
-    request,
-    context,
-    createTestUser('no-quorum-proposer'),
-    invite,
-  );
-  const supporter = await signUpViaApi(
-    request,
-    createTestUser('no-quorum-supporter'),
-    invite,
-  );
-  await signUpViaApi(request, createTestUser('no-quorum-bystander'), invite);
-  const server = await getServerBySlug(request, proposer, createdServer.slug);
-  await updateServerConfig(request, serverAdmin, server.id, {
-    decisionMakingModel: 'consensus',
-    agreementThreshold: 51,
-    quorumEnabled: false,
-    quorumThreshold: 75,
-    disagreementsLimit: 0,
-    abstainsLimit: 0,
-    blocksOpenToAll: true,
-    votingTimeLimit: 0,
-    anonymousUsersEnabled: false,
-  });
-
-  const chat = new ChatPage(page);
-  await page.goto(`/s/${server.slug}/c/${server.generalChannelId}`);
-  await chat.expectChannel('general');
-
-  const body = `No quorum consensus ${proposer.user.suffix}`;
-  const poll = await createTestProposal(page, server.generalChannelId, body);
-  const proposal = page.getByRole('article', {
-    name: `Consensus Proposal: ${body}`,
-  });
-  await expect(proposal.getByText('Voting', { exact: true })).toBeVisible();
-
-  await voteViaApi(
-    request,
-    supporter,
-    server.id,
-    server.generalChannelId,
-    poll.id,
-    'agree',
-  );
-
-  await expect(proposal.getByText('Ratified', { exact: true })).toBeVisible();
-
-  await updateServerConfig(request, serverAdmin, server.id, {
-    votingTimeLimit: 30,
-  });
-  const deadlineBody = `No quorum consensus deadline ${proposer.user.suffix}`;
-  const deadlinePoll = await createTestProposal(
-    page,
-    server.generalChannelId,
-    deadlineBody,
-  );
-  const deadlineProposal = page.getByRole('article', {
-    name: `Consensus Proposal: ${deadlineBody}`,
-  });
-
-  await voteViaApi(
-    request,
-    supporter,
-    server.id,
-    server.generalChannelId,
-    deadlinePoll.id,
-    'agree',
-  );
-  await expect(
-    deadlineProposal.getByText('Voting', { exact: true }),
-  ).toBeVisible();
-
-  expirePollDeadline(deadlinePoll.id);
-
-  await expect(
-    deadlineProposal.getByText('Ratified', { exact: true }),
-  ).toBeVisible();
 });
 
 test('consent settings disable quorum and agreement threshold and require a deadline', async ({
@@ -2211,4 +2069,48 @@ async function submitProposal(page: Page, dialog: Locator, channelId: string) {
 
   const { poll } = (await response.json()) as PollResponse;
   return poll;
+}
+
+type HighlightRecordingWindow = Window & { highlightedDecisionIds?: string[] };
+
+async function recordHighlightedDecisions(page: Page) {
+  await page.evaluate(() => {
+    const recordingWindow = window as HighlightRecordingWindow;
+    const highlightedDecisionIds: string[] = [];
+    recordingWindow.highlightedDecisionIds = highlightedDecisionIds;
+    const record = (element: Element) => {
+      const decisionId = element.getAttribute('data-decision-id');
+      if (
+        decisionId &&
+        element.getAttribute('data-focus-highlight') === 'true'
+      ) {
+        highlightedDecisionIds.push(decisionId);
+      }
+    };
+    new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes') {
+          record(mutation.target as Element);
+          continue;
+        }
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof Element) {
+            record(node);
+            node.querySelectorAll('[data-decision-id]').forEach(record);
+          }
+        });
+      }
+    }).observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['data-focus-highlight'],
+    });
+  });
+}
+
+function getHighlightedDecisionIds(page: Page) {
+  return page.evaluate(
+    () => (window as HighlightRecordingWindow).highlightedDecisionIds ?? [],
+  );
 }

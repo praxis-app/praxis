@@ -146,7 +146,7 @@ export const ChannelCallButton = ({
 
         toast(t('calls.errors.unavailable'), { id: 'calls-unavailable' });
       }}
-      onDisconnected={onLeave}
+      onDisconnected={() => void onLeave()}
     >
       <RoomAudioRenderer />
       <CallPanel

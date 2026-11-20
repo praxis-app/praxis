@@ -8,13 +8,18 @@ use std::sync::Arc;
 
 use super::{
     livekit::LiveKitConfig,
+    moderation::{self, CallModeration, ModeratedCall},
     service,
-    types::{CallPath, CallPayload, JoinCallResponse},
+    types::{
+        CallArtifactPayload, CallParticipantPath, CallPath, CallPayload,
+        JoinCallResponse,
+    },
 };
 use crate::{
-    auth::HasJwtSecret,
+    auth::{AuthenticatedUser, HasJwtSecret},
     channels::extractors::{ChannelWriteContext, HasDatabase},
     common::{ApiError, AppResult},
+    moderation::ModerationReasonRequest,
     pub_sub::PubSubService,
 };
 
@@ -168,6 +173,100 @@ pub(crate) async fn leave_call(
     }
 
     Ok(Json(CallPayload { call }))
+}
+
+pub(crate) async fn end_call(
+    State(state): State<CallsState>,
+    Path(path): Path<CallPath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<CallArtifactPayload>> {
+    let ended = moderation::end_call_as_moderator(
+        &state.database,
+        state.livekit.as_ref(),
+        &CallModeration {
+            server_id: path.server_id,
+            channel_id: path.channel_id,
+            call_id: path.call_id,
+            actor_user_id: user_id,
+            reason: payload.and_then(|Json(payload)| payload.reason),
+        },
+    )
+    .await?;
+    if let Err(error) = service::broadcast_moderated_call(
+        &state.database,
+        state.pub_sub_service.as_ref(),
+        user_id,
+        &ended.call,
+    )
+    .await
+    {
+        tracing::warn!("failed to broadcast moderated call: {error}");
+    }
+    notify_call_moderated(&state, "ended", &ended).await;
+
+    Ok(Json(CallArtifactPayload { call: ended.call }))
+}
+
+pub(crate) async fn remove_participant(
+    State(state): State<CallsState>,
+    Path(path): Path<CallParticipantPath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<CallArtifactPayload>> {
+    let removed = moderation::remove_call_participant(
+        &state.database,
+        state.livekit.as_ref(),
+        &CallModeration {
+            server_id: path.server_id,
+            channel_id: path.channel_id,
+            call_id: path.call_id,
+            actor_user_id: user_id,
+            reason: payload.and_then(|Json(payload)| payload.reason),
+        },
+        path.user_id,
+    )
+    .await?;
+    if let Err(error) = service::notify_removed_participant(
+        state.pub_sub_service.as_ref(),
+        path.server_id,
+        path.channel_id,
+        path.user_id,
+        &removed.call,
+    )
+    .await
+    {
+        tracing::warn!("failed to notify removed call participant: {error}");
+    }
+    notify_call_moderated(&state, "removed", &removed).await;
+    if let Some(pub_sub_service) = state.pub_sub_service.as_ref() {
+        crate::notifications::publish_notifications(
+            &state.database,
+            pub_sub_service,
+            &removed.notifications,
+        )
+        .await;
+    }
+
+    Ok(Json(CallArtifactPayload { call: removed.call }))
+}
+
+async fn notify_call_moderated(
+    state: &CallsState,
+    action: &str,
+    moderated: &ModeratedCall,
+) {
+    if let Err(error) = service::notify_call_moderated(
+        state.pub_sub_service.as_ref(),
+        action,
+        &moderated.call,
+        moderated.reason.as_deref(),
+        &moderated.disconnected_user_ids,
+    )
+    .await
+    {
+        tracing::warn!("failed to notify moderated call participants: {error}");
+    }
 }
 
 // TODO: Rename to handle_livekit_webhook

@@ -84,3 +84,38 @@ export const replaceProposalWithForumReference = (
     })),
   };
 };
+
+export const updateFeedPoll = (
+  data: FeedQuery | undefined,
+  poll: Extract<FeedItemRes, { type: 'poll' }>,
+  insertIfMissing = false,
+): FeedQuery | undefined => {
+  const matches = (item: FeedItemRes) =>
+    item.type === 'poll' && item.id === poll.id;
+  if (data?.pages.some((page) => page.feed.some(matches))) {
+    return {
+      ...data,
+      pages: data.pages.map((page) => ({
+        ...page,
+        feed: page.feed.map((item) => (matches(item) ? poll : item)),
+      })),
+    };
+  }
+  if (!insertIfMissing) return data;
+  const [first, ...rest] = data?.pages ?? [];
+  const oldest = first?.feed.at(-1);
+  if (
+    first?.hasMore &&
+    oldest &&
+    Date.parse(poll.createdAt) < Date.parse(oldest.createdAt)
+  ) {
+    return data;
+  }
+  const feed = [...(first?.feed ?? []), poll].sort(
+    (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
+  );
+  return {
+    pages: [{ ...first, feed }, ...rest],
+    pageParams: data?.pageParams ?? [null],
+  };
+};

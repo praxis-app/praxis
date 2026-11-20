@@ -1,3 +1,4 @@
+import { ServerAccessGuard } from '@/components/servers/server-access-guard';
 import { ServerHomePage } from '@/pages/servers/server-home-page';
 import { channelsRouter } from '@/routes/channels.router';
 import { serverSettingsRouter } from '@/routes/server-settings.router';
@@ -7,6 +8,7 @@ import { EventDetailPage } from '@/pages/events/event-detail-page';
 
 export const serversRouter: RouteObject = {
   path: 's/:serverSlug',
+  element: <ServerAccessGuard />,
   children: [
     {
       index: true,

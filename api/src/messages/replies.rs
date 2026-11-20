@@ -443,7 +443,7 @@ pub(super) async fn broadcast_reply(
     created: &CreatedReply,
 ) -> AppResult<()> {
     let body = serde_json::json!({
-        "type": "threadReply",
+        "type": "thread-reply",
         "rootKind": "message",
         "rootId": created.reply.thread_root_id,
         "rootMessageId": created.reply.thread_root_id,

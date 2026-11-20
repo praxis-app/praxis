@@ -1,10 +1,10 @@
 import { type WizardStepProps } from '@/components/shared/wizard/wizard.types';
-import { SERVER_PERMISSION_KEYS } from '@/constants/role.constants';
+import { RolePermissionSection } from '@/components/roles/role-permission-section';
+import { SERVER_PERMISSION_SECTIONS } from '@/constants/role.constants';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useWizardContext } from '../../../../shared/wizard/wizard-hooks';
 import { Button } from '../../../../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../ui/card';
 import { ProposePermissionToggle } from '../../proposal-actions/propose-permission-toggle';
 import { type CreateProposalFormSchema } from '../create-proposal-form.types';
 
@@ -34,15 +34,13 @@ export const ServerRolePermissionsStep = ({ isLoading }: WizardStepProps) => {
         </p>
       </div>
 
-      <div className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              {t('proposals.headers.permissions')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {SERVER_PERMISSION_KEYS.map((permissionName) => (
+      <div className="space-y-6">
+        {SERVER_PERMISSION_SECTIONS.map(({ name, permissions }) => (
+          <RolePermissionSection
+            key={name}
+            label={t(`permissions.sections.${name}`)}
+          >
+            {permissions.map((permissionName) => (
               <ProposePermissionToggle
                 key={permissionName}
                 formPermissions={formPermissions}
@@ -50,8 +48,8 @@ export const ServerRolePermissionsStep = ({ isLoading }: WizardStepProps) => {
                 setValue={form.setValue}
               />
             ))}
-          </CardContent>
-        </Card>
+          </RolePermissionSection>
+        ))}
       </div>
 
       <div className="flex justify-between">

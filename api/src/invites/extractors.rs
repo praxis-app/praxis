@@ -53,6 +53,7 @@ pub(crate) struct CanCreateInviteContext {
 pub(crate) struct CanManageInviteContext {
     pub(super) server_id: Uuid,
     pub(super) invite_id: Uuid,
+    pub(super) user_id: Uuid,
 }
 
 impl FromRequestParts<InvitesState> for CanCreateInviteContext {
@@ -111,6 +112,7 @@ impl FromRequestParts<InvitesState> for CanManageInviteContext {
         Ok(Self {
             server_id: path.server_id,
             invite_id: path.invite_id,
+            user_id,
         })
     }
 }

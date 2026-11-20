@@ -120,7 +120,11 @@ export const MessageForm = ({
     );
   };
 
-  const { mutate: sendMessage, isPending: isMessageSending } = useMutation({
+  const {
+    mutate: sendMessage,
+    mutateAsync: sendMessageAsync,
+    isPending: isMessageSending,
+  } = useMutation({
     mutationFn: async ({ body }: zod.infer<typeof formSchema>) => {
       if (!serverId) {
         throw new Error('Server ID is required');
@@ -602,7 +606,9 @@ export const MessageForm = ({
           <ChooseAuthDialog
             isOpen={isAuthPromptOpen}
             setIsOpen={setIsAuthPromptOpen}
-            sendMessage={handleSubmit((values) => sendMessage(values))}
+            sendMessage={handleSubmit(async (values) => {
+              await sendMessageAsync(values).catch(() => undefined);
+            })}
           />
 
           {!isEmpty ? (

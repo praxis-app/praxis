@@ -19,7 +19,7 @@ import { grantServerPermissions } from '../lib/server-roles';
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
   getServerBySlug,
   joinServer,
 } from '../lib/servers';
@@ -29,9 +29,13 @@ test('removed server members lose the permissions their roles granted', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
-  const member = await signUpViaApi(request, createTestUser('removed-member'));
-  const server = await getDefaultServer(request, instanceAdmin);
+  const member = await signUpViaApi(
+    request,
+    createTestUser('removed-member'),
+    server.inviteToken,
+  );
   await grantServerPermissions(
     request,
     instanceAdmin,
@@ -53,17 +57,19 @@ test('removed server members lose the permissions their roles granted', async ({
   await seedAuthenticatedSession(context, instanceAdmin.accessToken);
   await page.goto(`/settings/servers/${server.id}/edit?tab=members`);
   await page
-    .getByText(member.user.name, { exact: true })
-    .locator('xpath=ancestor::div[contains(@class, "justify-between")][1]')
-    .getByRole('button')
+    .getByRole('button', { name: `Actions for ${member.user.name}` })
     .click();
+  await page.getByRole('menuitem', { name: 'Remove member' }).click();
   const dialog = page.getByRole('dialog', { name: 'Remove server member?' });
+  await dialog.getByRole('textbox').fill('No longer active');
   const removeMemberResponse = page.waitForResponse(
     (response) =>
-      response.request().method() === 'DELETE' &&
-      response.url().endsWith(`/api/servers/${server.id}/members`),
+      response.request().method() === 'POST' &&
+      response
+        .url()
+        .endsWith(`/api/servers/${server.id}/members/${member.userId}/remove`),
   );
-  await dialog.getByRole('button', { name: 'Remove' }).click();
+  await dialog.getByRole('button', { name: 'Remove', exact: true }).click();
   expect((await removeMemberResponse).ok()).toBe(true);
   await expect(page.getByText(member.user.name, { exact: true })).toHaveCount(
     0,
@@ -80,9 +86,13 @@ test('granting and revoking a server role changes what a member can do', async (
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
-  const member = await signUpViaApi(request, createTestUser('role-member'));
-  const server = await getDefaultServer(request, instanceAdmin);
+  const member = await signUpViaApi(
+    request,
+    createTestUser('role-member'),
+    server.inviteToken,
+  );
   const roleName = `e2e-channels-${randomUUID().slice(0, 8)}`;
 
   await seedAuthenticatedSession(context, instanceAdmin.accessToken);

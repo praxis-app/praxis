@@ -4,7 +4,13 @@ mod validation;
 
 pub(crate) mod can;
 
-pub(crate) use can::{can, filter_users_who_can, PermissionScope};
+pub(crate) use can::{
+    can, filter_users_who_can, filter_users_who_can_including_instance,
+    is_granted, LoadedPermissions, PermissionScope,
+};
 pub(crate) use defaults::{ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR};
 pub(crate) use types::{PermissionMap, PermissionRule};
-pub(crate) use validation::validate_permissions;
+pub(crate) use validation::{
+    is_valid_action, validate_permissions, INSTANCE_CAPABILITY_ACTIONS,
+    SERVER_CAPABILITY_ACTIONS,
+};

@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 use super::models::UserRecord;
-use crate::{authz::PermissionRule, servers::types::ServerResponse};
+use crate::{
+    authz::PermissionRule,
+    servers::types::{MemberModerationState, ServerResponse},
+};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -92,6 +95,34 @@ pub(super) struct UserProfileResponse {
 }
 
 #[derive(Debug, Serialize)]
+pub(super) struct UserModerationPayload {
+    pub(super) moderation: UserModerationResponse,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UserModerationResponse {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) account: Option<AccountModerationState>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) server: Option<MemberModerationState>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct AccountModerationState {
+    pub(super) locked: bool,
+    pub(super) deleted_at: Option<String>,
+    pub(super) can_be_moderated: bool,
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UserModerationQuery {
+    pub(super) server_id: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
 pub(super) struct UserProfilePayload {
     pub(super) user: UserProfileResponse,
 }
@@ -133,4 +164,37 @@ pub(crate) struct UserConfigResponse {
 #[serde(rename_all = "camelCase")]
 pub(super) struct UserConfigPayload {
     pub(super) user_config: UserConfigResponse,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UserPath {
+    pub(super) user_id: Uuid,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub(super) struct InstanceUsersQuery {
+    pub(super) before: Option<String>,
+    pub(super) limit: Option<u64>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct InstanceUserResponse {
+    pub(super) id: String,
+    pub(super) name: String,
+    pub(super) display_name: Option<String>,
+    pub(super) anonymous: bool,
+    pub(super) locked: bool,
+    pub(super) deleted_at: Option<String>,
+    pub(super) profile_picture: Option<UserImageRef>,
+    pub(super) created_at: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct InstanceUsersResponse {
+    pub(super) users: Vec<InstanceUserResponse>,
+    pub(super) next_cursor: Option<String>,
+    pub(super) has_more: bool,
 }

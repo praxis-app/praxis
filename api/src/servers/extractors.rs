@@ -4,7 +4,11 @@ use axum::{
 };
 use sea_orm::prelude::Uuid;
 
-use super::{handlers::ServersState, service, types::ServerPath};
+use super::{
+    handlers::ServersState,
+    moderation, service,
+    types::{ServerMemberPath, ServerPath},
+};
 use crate::{
     auth::AuthenticatedUser, common::ApiError, invites::InviteAccessToken,
 };
@@ -86,5 +90,70 @@ impl FromRequestParts<ServersState> for CanManageServersContext {
         service::can_manage_servers(&state.database, user_id).await?;
 
         Ok(Self { user_id })
+    }
+}
+
+pub(super) struct CanManageServerMembersContext {
+    pub(super) path: ServerPath,
+}
+
+impl FromRequestParts<ServersState> for CanManageServerMembersContext {
+    type Rejection = ApiError;
+
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &ServersState,
+    ) -> Result<Self, Self::Rejection> {
+        let Path(path) = Path::<ServerPath>::from_request_parts(parts, state)
+            .await
+            .map_err(|_| {
+                ApiError::new(StatusCode::BAD_REQUEST, "Invalid route path.")
+            })?;
+        let AuthenticatedUser(user_id) =
+            AuthenticatedUser::from_request_parts(parts, state).await?;
+
+        moderation::can_manage_server_members(
+            &state.database,
+            user_id,
+            path.server_id,
+        )
+        .await?;
+
+        Ok(Self { path })
+    }
+}
+
+pub(super) struct CanModerateServerMemberContext {
+    pub(super) path: ServerMemberPath,
+    pub(super) user_id: Uuid,
+}
+
+impl FromRequestParts<ServersState> for CanModerateServerMemberContext {
+    type Rejection = ApiError;
+
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &ServersState,
+    ) -> Result<Self, Self::Rejection> {
+        let Path(path) =
+            Path::<ServerMemberPath>::from_request_parts(parts, state)
+                .await
+                .map_err(|_| {
+                    ApiError::new(
+                        StatusCode::BAD_REQUEST,
+                        "Invalid route path.",
+                    )
+                })?;
+        let AuthenticatedUser(user_id) =
+            AuthenticatedUser::from_request_parts(parts, state).await?;
+
+        moderation::can_manage_server_members(
+            &state.database,
+            user_id,
+            path.server_id,
+        )
+        .await?;
+
+        Ok(Self { path, user_id })
     }
 }

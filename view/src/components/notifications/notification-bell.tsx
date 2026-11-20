@@ -62,11 +62,11 @@ export const NotificationBell = () => {
 
   const selectNotification = (notification: NotificationRes) => {
     const route = getNotificationTargetRoute(notification, serverSlug);
-    if (!route) {
-      return;
-    }
     if (!notification.readAt) {
       markRead(notification);
+    }
+    if (!route) {
+      return;
     }
     closeAndNavigate(route.path, route.state);
   };

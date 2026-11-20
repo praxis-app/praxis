@@ -14,12 +14,13 @@ pub struct Model {
     pub root_message_id: Uuid,
     #[sea_orm(unique)]
     pub poll_id: Option<Uuid>,
-    pub ciphertext: Vec<u8>,
-    pub iv: Vec<u8>,
-    pub tag: Vec<u8>,
+    pub ciphertext: Option<Vec<u8>>,
+    pub iv: Option<Vec<u8>>,
+    pub tag: Option<Vec<u8>>,
     pub key_id: Uuid,
     pub status: ForumPostStatus,
     pub latest_activity_at: DateTimeWithTimeZone,
+    pub moderated_at: Option<DateTimeWithTimeZone>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
