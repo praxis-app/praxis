@@ -1187,6 +1187,7 @@
     "labels": {
       "bannedOn": "Banned on {{date}}",
       "bannedUsers": "Banned users",
+      "createdOn": "Created {{date}}",
       "current": "Current server",
       "default": "Default",
       "membersCount_one": "{{count}} member",
@@ -1421,13 +1422,14 @@
       "instanceSettings": "Instance Settings"
     },
     "labels": {
-      "auditLog": "Audit Log",
       "general": "General",
       "settings": "Manage Settings",
       "serverSettings": "Server settings",
+      "serverAuditLog": "Server Audit Log",
       "serverRoles": "Server Roles",
       "instanceSettings": "Instance settings",
       "switchServers": "Switch servers",
+      "instanceAuditLog": "Instance Audit Log",
       "instanceRoles": "Instance Roles",
       "proposals": "Proposals",
       "invites": "Invite Links",
@@ -1437,7 +1439,7 @@
       "notifications": "Notifications",
       "profile": "Profile",
       "userSettings": "Settings",
-      "users": "Users"
+      "users": "User Accounts"
     },
     "descriptions": {
       "navDrawer": "View server details and available server actions.",

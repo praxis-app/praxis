@@ -1,5 +1,6 @@
 import { TopNav } from '@/components/nav/top-nav';
 import { PermissionDenied } from '@/components/shared/permission-denied';
+import { CurrentServerCard } from '@/components/settings/current-server-card';
 import { SettingsNavItem } from '@/components/settings/settings-nav-item';
 import { Container } from '@/components/ui/container';
 import { NavigationPaths } from '@/constants/shared.constants';
@@ -21,7 +22,7 @@ import {
 
 export const Settings = () => {
   const { t } = useTranslation();
-  const { serverPath } = useServerData();
+  const { server, serverPath } = useServerData();
   const { serverAbility, instanceAbility, isLoading } = useAbility();
 
   const {
@@ -68,6 +69,16 @@ export const Settings = () => {
             <p className="text-muted-foreground mt-1 mb-4 text-sm">
               {t('settings.descriptions.serverSection')}
             </p>
+            {server && (
+              <CurrentServerCard
+                server={server}
+                membersPath={
+                  canManageServerMembers
+                    ? `${serverPath}${NavigationPaths.Members}`
+                    : undefined
+                }
+              />
+            )}
             <div className="flex flex-col gap-3">
               {canManageServerSettings && (
                 <>
@@ -107,7 +118,7 @@ export const Settings = () => {
               {canViewServerAuditLog && (
                 <SettingsNavItem
                   Icon={MdHistory}
-                  label={t('navigation.labels.auditLog')}
+                  label={t('navigation.labels.serverAuditLog')}
                   to={`${serverPath}${NavigationPaths.AuditLog}`}
                 />
               )}
@@ -151,7 +162,7 @@ export const Settings = () => {
               {canViewInstanceAuditLog && (
                 <SettingsNavItem
                   Icon={MdHistory}
-                  label={t('navigation.labels.auditLog')}
+                  label={t('navigation.labels.instanceAuditLog')}
                   to={NavigationPaths.AuditLog}
                 />
               )}
