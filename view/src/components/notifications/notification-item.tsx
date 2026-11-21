@@ -186,7 +186,7 @@ export const NotificationItem = ({
           </div>
         )}
         {notification.actor && (
-          <span className="bg-background absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border shadow-sm">
+          <span className="bg-background absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border">
             {getIcon(notification, 'size-3 -translate-y-px')}
           </span>
         )}
