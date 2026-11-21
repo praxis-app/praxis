@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { parseDateValue, toDateValue } from '@/lib/event.utils';
 import { cn } from '@/lib/shared.utils';
 import {
-  type AuditLogFilterValuesRes,
   type AuditLogFilters as AuditLogFilterState,
+  type AuditLogFilterValuesRes,
   type AuditLogScope,
 } from '@/types/moderation.types';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,10 @@ import { AuditLogFilterSelect } from './audit-log-filter-select';
 import { AuditLogSearchInput } from './audit-log-search-input';
 
 const FIELD_CLASS_NAME = 'min-w-0';
+
+const SELECT_FIELD_CLASS_NAME =
+  'min-w-0 min-[22.5rem]:col-span-2 sm:col-span-1';
+
 const DATE_TRIGGER_CLASS_NAME =
   'dark:bg-input/30 dark:hover:bg-input/50 h-9 rounded-md bg-transparent px-3 text-sm shadow-xs hover:bg-transparent sm:h-9 [&>svg]:size-4';
 
@@ -100,7 +104,8 @@ export const AuditLogFilters = ({
         <div
           className={cn(
             FIELD_CLASS_NAME,
-            isSearchFullWidth && 'min-[22.5rem]:col-span-2',
+            'min-[22.5rem]:col-span-2',
+            !isSearchFullWidth && 'sm:col-span-1',
           )}
         >
           <AuditLogSearchInput
@@ -113,7 +118,7 @@ export const AuditLogFilters = ({
             onChange={(value) => setFilter('search', value)}
           />
         </div>
-        <div className={FIELD_CLASS_NAME}>
+        <div className={SELECT_FIELD_CLASS_NAME}>
           <AuditLogFilterSelect
             label={t('auditLog.filters.actor')}
             value={filters.actorId}
@@ -121,7 +126,7 @@ export const AuditLogFilters = ({
             onChange={(value) => setFilter('actorId', value)}
           />
         </div>
-        <div className={FIELD_CLASS_NAME}>
+        <div className={SELECT_FIELD_CLASS_NAME}>
           <AuditLogFilterSelect
             label={t('auditLog.filters.targetKind')}
             value={filters.targetKind}
@@ -135,7 +140,7 @@ export const AuditLogFilters = ({
           />
         </div>
         {scope === 'instance' && (
-          <div className={FIELD_CLASS_NAME}>
+          <div className={SELECT_FIELD_CLASS_NAME}>
             <AuditLogFilterSelect
               label={t('auditLog.filters.server')}
               value={filters.serverId}

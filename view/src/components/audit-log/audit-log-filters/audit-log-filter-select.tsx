@@ -37,7 +37,7 @@ export const AuditLogFilterSelect = ({
       }
     >
       <SelectTrigger aria-label={label} className="w-full min-w-0">
-        <span className="flex min-w-0 items-center gap-2">
+        <span className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
           <span className="text-muted-foreground shrink-0">{label}</span>
           <SelectValue className="truncate" />
         </span>
