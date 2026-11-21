@@ -26,6 +26,9 @@ const VARIANT_KEYS = {
 export const formatDate = (timeStamp: string) =>
   dayjs(timeStamp).format('MMMM D, YYYY');
 
+export const formatShortDate = (timeStamp: string) =>
+  dayjs(timeStamp).format('MMM D, YYYY');
+
 export const timeMessage = (
   timeStamp: string,
   timeDifference: number,

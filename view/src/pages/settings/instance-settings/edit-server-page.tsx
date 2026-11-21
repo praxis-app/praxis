@@ -302,10 +302,13 @@ export const EditServerPage = () => {
   const handleTabChange = (value: string) => {
     setActiveTab(value as EditServerTabName);
     if (value === EditServerTabName.Members) {
-      setSearchParams({ tab: EditServerTabName.Members });
+      setSearchParams(
+        { tab: EditServerTabName.Members },
+        { preventScrollReset: true },
+      );
       return;
     }
-    setSearchParams({});
+    setSearchParams({}, { preventScrollReset: true });
   };
 
   const handleDeleteBtnClick = async () => {

@@ -238,7 +238,7 @@ export const TextChannelView = ({
     nextSearchParams.delete('poll');
     void navigate(
       { ...location, search: nextSearchParams.toString() },
-      { replace: true, state: null },
+      { replace: true, state: null, preventScrollReset: true },
     );
   }, [location, navigate]);
 
@@ -248,7 +248,7 @@ export const TextChannelView = ({
     nextSearchParams.delete('message');
     void navigate(
       { ...location, search: nextSearchParams.toString() },
-      { replace: true, state: null },
+      { replace: true, state: null, preventScrollReset: true },
     );
   }, [location, navigate]);
 

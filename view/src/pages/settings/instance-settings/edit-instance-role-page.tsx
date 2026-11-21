@@ -174,14 +174,20 @@ export const EditInstanceRolePage = () => {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     if (value === 'permissions') {
-      setSearchParams({ tab: EditInstanceRoleTabName.Permissions });
+      setSearchParams(
+        { tab: EditInstanceRoleTabName.Permissions },
+        { preventScrollReset: true },
+      );
       return;
     }
     if (value === 'members') {
-      setSearchParams({ tab: EditInstanceRoleTabName.Members });
+      setSearchParams(
+        { tab: EditInstanceRoleTabName.Members },
+        { preventScrollReset: true },
+      );
       return;
     }
-    setSearchParams({});
+    setSearchParams({}, { preventScrollReset: true });
   };
 
   const handleDeleteBtnClick = async () => {

@@ -1,9 +1,10 @@
 import { DatePicker } from '@/components/shared/date-picker';
 import { Button } from '@/components/ui/button';
 import { parseDateValue, toDateValue } from '@/lib/event.utils';
+import { cn } from '@/lib/shared.utils';
 import {
-  type AuditLogFilterValuesRes,
   type AuditLogFilters as AuditLogFilterState,
+  type AuditLogFilterValuesRes,
   type AuditLogScope,
 } from '@/types/moderation.types';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +12,11 @@ import { LuX } from 'react-icons/lu';
 import { AuditLogFilterSelect } from './audit-log-filter-select';
 import { AuditLogSearchInput } from './audit-log-search-input';
 
-const FIELD_CLASS_NAME = 'min-w-48 flex-1';
+const FIELD_CLASS_NAME = 'min-w-0';
+
+const SELECT_FIELD_CLASS_NAME =
+  'min-w-0 min-[22.5rem]:col-span-2 sm:col-span-1';
+
 const DATE_TRIGGER_CLASS_NAME =
   'dark:bg-input/30 dark:hover:bg-input/50 h-9 rounded-md bg-transparent px-3 text-sm shadow-xs hover:bg-transparent sm:h-9 [&>svg]:size-4';
 
@@ -44,6 +49,7 @@ export const AuditLogFilters = ({
   const { t } = useTranslation();
 
   const activeCount = countActiveFilters(filters);
+  const isSearchFullWidth = scope === 'server';
   const fromValue = toDateInputValue(filters.from);
   const toValue = toDateInputValue(filters.to);
 
@@ -70,11 +76,11 @@ export const AuditLogFilters = ({
   ) => onChange({ ...filters, [name]: value });
 
   return (
-    <section aria-labelledby="audit-log-filters-heading" className="space-y-3">
+    <section aria-labelledby="audit-log-filters-heading" className="space-y-2">
       <h2 id="audit-log-filters-heading" className="sr-only">
         {t('auditLog.filters.heading')}
       </h2>
-      <div className="flex h-8 items-center justify-between gap-2">
+      <div className="-mt-2 flex h-7 items-center justify-between gap-2">
         {activeCount > 0 && (
           <>
             <span className="text-muted-foreground text-sm font-medium">
@@ -84,6 +90,7 @@ export const AuditLogFilters = ({
               type="button"
               variant="ghost"
               size="sm"
+              className="h-7"
               onClick={() => onChange({})}
             >
               <LuX />
@@ -93,8 +100,14 @@ export const AuditLogFilters = ({
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <div className={FIELD_CLASS_NAME}>
+      <div className="grid grid-cols-1 gap-2 min-[22.5rem]:grid-cols-2">
+        <div
+          className={cn(
+            FIELD_CLASS_NAME,
+            'min-[22.5rem]:col-span-2',
+            !isSearchFullWidth && 'sm:col-span-1',
+          )}
+        >
           <AuditLogSearchInput
             label={
               scope === 'instance'
@@ -105,7 +118,7 @@ export const AuditLogFilters = ({
             onChange={(value) => setFilter('search', value)}
           />
         </div>
-        <div className={FIELD_CLASS_NAME}>
+        <div className={SELECT_FIELD_CLASS_NAME}>
           <AuditLogFilterSelect
             label={t('auditLog.filters.actor')}
             value={filters.actorId}
@@ -113,7 +126,7 @@ export const AuditLogFilters = ({
             onChange={(value) => setFilter('actorId', value)}
           />
         </div>
-        <div className={FIELD_CLASS_NAME}>
+        <div className={SELECT_FIELD_CLASS_NAME}>
           <AuditLogFilterSelect
             label={t('auditLog.filters.targetKind')}
             value={filters.targetKind}
@@ -127,7 +140,7 @@ export const AuditLogFilters = ({
           />
         </div>
         {scope === 'instance' && (
-          <div className={FIELD_CLASS_NAME}>
+          <div className={SELECT_FIELD_CLASS_NAME}>
             <AuditLogFilterSelect
               label={t('auditLog.filters.server')}
               value={filters.serverId}

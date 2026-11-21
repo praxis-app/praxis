@@ -36,7 +36,10 @@ export const SearchPanelLayout = ({
     searchParams.get(SEARCH_PANEL_PARAM) === layout;
   const close = () => {
     if (!isOpen) return;
-    setSearchParams(withoutSearchPanel(searchParams), { replace: true });
+    setSearchParams(withoutSearchPanel(searchParams), {
+      replace: true,
+      preventScrollReset: true,
+    });
     triggerRef.current?.focus();
   };
 
@@ -49,7 +52,10 @@ export const SearchPanelLayout = ({
           const nextParams = withoutSearchPanel(searchParams);
           nextParams.set(SEARCH_PANEL_PARAM, layout);
           if (channelId) nextParams.set(SEARCH_CHANNEL_PARAM, channelId);
-          setSearchParams(nextParams, { replace: true });
+          setSearchParams(nextParams, {
+            replace: true,
+            preventScrollReset: true,
+          });
         },
         close,
       }}
