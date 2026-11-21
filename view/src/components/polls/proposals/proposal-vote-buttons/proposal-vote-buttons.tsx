@@ -7,7 +7,8 @@ import {
   ProposalVoteConfirmationDialog,
   type ProposalVoteConfirmationType,
 } from '@/components/polls/proposals/proposal-vote-confirmation-dialog';
-import { Button } from '@/components/ui/button';
+import { ProposalVoteButton } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-button';
+import { type VoteAnimations } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
 import { VOTE_TYPES } from '@/constants/vote.constants';
 import { useAbility } from '@/hooks/use-ability';
 import { useAuthData } from '@/hooks/use-auth-data';
@@ -15,7 +16,6 @@ import { useServerData } from '@/hooks/use-server-data';
 import { useVotingDeadline } from '@/hooks/use-voting-deadline';
 import { handleError } from '@/lib/error.utils';
 import { wouldVoteRatifyProposal } from '@/lib/poll.utils';
-import { cn } from '@/lib/shared.utils';
 import { type ChannelRes, type FeedQuery } from '@/types/channel.types';
 import {
   type DecisionMakingModel,
@@ -47,6 +47,7 @@ interface Props {
   disabled?: boolean;
   disabledReason?: string;
   onVoteSuccess?: () => void;
+  onRatifyingVote?: () => void;
   updateCachedProposal?: (update: (proposal: PollRes) => PollRes) => void;
 }
 
@@ -64,12 +65,14 @@ export const ProposalVoteButtons = ({
   disabled = false,
   disabledReason,
   onVoteSuccess,
+  onRatifyingVote,
   updateCachedProposal,
 }: Props) => {
   const [pendingVote, setPendingVote] = useState<{
     voteType: VoteType;
     confirmationType: ProposalVoteConfirmationType;
   } | null>(null);
+  const [voteAnimations, setVoteAnimations] = useState<VoteAnimations>({});
 
   const deadlineHasPassed = useVotingDeadline(closingAt);
 
@@ -248,6 +251,25 @@ export const ProposalVoteButtons = ({
       }
       updateCachedProposal?.(updateProposal);
 
+      const isRatifying = result.isRatifyingVote && !result.closedReason;
+      setVoteAnimations((prev) => {
+        const next: VoteAnimations = {};
+        for (const [voteType, animation] of Object.entries(prev)) {
+          next[voteType as VoteType] = { ...animation, isPlaying: false };
+        }
+        if (result.action !== 'delete') {
+          next[result.voteType] = {
+            nonce: (prev[result.voteType]?.nonce ?? 0) + 1,
+            isPlaying: true,
+            isRatifying,
+          };
+        }
+        return next;
+      });
+      if (isRatifying) {
+        onRatifyingVote?.();
+      }
+
       onVoteSuccess?.();
     },
     onError(error: Error) {
@@ -319,22 +341,15 @@ export const ProposalVoteButtons = ({
     <>
       <div className="grid w-full min-w-0 grid-cols-2 gap-2 @lg:grid-cols-4">
         {voteTypes.map((vote) => (
-          <Button
+          <ProposalVoteButton
             key={vote}
-            variant="outline"
-            size="sm"
-            className={cn(
-              'col-span-1',
-              myVote?.voteType === vote && 'bg-primary/15!',
-              isVotingDisabled &&
-                'hover:bg-background dark:hover:bg-input/30 opacity-50',
-            )}
+            voteType={vote}
+            isSelected={myVote?.voteType === vote}
+            isDisabled={isVotingDisabled}
+            isPending={isPending}
+            animation={voteAnimations[vote]}
             onClick={() => handleVoteBtnClick(vote)}
-            aria-disabled={isVotingDisabled}
-            disabled={isPending}
-          >
-            {t(`proposals.actions.${vote}`)}
-          </Button>
+          />
         ))}
       </div>
       <ProposalVoteConfirmationDialog

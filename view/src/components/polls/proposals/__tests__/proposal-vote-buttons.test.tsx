@@ -1,9 +1,10 @@
-import { ProposalVoteButtons } from '@/components/polls/proposals/proposal-vote-buttons';
+import { ProposalVoteButtons } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-buttons';
 import { type ChannelRes } from '@/types/channel.types';
 import {
   type DecisionMakingModel,
   type PollConfigRes,
 } from '@/types/poll.types';
+import { type VoteRes } from '@/types/vote.types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -33,10 +34,12 @@ const renderButtons = ({
   blocksOpenToAll,
   canBlock,
   decisionMakingModel = 'consensus',
+  myVote,
 }: {
   blocksOpenToAll?: boolean;
   canBlock: boolean;
   decisionMakingModel?: DecisionMakingModel;
+  myVote?: VoteRes;
 }) => {
   canMock.mockImplementation(
     (action: string, subject: string) =>
@@ -50,6 +53,7 @@ const renderButtons = ({
       <ProposalVoteButtons
         channel={channel}
         pollId="poll-1"
+        myVote={myVote}
         stage="voting"
         decisionMakingModel={decisionMakingModel}
         config={config}
@@ -88,5 +92,27 @@ describe('ProposalVoteButtons', () => {
     expect(
       screen.queryByText('proposals.actions.block'),
     ).not.toBeInTheDocument();
+  });
+
+  it('should mark only the current vote as pressed', () => {
+    renderButtons({
+      canBlock: true,
+      myVote: { id: 'vote-1', voteType: 'disagree' },
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'proposals.actions.disagree' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      screen.getByRole('button', { name: 'proposals.actions.agree' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('should mark no vote as pressed before voting', () => {
+    renderButtons({ canBlock: true });
+
+    for (const button of screen.getAllByRole('button')) {
+      expect(button).toHaveAttribute('aria-pressed', 'false');
+    }
   });
 });
