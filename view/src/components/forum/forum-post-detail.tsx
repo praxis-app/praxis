@@ -151,7 +151,10 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
   const clearFocusedReply = useCallback(() => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete('reply');
-    setSearchParams(nextSearchParams, { replace: true });
+    setSearchParams(nextSearchParams, {
+      replace: true,
+      preventScrollReset: true,
+    });
   }, [searchParams, setSearchParams]);
 
   useFocusHighlight({

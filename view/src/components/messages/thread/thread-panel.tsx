@@ -239,7 +239,10 @@ export const ThreadPanel = ({
   const clearFocusedReply = useCallback(() => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete('reply');
-    setSearchParams(nextSearchParams, { replace: true });
+    setSearchParams(nextSearchParams, {
+      replace: true,
+      preventScrollReset: true,
+    });
   }, [searchParams, setSearchParams]);
 
   // An older reply would otherwise be missed, since the panel opens at its end

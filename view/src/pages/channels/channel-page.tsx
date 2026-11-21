@@ -96,7 +96,10 @@ export const ChannelPage = () => {
       const nextSearchParams = withoutSearchPanel(searchParams);
       nextSearchParams.delete('thread');
       nextSearchParams.delete('threadKind');
-      setSearchParams(nextSearchParams, { replace: true });
+      setSearchParams(nextSearchParams, {
+        replace: true,
+        preventScrollReset: true,
+      });
     }
     localStorage.setItem(LocalStorageKeys.DecisionsPanelOpen, 'true');
     setStandaloneRightPanel(panel);
@@ -110,14 +113,17 @@ export const ChannelPage = () => {
     } else {
       nextSearchParams.delete('threadKind');
     }
-    setSearchParams(nextSearchParams);
+    setSearchParams(nextSearchParams, { preventScrollReset: true });
   };
 
   const closeThread = () => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.delete('thread');
     nextSearchParams.delete('threadKind');
-    setSearchParams(nextSearchParams, { replace: true });
+    setSearchParams(nextSearchParams, {
+      replace: true,
+      preventScrollReset: true,
+    });
   };
 
   const toggleDecisionsPanel = () => {

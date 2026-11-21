@@ -52,7 +52,10 @@ export const UserSettingsSection = ({
   }, [isFirst, isSelected]);
 
   const handleHeaderClick = () => {
-    setSearchParams({ [USER_SETTINGS_SECTION_PARAM]: section });
+    setSearchParams(
+      { [USER_SETTINGS_SECTION_PARAM]: section },
+      { preventScrollReset: true },
+    );
     copySectionLink(section);
     toast(t('settings.prompts.sectionLinkCopied'));
   };

@@ -165,14 +165,20 @@ export const EditServerRolePage = () => {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     if (value === 'permissions') {
-      setSearchParams({ tab: EditServerRoleTabName.Permissions });
+      setSearchParams(
+        { tab: EditServerRoleTabName.Permissions },
+        { preventScrollReset: true },
+      );
       return;
     }
     if (value === 'members') {
-      setSearchParams({ tab: EditServerRoleTabName.Members });
+      setSearchParams(
+        { tab: EditServerRoleTabName.Members },
+        { preventScrollReset: true },
+      );
       return;
     }
-    setSearchParams({});
+    setSearchParams({}, { preventScrollReset: true });
   };
 
   const handleDeleteBtnClick = async () => {

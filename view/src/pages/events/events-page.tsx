@@ -91,7 +91,7 @@ export const EventsPage = () => {
     const nextSearchParams = new URLSearchParams(searchParams);
     nextSearchParams.set('view', nextView);
     nextSearchParams.set('date', toDateValue(nextDate));
-    setSearchParams(nextSearchParams);
+    setSearchParams(nextSearchParams, { preventScrollReset: true });
   };
 
   const { from, to } = useMemo(() => {
