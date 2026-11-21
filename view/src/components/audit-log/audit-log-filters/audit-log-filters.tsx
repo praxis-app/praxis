@@ -70,11 +70,11 @@ export const AuditLogFilters = ({
   ) => onChange({ ...filters, [name]: value });
 
   return (
-    <section aria-labelledby="audit-log-filters-heading" className="space-y-3">
+    <section aria-labelledby="audit-log-filters-heading" className="space-y-2">
       <h2 id="audit-log-filters-heading" className="sr-only">
         {t('auditLog.filters.heading')}
       </h2>
-      <div className="flex h-8 items-center justify-between gap-2">
+      <div className="-mt-2 flex h-7 items-center justify-between gap-2">
         {activeCount > 0 && (
           <>
             <span className="text-muted-foreground text-sm font-medium">
@@ -84,6 +84,7 @@ export const AuditLogFilters = ({
               type="button"
               variant="ghost"
               size="sm"
+              className="h-7"
               onClick={() => onChange({})}
             >
               <LuX />
