@@ -1,6 +1,7 @@
 import { DatePicker } from '@/components/shared/date-picker';
 import { Button } from '@/components/ui/button';
 import { parseDateValue, toDateValue } from '@/lib/event.utils';
+import { cn } from '@/lib/shared.utils';
 import {
   type AuditLogFilterValuesRes,
   type AuditLogFilters as AuditLogFilterState,
@@ -11,7 +12,7 @@ import { LuX } from 'react-icons/lu';
 import { AuditLogFilterSelect } from './audit-log-filter-select';
 import { AuditLogSearchInput } from './audit-log-search-input';
 
-const FIELD_CLASS_NAME = 'min-w-48 flex-1';
+const FIELD_CLASS_NAME = 'min-w-0';
 const DATE_TRIGGER_CLASS_NAME =
   'dark:bg-input/30 dark:hover:bg-input/50 h-9 rounded-md bg-transparent px-3 text-sm shadow-xs hover:bg-transparent sm:h-9 [&>svg]:size-4';
 
@@ -44,6 +45,7 @@ export const AuditLogFilters = ({
   const { t } = useTranslation();
 
   const activeCount = countActiveFilters(filters);
+  const isSearchFullWidth = scope === 'server';
   const fromValue = toDateInputValue(filters.from);
   const toValue = toDateInputValue(filters.to);
 
@@ -94,8 +96,13 @@ export const AuditLogFilters = ({
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <div className={FIELD_CLASS_NAME}>
+      <div className="grid grid-cols-1 gap-2 min-[22.5rem]:grid-cols-2">
+        <div
+          className={cn(
+            FIELD_CLASS_NAME,
+            isSearchFullWidth && 'min-[22.5rem]:col-span-2',
+          )}
+        >
           <AuditLogSearchInput
             label={
               scope === 'instance'
