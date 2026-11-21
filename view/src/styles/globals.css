@@ -33,6 +33,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-positive: var(--positive);
+  --color-vote-agree-a: var(--vote-agree-a);
+  --color-vote-agree-b: var(--vote-agree-b);
+  --color-vote-ratify-a: var(--vote-ratify-a);
+  --color-vote-ratify-b: var(--vote-ratify-b);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -232,6 +236,10 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --positive: oklch(0.65 0.1271 148.55);
+  --vote-agree-a: oklch(0.55 0.14 150);
+  --vote-agree-b: oklch(0.55 0.11 175);
+  --vote-ratify-a: #d93f35;
+  --vote-ratify-b: oklch(0.72 0.16 65);
 
   /* Blurple colors */
   --blurple-1: oklch(0.5725 0.1982 274.68);
@@ -288,6 +296,10 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --positive: oklch(0.65 0.1271 148.55);
+  --vote-agree-a: oklch(0.72 0.15 150);
+  --vote-agree-b: oklch(0.74 0.12 175);
+  --vote-ratify-a: #f05044;
+  --vote-ratify-b: #fdbc5c;
 
   /* Blurple colors */
   --blurple-1: oklch(0.5725 0.1982 274.68);

@@ -14,7 +14,7 @@ interface Props {
 export const VoteIcon = ({ voteType, isSelected, animation }: Props) => {
   const {
     icon: Icon,
-    accentClassName,
+    selectedClassName,
     animationClassName,
     filledOpacity,
     effect,
@@ -25,7 +25,7 @@ export const VoteIcon = ({ voteType, isSelected, animation }: Props) => {
       aria-hidden="true"
       className={cn(
         'relative inline-flex size-4 shrink-0 transition-colors duration-200 motion-reduce:transition-none',
-        isSelected && accentClassName,
+        isSelected && selectedClassName,
       )}
     >
       <span

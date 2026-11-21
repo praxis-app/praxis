@@ -7,7 +7,6 @@ export const VoteRing = () => (
     <circle
       r={8}
       fill="none"
-      stroke="currentColor"
       strokeWidth={1.5}
       className="motion-safe:animate-vote-ring origin-center opacity-0 transform-fill"
     />

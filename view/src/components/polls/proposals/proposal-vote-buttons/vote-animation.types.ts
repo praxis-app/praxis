@@ -13,7 +13,7 @@ export type VoteAnimations = Partial<Record<VoteType, VoteAnimation>>;
 
 export interface VoteAnimationConfig {
   icon: IconType;
-  accentClassName: string;
+  selectedClassName?: string;
   animationClassName: string;
   filledOpacity: number;
   effect: VoteEffect;

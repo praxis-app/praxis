@@ -10,28 +10,25 @@ import {
 export const VOTE_ANIMATIONS: Record<VoteType, VoteAnimationConfig> = {
   agree: {
     icon: LuThumbsUp,
-    accentClassName: 'text-positive',
     animationClassName: 'motion-safe:animate-vote-pop',
     filledOpacity: 1,
     effect: 'burst',
   },
   disagree: {
     icon: LuThumbsDown,
-    accentClassName: 'text-praxis-coral',
     animationClassName: 'motion-safe:animate-vote-nudge',
     filledOpacity: 1,
     effect: 'none',
   },
   abstain: {
     icon: LuCircleMinus,
-    accentClassName: 'text-praxis-blue-gray',
     animationClassName: 'motion-safe:animate-vote-settle',
     filledOpacity: 0.25,
     effect: 'none',
   },
   block: {
     icon: LuOctagonX,
-    accentClassName: 'text-destructive',
+    selectedClassName: 'text-destructive',
     animationClassName: 'motion-safe:animate-vote-stamp',
     filledOpacity: 0.25,
     effect: 'ring',
@@ -40,4 +37,7 @@ export const VOTE_ANIMATIONS: Record<VoteType, VoteAnimationConfig> = {
 
 export const BURST_PARTICLE_ANGLE_OFFSET = 18;
 
-export const BURST_SECONDARY_COLOR = 'var(--color-praxis-gold)';
+export const BURST_STROKE_CLASS_NAMES = {
+  agree: ['stroke-vote-agree-a', 'stroke-vote-agree-b'],
+  ratify: ['stroke-vote-ratify-a', 'stroke-vote-ratify-b'],
+} as const;

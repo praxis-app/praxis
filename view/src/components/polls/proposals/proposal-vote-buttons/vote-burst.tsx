@@ -1,7 +1,7 @@
 import { cn } from '@/lib/shared.utils';
 import {
   BURST_PARTICLE_ANGLE_OFFSET,
-  BURST_SECONDARY_COLOR,
+  BURST_STROKE_CLASS_NAMES,
 } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
 
 interface Props {
@@ -12,11 +12,14 @@ interface Particle {
   angle: number;
   innerRadius: number;
   outerRadius: number;
-  color: string;
+  strokeClassName: string;
 }
 
 const getParticles = (isLarge: boolean): Particle[] => {
   const count = isLarge ? 10 : 5;
+  const [strokeA, strokeB] = isLarge
+    ? BURST_STROKE_CLASS_NAMES.ratify
+    : BURST_STROKE_CLASS_NAMES.agree;
   const step = 360 / count;
 
   return Array.from({ length: count }, (_, index) => {
@@ -26,7 +29,7 @@ const getParticles = (isLarge: boolean): Particle[] => {
       angle: index * step + BURST_PARTICLE_ANGLE_OFFSET,
       innerRadius: reachesFurther ? 11 : 9,
       outerRadius: reachesFurther ? 21 : isLarge ? 16 : 14,
-      color: isAlternate ? BURST_SECONDARY_COLOR : 'currentColor',
+      strokeClassName: isAlternate ? strokeB : strokeA,
     };
   });
 };
@@ -44,7 +47,7 @@ export const VoteBurst = ({ isLarge = false }: Props) => {
         isLarge ? 'size-12' : 'size-8',
       )}
     >
-      {particles.map(({ angle, innerRadius, outerRadius, color }) => (
+      {particles.map(({ angle, innerRadius, outerRadius, strokeClassName }) => (
         <line
           key={angle}
           x1={0}
@@ -52,11 +55,10 @@ export const VoteBurst = ({ isLarge = false }: Props) => {
           x2={0}
           y2={-outerRadius}
           transform={`rotate(${angle})`}
-          stroke={color}
           strokeLinecap="round"
           pathLength={1}
           strokeDasharray="1 1"
-          className="motion-safe:animate-vote-particle"
+          className={cn(strokeClassName, 'motion-safe:animate-vote-particle')}
         />
       ))}
     </svg>
