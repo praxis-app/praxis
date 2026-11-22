@@ -3,12 +3,12 @@ import {
   getActiveDecisionsQueryKey,
   updateActiveDecisionCache,
 } from '@/components/decisions/decisions-panel.utils';
+import { ProposalVoteButton } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-button';
+import { type VoteAnimations } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
 import {
   ProposalVoteConfirmationDialog,
   type ProposalVoteConfirmationType,
 } from '@/components/polls/proposals/proposal-vote-confirmation-dialog';
-import { ProposalVoteButton } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-button';
-import { type VoteAnimations } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
 import { VOTE_TYPES } from '@/constants/vote.constants';
 import { useAbility } from '@/hooks/use-ability';
 import { useAuthData } from '@/hooks/use-auth-data';

@@ -1,8 +1,8 @@
-import { cn } from '@/lib/shared.utils';
 import {
   BURST_PARTICLE_ANGLE_OFFSET,
   BURST_STROKE_CLASS_NAMES,
 } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
+import { cn } from '@/lib/shared.utils';
 
 interface Props {
   isLarge?: boolean;
