@@ -4,6 +4,8 @@ import {
   type ComponentProps,
   type SyntheticEvent,
   forwardRef,
+  useEffect,
+  useEffectEvent,
   useRef,
   useState,
 } from 'react';
@@ -73,13 +75,9 @@ export const LazyLoadImage = forwardRef<HTMLDivElement, Props>(
       }
     };
 
-    const srcFromImageId = useImageSrc({
+    const { src: srcFromImageId, isError: fetchFailed } = useImageSrc({
       enabled: !isPlaceholder,
       ref: internalRef,
-      onError: () => {
-        setFailed(true);
-        onError?.();
-      },
       imageId,
       channelId,
       messageId,
@@ -91,18 +89,20 @@ export const LazyLoadImage = forwardRef<HTMLDivElement, Props>(
     });
 
     const [loaded, setLoaded] = useState(!!srcFromImageId);
-
-    // TODO: `failed` is write-once — nothing ever sets it back to false — so a
-    // single failed fetch breaks this image for as long as the component stays
-    // mounted, even after later fetches succeed. This shows up on the invites
-    // page in server settings: leaving the tab and returning refetches every
-    // avatar, and any one that fails stays broken while the rest reload fine.
-    // Clear `failed` when the resolved source changes
-    const [failed, setFailed] = useState(false);
+    const [failedSrc, setFailedSrc] = useState<string>();
 
     const { t } = useTranslation();
 
+    const notifyFetchFailed = useEffectEvent(() => onError?.());
+
+    useEffect(() => {
+      if (fetchFailed) {
+        notifyFetchFailed();
+      }
+    }, [fetchFailed]);
+
     const resolvedSrc = src || srcFromImageId;
+    const failed = fetchFailed || (!!resolvedSrc && failedSrc === resolvedSrc);
     const showImage = !!resolvedSrc && !failed && (!isPlaceholder || !!src);
     const showFileMissing = failed && !showImage && !isPlaceholder;
 
@@ -115,7 +115,7 @@ export const LazyLoadImage = forwardRef<HTMLDivElement, Props>(
     };
 
     const handleError = () => {
-      setFailed(true);
+      setFailedSrc(resolvedSrc);
       onError?.();
     };
 
