@@ -23,6 +23,12 @@ export const VOTE_FLOURISH = {
   strokeWidth: 1.5,
 } as const;
 
+export const VOTE_RIPPLE = {
+  expandMs: 300,
+  minLitMs: 280,
+  fadeMs: 600,
+} as const;
+
 export const VOTE_GLYPHS: Record<VoteType, VoteGlyphConfig> = {
   agree: {
     shapePath:

@@ -304,4 +304,23 @@ describe('ProposalVoteButtons', () => {
         ?.getAttribute('class'),
     ).toContain('motion-reduce:hidden');
   });
+
+  it('should light the button while pressed and clear the ripple after release', () => {
+    vi.useFakeTimers();
+    try {
+      apiMock.createVote.mockReturnValue(new Promise(() => {}));
+      renderButtons({ canBlock: true });
+      const button = getVoteButton('agree');
+
+      fireEvent.pointerDown(button, { button: 0, clientX: 10, clientY: 10 });
+      act(() => vi.advanceTimersByTime(1000));
+      expect(screen.getAllByTestId('vote-ripple')).toHaveLength(1);
+
+      fireEvent.pointerUp(button);
+      act(() => vi.advanceTimersByTime(1000));
+      expect(screen.queryByTestId('vote-ripple')).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

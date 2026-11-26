@@ -20,3 +20,11 @@ export interface VoteGlyphConfig {
   selectEasing: VoteEasing;
   flourish: VoteFlourish;
 }
+
+export interface VoteRipple {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  isReleased: boolean;
+}
