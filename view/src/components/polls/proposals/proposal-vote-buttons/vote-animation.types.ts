@@ -4,8 +4,6 @@ export type VoteMotion = 'select' | 'retract' | 'rollback';
 
 export type VoteEasing = 'spring' | 'firm';
 
-export type VoteFlourish = 'check' | 'arc' | 'ring' | 'line';
-
 export interface VoteAnimation {
   nonce: number;
   motion: VoteMotion | null;
@@ -18,7 +16,8 @@ export interface VoteGlyphConfig {
   glyphPaths: string[];
   selectKeyframes: string;
   selectEasing: VoteEasing;
-  flourish: VoteFlourish;
+  flourishPeak: string;
+  flourishTravel: string;
 }
 
 export interface VoteRipple {

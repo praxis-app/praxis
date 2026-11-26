@@ -252,7 +252,7 @@ describe('ProposalVoteButtons', () => {
     expect(new Set(glyphs.map((glyph) => glyph.selectKeyframes)).size).toBe(
       glyphs.length,
     );
-    expect(new Set(glyphs.map((glyph) => glyph.flourish)).size).toBe(
+    expect(new Set(glyphs.map((glyph) => glyph.flourishTravel)).size).toBe(
       glyphs.length,
     );
 
@@ -260,22 +260,28 @@ describe('ProposalVoteButtons', () => {
     apiMock.updateVote.mockReturnValue(new Promise(() => {}));
     renderButtons({ canBlock: true });
 
-    const timings = VOTE_TYPES.filter((voteType) => voteType !== 'block').map(
-      (voteType) => {
-        fireEvent.click(getVoteButton(voteType));
-        const button = getVoteButton(voteType);
-        const motion = button.querySelector<HTMLElement>('[data-vote-motion]');
-        const flourish = button.querySelector<SVGElement>(
-          '[data-testid="vote-flourish"] [style]',
+    const timings = VOTE_TYPES.map((voteType) => {
+      fireEvent.click(getVoteButton(voteType));
+      if (voteType === 'block') {
+        fireEvent.click(
+          screen.getByRole('button', {
+            name: 'proposals.actions.castBlockingVote',
+          }),
         );
-        const stripName = (animation = '') =>
-          animation.replace(/^\S+/, '').replace(/cubic-bezier\([^)]*\)/, '');
-        return {
-          flourish: stripName(flourish?.style.animation),
-          motion: stripName(motion?.style.animation),
-        };
-      },
-    );
+      }
+      const button = getVoteButton(voteType);
+      const motion = button.querySelector<HTMLElement>('[data-vote-motion]');
+      const flourish = button.querySelector('[data-testid="vote-flourish"]');
+      const paths = flourish?.querySelectorAll('path');
+      expect(paths).toHaveLength(1);
+      expect(paths?.[0]).toHaveAttribute('d', VOTE_GLYPHS[voteType].shapePath);
+      expect(flourish).toHaveClass('animate-vote-flourish');
+      const stripName = (animation = '') =>
+        animation.replace(/^\S+/, '').replace(/cubic-bezier\([^)]*\)/, '');
+      return {
+        motion: stripName(motion?.style.animation),
+      };
+    });
 
     for (const timing of timings) {
       expect(timing).toEqual(timings[0]);
@@ -292,7 +298,7 @@ describe('ProposalVoteButtons', () => {
     const animated = [
       ...button.querySelectorAll<HTMLElement>('[style]'),
     ].filter((element) => element.style.animation);
-    expect(animated.length).toBeGreaterThan(1);
+    expect(animated.length).toBeGreaterThan(0);
     for (const element of animated) {
       expect(element.getAttribute('class')).toContain(
         REDUCED_MOTION_CLASS_NAME,

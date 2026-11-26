@@ -16,13 +16,6 @@ export const VOTE_MOTION_DURATIONS_MS: Record<VoteMotion, number> = {
   rollback: 420,
 };
 
-export const VOTE_FLOURISH = {
-  durationMs: 420,
-  delayMs: 60,
-  easing: 'ease-out',
-  strokeWidth: 1.5,
-} as const;
-
 export const VOTE_RIPPLE = {
   expandMs: 300,
   minLitMs: 280,
@@ -36,7 +29,8 @@ export const VOTE_GLYPHS: Record<VoteType, VoteGlyphConfig> = {
     glyphPaths: ['M7 10v12'],
     selectKeyframes: 'vote-agree-settle',
     selectEasing: 'spring',
-    flourish: 'check',
+    flourishPeak: 'translateY(-1.25px) scale(1.4)',
+    flourishTravel: 'translateY(-2.5px) scale(1.46)',
   },
   disagree: {
     shapePath:
@@ -44,14 +38,16 @@ export const VOTE_GLYPHS: Record<VoteType, VoteGlyphConfig> = {
     glyphPaths: ['M17 14V2'],
     selectKeyframes: 'vote-disagree-turn',
     selectEasing: 'spring',
-    flourish: 'arc',
+    flourishPeak: 'rotate(-12deg) scale(1.4)',
+    flourishTravel: 'rotate(-16deg) scale(1.46)',
   },
   abstain: {
     shapePath: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z',
     glyphPaths: ['M8 12h8'],
     selectKeyframes: 'vote-abstain-recede',
     selectEasing: 'firm',
-    flourish: 'ring',
+    flourishPeak: 'scale(1.45)',
+    flourishTravel: 'scale(1.04)',
   },
   // TODO: Test the block motion in the app. It's only been checked with mocked votes
   block: {
@@ -60,7 +56,8 @@ export const VOTE_GLYPHS: Record<VoteType, VoteGlyphConfig> = {
     glyphPaths: ['m15 9-6 6', 'm9 9 6 6'],
     selectKeyframes: 'vote-block-press',
     selectEasing: 'firm',
-    flourish: 'line',
+    flourishPeak: 'translateY(1.25px) scale(1.47, 1.36)',
+    flourishTravel: 'translateY(2px) scale(1.48, 1.29)',
   },
 };
 

@@ -44,7 +44,7 @@ export const ProposalVoteButton = ({
       variant="outline"
       size="sm"
       className={cn(
-        'relative isolate col-span-1 overflow-hidden',
+        'relative isolate col-span-1 overflow-hidden motion-reduce:transition-none',
         isSelected && 'bg-primary/15!',
         isDisabled && 'hover:bg-background dark:hover:bg-input/30 opacity-50',
       )}

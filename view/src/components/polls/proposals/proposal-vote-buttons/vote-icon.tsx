@@ -37,20 +37,20 @@ export const VoteIcon = ({ voteType, isSelected, animation }: Props) => {
 
   return (
     <span aria-hidden="true" className="relative inline-flex size-4 shrink-0">
+      {motion === 'select' && (
+        <VoteFlourish
+          key={`flourish-${animation?.nonce}`}
+          voteType={voteType}
+        />
+      )}
       <span
         key={`motion-${animation?.nonce ?? 0}`}
         data-vote-motion={motion ?? undefined}
-        className={`inline-flex ${REDUCED_MOTION_CLASS_NAME}`}
+        className={`relative inline-flex ${REDUCED_MOTION_CLASS_NAME}`}
         style={motion ? getMotionStyle(voteType, motion) : undefined}
       >
         <VoteGlyph voteType={voteType} isSelected={isSelected} />
       </span>
-      {motion === 'select' && (
-        <VoteFlourish
-          key={`flourish-${animation?.nonce}`}
-          kind={VOTE_GLYPHS[voteType].flourish}
-        />
-      )}
     </span>
   );
 };
