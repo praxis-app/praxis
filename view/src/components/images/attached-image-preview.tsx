@@ -52,7 +52,7 @@ const SavedImagePreview = ({
   const { t } = useTranslation();
 
   const ref = useRef<HTMLDivElement>(null);
-  const src = useImageSrc({
+  const { src } = useImageSrc({
     imageId: savedImage.id,
     ref,
     channelId,
