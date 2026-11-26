@@ -33,10 +33,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-positive: var(--positive);
-  --color-vote-agree-a: var(--vote-agree-a);
-  --color-vote-agree-b: var(--vote-agree-b);
-  --color-vote-ratify-a: var(--vote-ratify-a);
-  --color-vote-ratify-b: var(--vote-ratify-b);
+  --color-vote-accent: var(--vote-accent);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -87,113 +84,18 @@
     }
   }
 
-  --animate-vote-pop: vote-pop 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  --animate-vote-nudge: vote-nudge 450ms ease-out both;
-  --animate-vote-settle: vote-settle 300ms ease-out both;
-  --animate-vote-stamp: vote-stamp 320ms ease-out both;
-  --animate-vote-particle: vote-particle 520ms ease-out 80ms both;
-  --animate-vote-ring: vote-ring 480ms ease-out 170ms both;
-  --animate-badge-ratify: badge-ratify 600ms cubic-bezier(0.34, 1.56, 0.64, 1)
-    both;
-
-  @keyframes vote-pop {
-    0% {
-      transform: scale(0.75);
-    }
-
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes vote-nudge {
-    0% {
-      transform: scale(0.8) rotate(0deg);
-    }
-
-    40% {
-      transform: scale(1.15) rotate(-12deg);
-    }
-
-    70% {
-      transform: scale(1) rotate(5deg);
-    }
-
-    100% {
-      transform: scale(1) rotate(0deg);
-    }
-  }
-
-  @keyframes vote-settle {
-    0% {
-      opacity: 0.4;
-      transform: scale(0.85);
-    }
-
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes vote-stamp {
-    0% {
-      opacity: 0.5;
-      transform: scale(1.4);
-      animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
-    }
-
-    55% {
-      opacity: 1;
-      transform: scale(0.88);
-    }
-
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes vote-particle {
-    0% {
-      stroke-dashoffset: 1;
-      stroke-width: 2;
-    }
-
-    40% {
-      stroke-dashoffset: 0;
-      stroke-width: 2;
-    }
-
-    100% {
-      stroke-dashoffset: -1;
-      stroke-width: 0;
-    }
-  }
-
-  @keyframes vote-ring {
-    0% {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-
-    10% {
-      opacity: 0.8;
-    }
-
-    100% {
-      opacity: 0;
-      transform: scale(1.9);
-    }
-  }
+  --animate-vote-counted-drop: vote-counted-drop 600ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-vote-counted-ring: vote-counted-ring 600ms ease-out both;
+  --animate-badge-ratify: badge-ratify 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
 
   @keyframes badge-ratify {
     0% {
-      transform: scale(0.9);
+      transform: scale(0.96);
     }
 
-    45% {
-      transform: scale(1.1);
+    40% {
+      transform: scale(1.04);
     }
 
     100% {
@@ -236,10 +138,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --positive: oklch(0.65 0.1271 148.55);
-  --vote-agree-a: oklch(0.55 0.14 150);
-  --vote-agree-b: oklch(0.55 0.11 175);
-  --vote-ratify-a: #d93f35;
-  --vote-ratify-b: oklch(0.72 0.16 65);
+  --vote-accent: oklch(0.55 0.18 275);
 
   /* Blurple colors */
   --blurple-1: oklch(0.5725 0.1982 274.68);
@@ -296,10 +195,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --positive: oklch(0.65 0.1271 148.55);
-  --vote-agree-a: oklch(0.72 0.15 150);
-  --vote-agree-b: oklch(0.74 0.12 175);
-  --vote-ratify-a: #f05044;
-  --vote-ratify-b: #fdbc5c;
+  --vote-accent: oklch(0.74 0.14 275);
 
   /* Blurple colors */
   --blurple-1: oklch(0.5725 0.1982 274.68);
@@ -319,5 +215,163 @@
 @layer utilities {
   .font-inter {
     font-family: var(--font-inter);
+  }
+}
+
+@keyframes vote-agree-settle {
+  from {
+    opacity: 0.5;
+    transform: translateY(-5px) scale(0.9);
+  }
+}
+
+@keyframes vote-disagree-turn {
+  from {
+    transform: rotate(-45deg) scale(0.92);
+  }
+}
+
+@keyframes vote-abstain-recede {
+  from {
+    opacity: 0.35;
+    transform: scale(1.22);
+  }
+}
+
+@keyframes vote-block-press {
+  0% {
+    transform: translateY(-4px) scale(1.1);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+
+  30% {
+    transform: translateY(1px) scale(1.08, 0.88);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes vote-retract {
+  from {
+    transform: scale(0.88);
+  }
+}
+
+@keyframes vote-rollback {
+  0%,
+  30% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes vote-flourish-draw {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  45% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes vote-flourish-sweep {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  45% {
+    stroke-dashoffset: 0;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -0.9;
+  }
+}
+
+@keyframes vote-flourish-contract {
+  0% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+
+  30% {
+    opacity: 0.65;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes vote-flourish-spread {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.15);
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  45% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes vote-counted-drop {
+  0% {
+    opacity: 0.3;
+    transform: translateY(-5px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(1px);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes vote-counted-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
   }
 }

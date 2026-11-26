@@ -9,7 +9,6 @@ interface Props {
   voteType: VoteType;
   isSelected: boolean;
   isDisabled: boolean;
-  isPending: boolean;
   animation?: VoteAnimation;
   onClick: () => void;
 }
@@ -18,7 +17,6 @@ export const ProposalVoteButton = ({
   voteType,
   isSelected,
   isDisabled,
-  isPending,
   animation,
   onClick,
 }: Props) => {
@@ -38,7 +36,6 @@ export const ProposalVoteButton = ({
       onClick={onClick}
       aria-pressed={isSelected}
       aria-disabled={isDisabled}
-      disabled={isPending}
     >
       <VoteIcon
         voteType={voteType}

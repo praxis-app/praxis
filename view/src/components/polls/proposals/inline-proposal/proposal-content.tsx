@@ -70,6 +70,7 @@ export const ProposalContent = ({
   const [isVoteProgressDialogOpen, setIsVoteProgressDialogOpen] =
     useState(false);
   const [hasCastRatifyingVote, setHasCastRatifyingVote] = useState(false);
+  const [countedNonce, setCountedNonce] = useState(0);
 
   const { t } = useTranslation();
 
@@ -165,6 +166,7 @@ export const ProposalContent = ({
           }
           onVoteSuccess={onPollChange}
           onRatifyingVote={() => setHasCastRatifyingVote(true)}
+          onVoteCounted={() => setCountedNonce((nonce) => nonce + 1)}
           updateCachedProposal={updateCachedProposal}
         />
       </CardAction>
@@ -184,6 +186,7 @@ export const ProposalContent = ({
             memberCount={memberCount}
             stage={stage}
             closedReason={poll.closedReason}
+            countedNonce={countedNonce}
             isOpen={isVoteProgressDialogOpen}
             onOpenChange={setIsVoteProgressDialogOpen}
           />
