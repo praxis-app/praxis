@@ -15,7 +15,6 @@ interface UseImageSrcProps {
   eventCoverPhoto?: boolean;
   userId?: string;
   serverImageServerId?: string;
-  onError?: () => void;
   ref: RefObject<HTMLElement | null>;
 }
 
@@ -29,7 +28,6 @@ export const useImageSrc = ({
   eventCoverPhoto = false,
   userId,
   serverImageServerId,
-  onError,
   ref,
 }: UseImageSrcProps) => {
   const { inviteToken } = useAuthStore();
@@ -41,58 +39,51 @@ export const useImageSrc = ({
     if (!imageId) {
       return '';
     }
-    try {
-      let result: Blob;
+    let result: Blob;
 
-      // Determine which API method to call based on parent context
-      if (serverImageServerId) {
-        result = await api.getServerImage(serverImageServerId, imageId);
-      } else if (messageId && channelId) {
-        if (!serverId) {
-          throw new Error('Server ID is required for message images');
-        }
-        result = await api.getMessageImage(
-          serverId,
-          channelId,
-          messageId,
-          imageId,
-        );
-      } else if (eventCoverPhoto && pollId && channelId) {
-        if (!serverId) {
-          throw new Error('Server ID is required for event cover photos');
-        }
-        result = await api.getPollActionEventCoverPhoto(
-          serverId,
-          channelId,
-          pollId,
-          imageId,
-        );
-      } else if (pollId && channelId) {
-        if (!serverId) {
-          throw new Error('Server ID is required for poll images');
-        }
-        result = await api.getPollImage(serverId, channelId, pollId, imageId);
-      } else if (eventId) {
-        if (!serverId) {
-          throw new Error('Server ID is required for event cover photos');
-        }
-        result = await api.getEventCoverPhoto(serverId, eventId, imageId);
-      } else if (userId) {
-        result = await api.getUserImage(userId, imageId);
-      } else {
-        throw new Error('Invalid image context: missing parent identifiers');
+    // Determine which API method to call based on parent context
+    if (serverImageServerId) {
+      result = await api.getServerImage(serverImageServerId, imageId);
+    } else if (messageId && channelId) {
+      if (!serverId) {
+        throw new Error('Server ID is required for message images');
       }
-
-      const url = URL.createObjectURL(result);
-      return url;
-    } catch {
-      onError?.();
-      // Gracefully handle missing image
-      return '';
+      result = await api.getMessageImage(
+        serverId,
+        channelId,
+        messageId,
+        imageId,
+      );
+    } else if (eventCoverPhoto && pollId && channelId) {
+      if (!serverId) {
+        throw new Error('Server ID is required for event cover photos');
+      }
+      result = await api.getPollActionEventCoverPhoto(
+        serverId,
+        channelId,
+        pollId,
+        imageId,
+      );
+    } else if (pollId && channelId) {
+      if (!serverId) {
+        throw new Error('Server ID is required for poll images');
+      }
+      result = await api.getPollImage(serverId, channelId, pollId, imageId);
+    } else if (eventId) {
+      if (!serverId) {
+        throw new Error('Server ID is required for event cover photos');
+      }
+      result = await api.getEventCoverPhoto(serverId, eventId, imageId);
+    } else if (userId) {
+      result = await api.getUserImage(userId, imageId);
+    } else {
+      throw new Error('Invalid image context: missing parent identifiers');
     }
+
+    return URL.createObjectURL(result);
   };
 
-  const { data } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: [
       'images',
       serverId,
@@ -108,7 +99,8 @@ export const useImageSrc = ({
     ],
     queryFn: getImageSrc,
     enabled: !!imageId && viewed && enabled,
+    staleTime: Infinity,
   });
 
-  return data;
+  return { src: data, isError: isError && !data };
 };
