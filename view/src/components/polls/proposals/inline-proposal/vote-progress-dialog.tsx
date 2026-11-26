@@ -9,6 +9,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { ProposalRuleRow } from '@/components/polls/proposals/inline-proposal/proposal-rule-row';
+import { VoteCountedIcon } from '@/components/polls/proposals/inline-proposal/vote-counted-icon';
 import { useAbility } from '@/hooks/use-ability';
 import { getProgressPercentage, getProposalRuleStatus } from '@/lib/poll.utils';
 import { formatDeadline } from '@/lib/time.utils';
@@ -21,7 +22,6 @@ import { type VoteRes } from '@/types/vote.types';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslation } from 'react-i18next';
 import { LuClock3, LuTrendingUp } from 'react-icons/lu';
-import { MdHowToVote } from 'react-icons/md';
 
 interface Props {
   votes: VoteRes[];
@@ -29,6 +29,7 @@ interface Props {
   memberCount: number;
   stage?: PollStage;
   closedReason?: PollClosedReason;
+  countedNonce?: number;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -39,6 +40,7 @@ export const VoteProgressDialog = ({
   memberCount,
   stage,
   closedReason,
+  countedNonce = 0,
   isOpen,
   onOpenChange,
 }: Props) => {
@@ -97,7 +99,7 @@ export const VoteProgressDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <button className="flex cursor-pointer items-center gap-1.5">
-          <MdHowToVote className="text-muted-foreground" />
+          <VoteCountedIcon countedNonce={countedNonce} />
           <span>
             {t('proposals.labels.totalVotes', { count: status.totalVotes })}
           </span>

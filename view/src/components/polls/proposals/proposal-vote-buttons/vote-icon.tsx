@@ -1,8 +1,16 @@
-import { VOTE_ANIMATIONS } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
-import { type VoteAnimation } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
-import { VoteBurst } from '@/components/polls/proposals/proposal-vote-buttons/vote-burst';
-import { VoteRing } from '@/components/polls/proposals/proposal-vote-buttons/vote-ring';
-import { cn } from '@/lib/shared.utils';
+import {
+  REDUCED_MOTION_CLASS_NAME,
+  VOTE_EASINGS,
+  VOTE_GLYPHS,
+  VOTE_MOTION_DURATIONS_MS,
+} from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
+import {
+  type VoteAnimation,
+  type VoteMotion,
+} from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
+import { getAnimationStyle } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.utils';
+import { VoteFlourish } from '@/components/polls/proposals/proposal-vote-buttons/vote-flourish';
+import { VoteGlyph } from '@/components/polls/proposals/proposal-vote-buttons/vote-glyph';
 import { type VoteType } from '@/types/vote.types';
 
 interface Props {
@@ -11,44 +19,37 @@ interface Props {
   animation?: VoteAnimation;
 }
 
+const getMotionStyle = (voteType: VoteType, motion: VoteMotion) => {
+  const durationMs = VOTE_MOTION_DURATIONS_MS[motion];
+  if (motion === 'select') {
+    const { selectKeyframes, selectEasing } = VOTE_GLYPHS[voteType];
+    return getAnimationStyle(
+      selectKeyframes,
+      durationMs,
+      VOTE_EASINGS[selectEasing],
+    );
+  }
+  return getAnimationStyle(`vote-${motion}`, durationMs, VOTE_EASINGS.firm);
+};
+
 export const VoteIcon = ({ voteType, isSelected, animation }: Props) => {
-  const {
-    icon: Icon,
-    selectedClassName,
-    animationClassName,
-    filledOpacity,
-    effect,
-  } = VOTE_ANIMATIONS[voteType];
+  const motion = animation?.motion ?? null;
 
   return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        'relative inline-flex size-4 shrink-0 transition-colors duration-200 motion-reduce:transition-none',
-        isSelected && selectedClassName,
-      )}
-    >
+    <span aria-hidden="true" className="relative inline-flex size-4 shrink-0">
       <span
-        key={`icon-${animation?.nonce ?? 0}`}
-        className={cn(
-          'inline-flex',
-          animation?.isPlaying && animationClassName,
-        )}
+        key={`motion-${animation?.nonce ?? 0}`}
+        data-vote-motion={motion ?? undefined}
+        className={`inline-flex ${REDUCED_MOTION_CLASS_NAME}`}
+        style={motion ? getMotionStyle(voteType, motion) : undefined}
       >
-        <Icon
-          fill="currentColor"
-          className="size-4 transition-[fill-opacity] duration-200 motion-reduce:transition-none"
-          style={{ fillOpacity: isSelected ? filledOpacity : 0 }}
-        />
+        <VoteGlyph voteType={voteType} isSelected={isSelected} />
       </span>
-      {animation?.isPlaying && effect === 'burst' && (
-        <VoteBurst
-          key={`burst-${animation.nonce}`}
-          isLarge={animation.isRatifying}
+      {motion === 'select' && (
+        <VoteFlourish
+          key={`flourish-${animation?.nonce}`}
+          kind={VOTE_GLYPHS[voteType].flourish}
         />
-      )}
-      {animation?.isPlaying && effect === 'ring' && (
-        <VoteRing key={`ring-${animation.nonce}`} />
       )}
     </span>
   );
