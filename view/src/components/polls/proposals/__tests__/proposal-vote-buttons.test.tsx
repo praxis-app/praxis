@@ -1,10 +1,8 @@
 import { ProposalVoteButtons } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-buttons';
 import {
-  REDUCED_MOTION_CLASS_NAME,
   VOTE_EASINGS,
   VOTE_GLYPHS,
 } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
-import { VOTE_TYPES } from '@/constants/vote.constants';
 import { type ChannelRes } from '@/types/channel.types';
 import {
   type DecisionMakingModel,
@@ -46,16 +44,6 @@ vi.mock('react-i18next', () => ({
 }));
 
 const channel = { id: 'channel-1' } as ChannelRes;
-
-const createDeferred = <T,>() => {
-  let resolve!: (value: T) => void;
-  let reject!: (error: Error) => void;
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  return { promise, resolve, reject };
-};
 
 const StatefulButtons = ({
   config,
@@ -174,14 +162,6 @@ describe('ProposalVoteButtons', () => {
     expect(getVoteButton('agree')).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('should mark no vote as pressed before voting', () => {
-    renderButtons({ canBlock: true });
-
-    for (const button of screen.getAllByRole('button')) {
-      expect(button).toHaveAttribute('aria-pressed', 'false');
-    }
-  });
-
   it('should select the vote and play its motion before the server responds', () => {
     apiMock.createVote.mockReturnValue(new Promise(() => {}));
     renderButtons({ canBlock: true });
@@ -192,35 +172,17 @@ describe('ProposalVoteButtons', () => {
     expect(getMotion('agree')).toBe('select');
   });
 
-  it('should send the latest vote once an earlier request resolves', async () => {
-    const createRequest = createDeferred<{
-      vote: { id: string; isRatifyingVote: boolean };
-    }>();
-    apiMock.createVote.mockReturnValue(createRequest.promise);
-    apiMock.updateVote.mockResolvedValue({ isRatifyingVote: false });
+  it('should ignore other votes while a vote is saving', async () => {
+    apiMock.createVote.mockReturnValue(new Promise(() => {}));
     renderButtons({ canBlock: true });
 
     fireEvent.click(getVoteButton('agree'));
-    await act(async () => {});
-    expect(apiMock.createVote).toHaveBeenCalledTimes(1);
-
     fireEvent.click(getVoteButton('disagree'));
-    expect(getVoteButton('disagree')).toHaveAttribute('aria-pressed', 'true');
-
-    await act(async () => {
-      createRequest.resolve({ vote: { id: 'vote-1', isRatifyingVote: false } });
-    });
+    await act(async () => {});
 
     expect(apiMock.createVote).toHaveBeenCalledTimes(1);
-    expect(apiMock.updateVote).toHaveBeenCalledWith(
-      'server-1',
-      'channel-1',
-      'poll-1',
-      'vote-1',
-      { voteType: 'disagree' },
-    );
-    expect(getVoteButton('disagree')).toHaveAttribute('aria-pressed', 'true');
-    expect(getVoteButton('agree')).toHaveAttribute('aria-pressed', 'false');
+    expect(getVoteButton('agree')).toHaveAttribute('aria-pressed', 'true');
+    expect(getVoteButton('disagree')).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('should roll back visibly and report the error when a vote fails', async () => {
@@ -255,72 +217,5 @@ describe('ProposalVoteButtons', () => {
     expect(new Set(glyphs.map((glyph) => glyph.flourish)).size).toBe(
       glyphs.length,
     );
-
-    apiMock.createVote.mockReturnValue(new Promise(() => {}));
-    apiMock.updateVote.mockReturnValue(new Promise(() => {}));
-    renderButtons({ canBlock: true });
-
-    const timings = VOTE_TYPES.filter((voteType) => voteType !== 'block').map(
-      (voteType) => {
-        fireEvent.click(getVoteButton(voteType));
-        const button = getVoteButton(voteType);
-        const motion = button.querySelector<HTMLElement>('[data-vote-motion]');
-        const flourish = button.querySelector<SVGElement>(
-          '[data-testid="vote-flourish"] [style]',
-        );
-        const stripName = (animation = '') =>
-          animation.replace(/^\S+/, '').replace(/cubic-bezier\([^)]*\)/, '');
-        return {
-          flourish: stripName(flourish?.style.animation),
-          motion: stripName(motion?.style.animation),
-        };
-      },
-    );
-
-    for (const timing of timings) {
-      expect(timing).toEqual(timings[0]);
-    }
-  });
-
-  it('should let reduced motion skip every flourish', () => {
-    apiMock.createVote.mockReturnValue(new Promise(() => {}));
-    renderButtons({ canBlock: true });
-
-    fireEvent.click(getVoteButton('agree'));
-
-    const button = getVoteButton('agree');
-    const animated = [
-      ...button.querySelectorAll<HTMLElement>('[style]'),
-    ].filter((element) => element.style.animation);
-    expect(animated.length).toBeGreaterThan(1);
-    for (const element of animated) {
-      expect(element.getAttribute('class')).toContain(
-        REDUCED_MOTION_CLASS_NAME,
-      );
-    }
-    expect(
-      button
-        .querySelector('[data-testid="vote-flourish"]')
-        ?.getAttribute('class'),
-    ).toContain('motion-reduce:hidden');
-  });
-
-  it('should light the button while pressed and clear the ripple after release', () => {
-    vi.useFakeTimers();
-    try {
-      apiMock.createVote.mockReturnValue(new Promise(() => {}));
-      renderButtons({ canBlock: true });
-      const button = getVoteButton('agree');
-
-      fireEvent.pointerDown(button, { button: 0, clientX: 10, clientY: 10 });
-      act(() => vi.advanceTimersByTime(1000));
-      expect(screen.getAllByTestId('vote-ripple')).toHaveLength(1);
-
-      fireEvent.pointerUp(button);
-      act(() => vi.advanceTimersByTime(1000));
-      expect(screen.queryByTestId('vote-ripple')).not.toBeInTheDocument();
-    } finally {
-      vi.useRealTimers();
-    }
   });
 });

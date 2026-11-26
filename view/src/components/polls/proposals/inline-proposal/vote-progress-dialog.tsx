@@ -9,9 +9,9 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { ProposalRuleRow } from '@/components/polls/proposals/inline-proposal/proposal-rule-row';
-import { VoteCountedIcon } from '@/components/polls/proposals/inline-proposal/vote-counted-icon';
 import { useAbility } from '@/hooks/use-ability';
 import { getProgressPercentage, getProposalRuleStatus } from '@/lib/poll.utils';
+import { cn } from '@/lib/shared.utils';
 import { formatDeadline } from '@/lib/time.utils';
 import {
   type PollClosedReason,
@@ -22,6 +22,7 @@ import { type VoteRes } from '@/types/vote.types';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslation } from 'react-i18next';
 import { LuClock3, LuTrendingUp } from 'react-icons/lu';
+import { MdHowToVote } from 'react-icons/md';
 
 interface Props {
   votes: VoteRes[];
@@ -99,7 +100,24 @@ export const VoteProgressDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <button className="flex cursor-pointer items-center gap-1.5">
-          <VoteCountedIcon countedNonce={countedNonce} />
+          <span className="relative inline-flex">
+            <span
+              key={`drop-${countedNonce}`}
+              className={cn(
+                'inline-flex',
+                countedNonce > 0 && 'motion-safe:animate-vote-counted-drop',
+              )}
+            >
+              <MdHowToVote className="text-muted-foreground" />
+            </span>
+            {countedNonce > 0 && (
+              <span
+                key={`ring-${countedNonce}`}
+                aria-hidden="true"
+                className="border-vote-accent motion-safe:animate-vote-counted-ring pointer-events-none absolute inset-0 rounded-full border opacity-0 motion-reduce:hidden"
+              />
+            )}
+          </span>
           <span>
             {t('proposals.labels.totalVotes', { count: status.totalVotes })}
           </span>

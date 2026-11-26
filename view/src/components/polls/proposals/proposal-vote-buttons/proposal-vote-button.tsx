@@ -1,7 +1,7 @@
 import { type VoteAnimation } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
 import { VoteIcon } from '@/components/polls/proposals/proposal-vote-buttons/vote-icon';
+import { VOTE_RIPPLE } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
 import { useVoteRipples } from '@/components/polls/proposals/proposal-vote-buttons/use-vote-ripples';
-import { VoteRipple } from '@/components/polls/proposals/proposal-vote-buttons/vote-ripple';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/shared.utils';
 import { type VoteType } from '@/types/vote.types';
@@ -57,7 +57,25 @@ export const ProposalVoteButton = ({
       aria-disabled={isDisabled}
     >
       {ripples.map((ripple) => (
-        <VoteRipple key={ripple.id} ripple={ripple} />
+        <span
+          key={ripple.id}
+          className={cn(
+            'pointer-events-none absolute -z-10 transition-opacity ease-out motion-reduce:hidden',
+            ripple.isReleased && 'opacity-0',
+          )}
+          style={{
+            left: ripple.x - ripple.size / 2,
+            top: ripple.y - ripple.size / 2,
+            width: ripple.size,
+            height: ripple.size,
+            transitionDuration: `${VOTE_RIPPLE.fadeMs}ms`,
+          }}
+        >
+          <span
+            className="animate-vote-ripple block size-full rounded-full bg-[radial-gradient(circle_closest-side,var(--vote-ripple-center),var(--vote-ripple-edge)_var(--vote-ripple-edge-stop),transparent)]"
+            style={{ animationDuration: `${VOTE_RIPPLE.rampMs}ms` }}
+          />
+        </span>
       ))}
       <VoteIcon
         voteType={voteType}

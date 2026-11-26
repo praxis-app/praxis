@@ -8,8 +8,11 @@ import { handleError } from '@/lib/error.utils';
 import { type FeedQuery } from '@/types/channel.types';
 import { type PollClosedReason, type PollRes } from '@/types/poll.types';
 import { type VoteRes, type VoteType } from '@/types/vote.types';
-import { useQueryClient, type QueryKey } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import {
+  useMutation,
+  useQueryClient,
+  type QueryKey,
+} from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -45,42 +48,15 @@ export const useProposalVote = ({
   onRollback,
   updateCachedProposal,
 }: Options) => {
-  const [optimisticVoteType, setOptimisticVoteType] = useState<
-    VoteType | null | undefined
-  >();
-
-  const confirmedVoteRef = useRef<VoteRes | undefined>(undefined);
-  const targetVoteTypeRef = useRef<VoteType | null>(null);
-  const isSyncingRef = useRef(false);
-  const didCancelRefetchRef = useRef(false);
-
   const { serverId } = useServerData();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const displayedVoteType =
-    optimisticVoteType === undefined
-      ? (myVote?.voteType ?? null)
-      : optimisticVoteType;
-
-  // TODO: Confirm this fixes a saved vote briefly losing its selected state. It
-  // happened once in the app and couldn't be reproduced
-  const cancelFeedRefetch = async () => {
-    if (!feedQueryKey || !queryClient.isFetching({ queryKey: feedQueryKey })) {
-      return;
-    }
-    didCancelRefetchRef.current = true;
-    await queryClient.cancelQueries({ queryKey: feedQueryKey });
-  };
-
-  const sendVote = async (
-    base: VoteRes | undefined,
-    voteType: VoteType | null,
-  ): Promise<VoteResult> => {
+  const sendVote = async (voteType: VoteType | null): Promise<VoteResult> => {
     if (!serverId) {
       throw new Error('Server ID is required');
     }
-    if (!base) {
+    if (!myVote) {
       if (!voteType) {
         throw new Error('Vote type is required');
       }
@@ -96,11 +72,11 @@ export const useProposalVote = ({
       };
     }
     if (!voteType) {
-      await api.deleteVote(serverId, channelId, pollId, base.id);
+      await api.deleteVote(serverId, channelId, pollId, myVote.id);
       return {
         action: 'delete',
-        voteId: base.id,
-        previousVoteType: base.voteType,
+        voteId: myVote.id,
+        previousVoteType: myVote.voteType,
         isRatifyingVote: false,
       };
     }
@@ -108,14 +84,14 @@ export const useProposalVote = ({
       serverId,
       channelId,
       pollId,
-      base.id,
+      myVote.id,
       { voteType },
     );
     return {
       action: 'update',
-      voteId: base.id,
+      voteId: myVote.id,
       voteType,
-      previousVoteType: base.voteType,
+      previousVoteType: myVote.voteType,
       isRatifyingVote,
       closedReason,
     };
@@ -223,58 +199,24 @@ export const useProposalVote = ({
     }
   };
 
-  const syncVote = async () => {
-    try {
-      while (
-        targetVoteTypeRef.current !==
-        (confirmedVoteRef.current?.voteType ?? null)
-      ) {
-        const result = await sendVote(
-          confirmedVoteRef.current,
-          targetVoteTypeRef.current,
-        );
-        await cancelFeedRefetch();
-        confirmedVoteRef.current =
-          result.action === 'delete'
-            ? undefined
-            : { id: result.voteId, voteType: result.voteType };
-        applyVoteResult(result);
-
-        if (result.isRatifyingVote || result.closedReason) {
-          targetVoteTypeRef.current = result.voteType ?? null;
-        }
-      }
-      setOptimisticVoteType(undefined);
-      if (didCancelRefetchRef.current && feedQueryKey) {
-        void queryClient.invalidateQueries({ queryKey: feedQueryKey });
-      }
-      if (confirmedVoteRef.current) {
+  const { mutate, isPending, variables } = useMutation({
+    mutationFn: sendVote,
+    onSuccess: (result) => {
+      applyVoteResult(result);
+      if (result.action !== 'delete') {
         onVoteCounted?.();
       }
       onVoteSuccess?.();
-    } catch (error) {
-      const failedVoteType = targetVoteTypeRef.current;
-      targetVoteTypeRef.current = confirmedVoteRef.current?.voteType ?? null;
-      setOptimisticVoteType(undefined);
-      onRollback(failedVoteType);
-      handleError(error as Error);
-    } finally {
-      isSyncingRef.current = false;
-      didCancelRefetchRef.current = false;
-    }
-  };
+    },
+    onError: (error, voteType) => {
+      onRollback(voteType);
+      handleError(error);
+    },
+  });
 
-  const castVote = (voteType: VoteType | null) => {
-    targetVoteTypeRef.current = voteType;
-    setOptimisticVoteType(voteType);
+  const displayedVoteType = isPending
+    ? (variables ?? null)
+    : (myVote?.voteType ?? null);
 
-    if (isSyncingRef.current) {
-      return;
-    }
-    confirmedVoteRef.current = myVote;
-    isSyncingRef.current = true;
-    void cancelFeedRefetch().then(syncVote);
-  };
-
-  return { displayedVoteType, castVote };
+  return { displayedVoteType, isPending, castVote: mutate };
 };

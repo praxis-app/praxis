@@ -90,7 +90,7 @@ export const ProposalVoteButtons = ({
     });
   };
 
-  const { displayedVoteType, castVote } = useProposalVote({
+  const { displayedVoteType, isPending, castVote } = useProposalVote({
     channelId: channel.id,
     pollId,
     myVote,
@@ -119,6 +119,9 @@ export const ProposalVoteButtons = ({
   });
 
   const applyVote = (voteType: VoteType) => {
+    if (isPending) {
+      return;
+    }
     const isRetracting = displayedVoteType === voteType;
     playVoteMotion(voteType, isRetracting ? 'retract' : 'select');
     castVote(isRetracting ? null : voteType);

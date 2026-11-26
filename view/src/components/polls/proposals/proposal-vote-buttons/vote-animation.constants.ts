@@ -24,9 +24,9 @@ export const VOTE_FLOURISH = {
 } as const;
 
 export const VOTE_RIPPLE = {
-  expandMs: 300,
-  minLitMs: 280,
-  fadeMs: 600,
+  rampMs: 220,
+  minPeakMs: 360,
+  fadeMs: 640,
 } as const;
 
 export const VOTE_GLYPHS: Record<VoteType, VoteGlyphConfig> = {

@@ -23,9 +23,9 @@ export const useVoteRipples = () => {
   };
 
   const fadeOut = (id: number, startedAt: number) => {
-    const remainingLitMs = Math.max(
+    const remainingPeakMs = Math.max(
       0,
-      VOTE_RIPPLE.minLitMs - (performance.now() - startedAt),
+      VOTE_RIPPLE.minPeakMs - (performance.now() - startedAt),
     );
     schedule(() => {
       setRipples((current) =>
@@ -38,7 +38,7 @@ export const useVoteRipples = () => {
           setRipples((current) => current.filter((ripple) => ripple.id !== id)),
         VOTE_RIPPLE.fadeMs,
       );
-    }, remainingLitMs);
+    }, remainingPeakMs);
   };
 
   const release = () => {
