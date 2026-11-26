@@ -63,6 +63,8 @@ export const useProposalVote = ({
       ? (myVote?.voteType ?? null)
       : optimisticVoteType;
 
+  // TODO: Confirm this fixes a saved vote briefly losing its selected state. It
+  // happened once in the app and couldn't be reproduced
   const cancelFeedRefetch = async () => {
     if (!feedQueryKey || !queryClient.isFetching({ queryKey: feedQueryKey })) {
       return;
