@@ -30,9 +30,9 @@
 
 :root {
   --vote-accent: oklch(0.55 0.18 275);
-  --vote-ripple-center: oklch(0.145 0 0 / 8%);
-  --vote-ripple-edge: oklch(0.145 0 0 / 4.5%);
-  --vote-ripple-edge-stop: 100%;
+  --vote-ripple-center: oklch(0.145 0 0 / 12%);
+  --vote-ripple-edge: oklch(0.145 0 0 / 4%);
+  --vote-ripple-edge-stop: 85%;
 }
 
 .dark {
