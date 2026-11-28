@@ -6,7 +6,7 @@ import { VoteProgressDialog } from '@/components/polls/proposals/inline-proposal
 import { ProposalAction } from '@/components/polls/proposals/proposal-actions/proposal-action';
 import { ProposalMenu } from '@/components/polls/proposals/proposal-menu';
 import { ProposalSettingsDialog } from '@/components/polls/proposals/proposal-settings-dialog';
-import { ProposalVoteButtons } from '@/components/polls/proposals/proposal-vote-buttons';
+import { ProposalVoteButtons } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-buttons';
 import { FormattedText } from '@/components/shared/formatted-text';
 import { CardAction } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -69,6 +69,8 @@ export const ProposalContent = ({
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [isVoteProgressDialogOpen, setIsVoteProgressDialogOpen] =
     useState(false);
+  const [hasCastRatifyingVote, setHasCastRatifyingVote] = useState(false);
+  const [countedNonce, setCountedNonce] = useState(0);
 
   const { t } = useTranslation();
 
@@ -162,7 +164,15 @@ export const ProposalContent = ({
                 ? votingDisabledReason
                 : t('proposals.prompts.noVotingAfterCallEnd')
           }
-          onVoteSuccess={onPollChange}
+          onVoteSuccess={(result) => {
+            if (result.action !== 'delete') {
+              setCountedNonce((nonce) => nonce + 1);
+            }
+            if (result.isRatifyingVote && !result.closedReason) {
+              setHasCastRatifyingVote(true);
+            }
+            onPollChange?.();
+          }}
           updateCachedProposal={updateCachedProposal}
         />
       </CardAction>
@@ -182,6 +192,7 @@ export const ProposalContent = ({
             memberCount={memberCount}
             stage={stage}
             closedReason={poll.closedReason}
+            countedNonce={countedNonce}
             isOpen={isVoteProgressDialogOpen}
             onOpenChange={setIsVoteProgressDialogOpen}
           />
@@ -220,6 +231,7 @@ export const ProposalContent = ({
         <ProposalStatusBadge
           poll={poll}
           sourceCallHasEnded={sourceCallHasEnded}
+          animateRatified={hasCastRatifyingVote}
           onClick={() => setIsVoteProgressDialogOpen(true)}
         />
       </div>

@@ -14,6 +14,7 @@ import {
 interface Props {
   poll: PollRes;
   sourceCallHasEnded?: boolean;
+  animateRatified?: boolean;
   onClick: () => void;
 }
 
@@ -36,6 +37,7 @@ const stageIcons: Record<PollStage, typeof LuVote> = {
 export const ProposalStatusBadge = ({
   poll,
   sourceCallHasEnded = false,
+  animateRatified = false,
   onClick,
 }: Props) => {
   const { t } = useTranslation();
@@ -69,6 +71,10 @@ export const ProposalStatusBadge = ({
         limitReached
           ? 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400'
           : stageStyles[displayStage],
+        // TODO: Test the ratify animation in the app with a real ratifying vote
+        animateRatified &&
+          stage === 'ratified' &&
+          'motion-safe:animate-badge-ratify',
       )}
     >
       <button type="button" onClick={onClick}>

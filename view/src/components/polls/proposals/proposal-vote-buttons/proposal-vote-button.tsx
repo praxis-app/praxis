@@ -1,0 +1,85 @@
+import { useVoteRipples } from '@/components/polls/proposals/proposal-vote-buttons/use-vote-ripples';
+import { type VoteMotion } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
+import { VoteIcon } from '@/components/polls/proposals/proposal-vote-buttons/vote-icon';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/shared.utils';
+import { type VoteType } from '@/types/vote.types';
+import { type MouseEvent, type PointerEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+
+interface Props {
+  voteType: VoteType;
+  isSelected: boolean;
+  isDisabled: boolean;
+  motion: VoteMotion | null;
+  onClick: () => void;
+}
+
+export const ProposalVoteButton = ({
+  voteType,
+  isSelected,
+  isDisabled,
+  motion,
+  onClick,
+}: Props) => {
+  const { t } = useTranslation();
+  const { ripples, press, release, remove } = useVoteRipples();
+
+  const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!isDisabled && event.button === 0) {
+      press(event.currentTarget, event.clientX, event.clientY);
+    }
+  };
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!isDisabled && event.detail === 0) {
+      press(event.currentTarget, undefined, undefined, false);
+    }
+    onClick();
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className={cn(
+        'relative isolate col-span-1 overflow-hidden',
+        isSelected && 'bg-primary/15!',
+        isDisabled && 'hover:bg-background dark:hover:bg-input/30 opacity-50',
+      )}
+      onPointerDown={handlePointerDown}
+      onPointerUp={release}
+      onPointerLeave={release}
+      onPointerCancel={release}
+      onClick={handleClick}
+      aria-pressed={isSelected}
+      aria-disabled={isDisabled}
+    >
+      {ripples.map((ripple) => (
+        <span
+          key={ripple.id}
+          className={cn(
+            'pointer-events-none absolute -z-10',
+            ripple.fadeDelayMs !== null && 'animate-vote-ripple-fade',
+          )}
+          style={{
+            left: ripple.x - ripple.size / 2,
+            top: ripple.y - ripple.size / 2,
+            width: ripple.size,
+            height: ripple.size,
+            animationDelay: `${ripple.fadeDelayMs ?? 0}ms`,
+          }}
+          onAnimationEnd={(event) => {
+            if (event.target === event.currentTarget) {
+              remove(ripple.id);
+            }
+          }}
+        >
+          <span className="animate-vote-ripple block size-full rounded-full bg-[radial-gradient(circle_closest-side,var(--vote-ripple-center),var(--vote-ripple-edge)_85%,transparent)]" />
+        </span>
+      ))}
+      <VoteIcon voteType={voteType} isSelected={isSelected} motion={motion} />
+      {t(`proposals.actions.${voteType}`)}
+    </Button>
+  );
+};

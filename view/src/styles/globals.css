@@ -6,6 +6,7 @@
 @import 'tw-animate-css';
 @import './events.css';
 @import './chrome.css';
+@import './vote-animations.css';
 
 @custom-variant dark (&:is(.dark *));
 

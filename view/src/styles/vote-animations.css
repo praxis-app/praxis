@@ -1,0 +1,222 @@
+@theme inline {
+  --color-vote-accent: var(--vote-accent);
+  --animate-vote-agree: vote-agree-settle 480ms
+    cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-vote-disagree: vote-disagree-turn 480ms
+    cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-vote-abstain: vote-abstain-recede 480ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-vote-block: vote-block-press 480ms cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+  --animate-vote-retract: vote-retract 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-vote-rollback: vote-rollback 420ms cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+  --animate-vote-flourish-draw: vote-flourish-draw 420ms ease-out 60ms both;
+  --animate-vote-flourish-sweep: vote-flourish-sweep 420ms ease-out 60ms both;
+  --animate-vote-flourish-contract: vote-flourish-contract 420ms ease-out 60ms
+    both;
+  --animate-vote-flourish-spread: vote-flourish-spread 420ms ease-out 60ms both;
+  --animate-vote-counted-drop: vote-counted-drop 600ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-vote-counted-ring: vote-counted-ring 600ms ease-out both;
+  --animate-badge-ratify: badge-ratify 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-vote-ripple: vote-ripple 220ms ease-out both;
+  --animate-vote-ripple-fade: vote-ripple-fade 640ms ease-out both;
+
+  @keyframes vote-ripple {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+  }
+
+  @keyframes vote-ripple-fade {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes badge-ratify {
+    0% {
+      transform: scale(0.96);
+    }
+
+    40% {
+      transform: scale(1.04);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+:root {
+  --vote-accent: oklch(0.55 0.18 275);
+  --vote-ripple-center: oklch(0.145 0 0 / 12%);
+  --vote-ripple-edge: oklch(0.145 0 0 / 4%);
+}
+
+.dark {
+  --vote-accent: oklch(0.74 0.14 275);
+  --vote-ripple-center: oklch(0.92 0 0 / 36%);
+  --vote-ripple-edge: oklch(0.92 0 0 / 12%);
+}
+
+@keyframes vote-agree-settle {
+  from {
+    opacity: 0.5;
+    transform: translateY(-5px) scale(0.9);
+  }
+}
+
+@keyframes vote-disagree-turn {
+  from {
+    transform: rotate(-45deg) scale(0.92);
+  }
+}
+
+@keyframes vote-abstain-recede {
+  from {
+    opacity: 0.35;
+    transform: scale(1.22);
+  }
+}
+
+@keyframes vote-block-press {
+  0% {
+    transform: translateY(-4px) scale(1.1);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+
+  30% {
+    transform: translateY(1px) scale(1.08, 0.88);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes vote-retract {
+  from {
+    transform: scale(0.88);
+  }
+}
+
+@keyframes vote-rollback {
+  0%,
+  30% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes vote-flourish-draw {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  45% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes vote-flourish-sweep {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  45% {
+    stroke-dashoffset: 0;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -0.9;
+  }
+}
+
+@keyframes vote-flourish-contract {
+  0% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+
+  30% {
+    opacity: 0.65;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes vote-flourish-spread {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.15);
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  45% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes vote-counted-drop {
+  0% {
+    opacity: 0.3;
+    transform: translateY(-5px);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(1px);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes vote-counted-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
