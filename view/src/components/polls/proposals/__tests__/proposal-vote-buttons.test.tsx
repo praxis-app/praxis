@@ -1,18 +1,12 @@
 import { ProposalVoteButtons } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-buttons';
-import {
-  VOTE_EASINGS,
-  VOTE_GLYPHS,
-} from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.constants';
 import { type ChannelRes } from '@/types/channel.types';
 import {
   type DecisionMakingModel,
   type PollConfigRes,
-  type PollRes,
 } from '@/types/poll.types';
 import { type VoteRes, type VoteType } from '@/types/vote.types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { canMock, handleErrorMock, apiMock } = vi.hoisted(() => ({
@@ -45,37 +39,6 @@ vi.mock('react-i18next', () => ({
 
 const channel = { id: 'channel-1' } as ChannelRes;
 
-const StatefulButtons = ({
-  config,
-  decisionMakingModel,
-  initialVote,
-}: {
-  config: PollConfigRes;
-  decisionMakingModel: DecisionMakingModel;
-  initialVote?: VoteRes;
-}) => {
-  const [proposal, setProposal] = useState({
-    myVote: initialVote,
-    votes: initialVote ? [initialVote] : [],
-    agreementVoteCount: 0,
-    stage: 'voting',
-  } as PollRes);
-
-  return (
-    <ProposalVoteButtons
-      channel={channel}
-      pollId="poll-1"
-      myVote={proposal.myVote}
-      stage={proposal.stage}
-      decisionMakingModel={decisionMakingModel}
-      config={config}
-      votes={proposal.votes ?? []}
-      memberCount={10}
-      updateCachedProposal={(update) => setProposal(update)}
-    />
-  );
-};
-
 const renderButtons = ({
   blocksOpenToAll,
   canBlock,
@@ -101,10 +64,15 @@ const renderButtons = ({
 
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <StatefulButtons
-        config={config}
+      <ProposalVoteButtons
+        channel={channel}
+        pollId="poll-1"
+        myVote={myVote}
+        stage="voting"
         decisionMakingModel={decisionMakingModel}
-        initialVote={myVote}
+        config={config}
+        votes={myVote ? [myVote] : []}
+        memberCount={10}
       />
     </QueryClientProvider>,
   );
@@ -112,11 +80,6 @@ const renderButtons = ({
 
 const getVoteButton = (voteType: VoteType) =>
   screen.getByRole('button', { name: `proposals.actions.${voteType}` });
-
-const getMotion = (voteType: VoteType) =>
-  getVoteButton(voteType)
-    .querySelector('[data-vote-motion]')
-    ?.getAttribute('data-vote-motion');
 
 describe('ProposalVoteButtons', () => {
   beforeEach(() => {
@@ -162,14 +125,28 @@ describe('ProposalVoteButtons', () => {
     expect(getVoteButton('agree')).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('should select the vote and play its motion before the server responds', () => {
+  // The press ripple holds while pressed and fades only on release. Keep this behavior
+  it('should hold the press ripple until the pointer is released', () => {
+    renderButtons({ canBlock: true });
+    const button = getVoteButton('agree');
+    const getRipple = () =>
+      button.querySelector('.animate-vote-ripple')?.parentElement;
+
+    fireEvent.pointerDown(button, { button: 0 });
+    expect(getRipple()).toBeInTheDocument();
+    expect(getRipple()).not.toHaveClass('animate-vote-ripple-fade');
+
+    fireEvent.pointerUp(button);
+    expect(getRipple()).toHaveClass('animate-vote-ripple-fade');
+  });
+
+  it('should select the vote before the server responds', () => {
     apiMock.createVote.mockReturnValue(new Promise(() => {}));
     renderButtons({ canBlock: true });
 
     fireEvent.click(getVoteButton('agree'));
 
     expect(getVoteButton('agree')).toHaveAttribute('aria-pressed', 'true');
-    expect(getMotion('agree')).toBe('select');
   });
 
   it('should ignore other votes while a vote is saving', async () => {
@@ -185,7 +162,7 @@ describe('ProposalVoteButtons', () => {
     expect(getVoteButton('disagree')).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('should roll back visibly and report the error when a vote fails', async () => {
+  it('should roll back and report the error when a vote fails', async () => {
     apiMock.createVote.mockRejectedValue(new Error('Network error'));
     renderButtons({ canBlock: true });
 
@@ -201,21 +178,6 @@ describe('ProposalVoteButtons', () => {
     });
 
     expect(getVoteButton('block')).toHaveAttribute('aria-pressed', 'false');
-    expect(getMotion('block')).toBe('rollback');
     expect(handleErrorMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should give each vote type its own motion at equal weight', () => {
-    const glyphs = Object.values(VOTE_GLYPHS);
-    for (const glyph of glyphs) {
-      expect(Object.keys(glyph).sort()).toEqual(Object.keys(glyphs[0]).sort());
-      expect(Object.keys(VOTE_EASINGS)).toContain(glyph.selectEasing);
-    }
-    expect(new Set(glyphs.map((glyph) => glyph.selectKeyframes)).size).toBe(
-      glyphs.length,
-    );
-    expect(new Set(glyphs.map((glyph) => glyph.flourish)).size).toBe(
-      glyphs.length,
-    );
   });
 });

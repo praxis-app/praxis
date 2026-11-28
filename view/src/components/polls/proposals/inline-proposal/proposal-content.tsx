@@ -164,9 +164,15 @@ export const ProposalContent = ({
                 ? votingDisabledReason
                 : t('proposals.prompts.noVotingAfterCallEnd')
           }
-          onVoteSuccess={onPollChange}
-          onRatifyingVote={() => setHasCastRatifyingVote(true)}
-          onVoteCounted={() => setCountedNonce((nonce) => nonce + 1)}
+          onVoteSuccess={(result) => {
+            if (result.action !== 'delete') {
+              setCountedNonce((nonce) => nonce + 1);
+            }
+            if (result.isRatifyingVote && !result.closedReason) {
+              setHasCastRatifyingVote(true);
+            }
+            onPollChange?.();
+          }}
           updateCachedProposal={updateCachedProposal}
         />
       </CardAction>

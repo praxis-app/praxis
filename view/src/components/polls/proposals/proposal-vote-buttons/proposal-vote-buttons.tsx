@@ -1,9 +1,9 @@
 import { ProposalVoteButton } from '@/components/polls/proposals/proposal-vote-buttons/proposal-vote-button';
-import { useProposalVote } from '@/components/polls/proposals/proposal-vote-buttons/use-proposal-vote';
 import {
-  type VoteAnimations,
-  type VoteMotion,
-} from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
+  useProposalVote,
+  type VoteResult,
+} from '@/components/polls/proposals/proposal-vote-buttons/use-proposal-vote';
+import { type VoteMotion } from '@/components/polls/proposals/proposal-vote-buttons/vote-animation.types';
 import {
   ProposalVoteConfirmationDialog,
   type ProposalVoteConfirmationType,
@@ -39,9 +39,7 @@ interface Props {
   closingAt?: string;
   disabled?: boolean;
   disabledReason?: string;
-  onVoteSuccess?: () => void;
-  onRatifyingVote?: () => void;
-  onVoteCounted?: () => void;
+  onVoteSuccess?: (result: VoteResult) => void;
   updateCachedProposal?: (update: (proposal: PollRes) => PollRes) => void;
 }
 
@@ -59,15 +57,16 @@ export const ProposalVoteButtons = ({
   disabled = false,
   disabledReason,
   onVoteSuccess,
-  onRatifyingVote,
-  onVoteCounted,
   updateCachedProposal,
 }: Props) => {
   const [pendingVote, setPendingVote] = useState<{
     voteType: VoteType;
     confirmationType: ProposalVoteConfirmationType;
   } | null>(null);
-  const [voteAnimations, setVoteAnimations] = useState<VoteAnimations>({});
+  const [lastMotion, setLastMotion] = useState<{
+    voteType: VoteType;
+    motion: VoteMotion;
+  } | null>(null);
 
   const deadlineHasPassed = useVotingDeadline(closingAt);
 
@@ -75,34 +74,17 @@ export const ProposalVoteButtons = ({
   const { serverAbility } = useAbility();
   const { t } = useTranslation();
 
-  const playVoteMotion = (voteType: VoteType, motion: VoteMotion) => {
-    setVoteAnimations((prev) => {
-      const next: VoteAnimations = {};
-      for (const [type, animation] of Object.entries(prev)) {
-        next[type as VoteType] = { ...animation, motion: null };
-      }
-      const nonce = prev[voteType]?.nonce ?? 0;
-      next[voteType] = {
-        nonce: motion === 'retract' ? nonce : nonce + 1,
-        motion,
-      };
-      return next;
-    });
-  };
-
   const { displayedVoteType, isPending, castVote } = useProposalVote({
     channelId: channel.id,
     pollId,
     myVote,
     feedQueryKey,
     onVoteSuccess,
-    onRatifyingVote,
-    onVoteCounted,
     updateCachedProposal,
     onRollback: (failedVoteType) => {
       const rolledBackVoteType = failedVoteType ?? myVote?.voteType;
       if (rolledBackVoteType) {
-        playVoteMotion(rolledBackVoteType, 'rollback');
+        setLastMotion({ voteType: rolledBackVoteType, motion: 'rollback' });
       }
     },
   });
@@ -123,7 +105,7 @@ export const ProposalVoteButtons = ({
       return;
     }
     const isRetracting = displayedVoteType === voteType;
-    playVoteMotion(voteType, isRetracting ? 'retract' : 'select');
+    setLastMotion({ voteType, motion: isRetracting ? 'retract' : 'select' });
     castVote(isRetracting ? null : voteType);
   };
 
@@ -192,7 +174,7 @@ export const ProposalVoteButtons = ({
             voteType={vote}
             isSelected={displayedVoteType === vote}
             isDisabled={isVotingDisabled}
-            animation={voteAnimations[vote]}
+            motion={lastMotion?.voteType === vote ? lastMotion.motion : null}
             onClick={() => handleVoteBtnClick(vote)}
           />
         ))}

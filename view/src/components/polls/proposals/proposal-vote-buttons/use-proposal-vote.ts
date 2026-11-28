@@ -16,7 +16,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-interface VoteResult {
+export interface VoteResult {
   action: 'create' | 'update' | 'delete';
   voteId: string;
   voteType?: VoteType;
@@ -30,9 +30,7 @@ interface Options {
   pollId: string;
   myVote?: VoteRes;
   feedQueryKey?: QueryKey;
-  onVoteSuccess?: () => void;
-  onRatifyingVote?: () => void;
-  onVoteCounted?: () => void;
+  onVoteSuccess?: (result: VoteResult) => void;
   onRollback: (failedVoteType: VoteType | null) => void;
   updateCachedProposal?: (update: (proposal: PollRes) => PollRes) => void;
 }
@@ -43,8 +41,6 @@ export const useProposalVote = ({
   myVote,
   feedQueryKey,
   onVoteSuccess,
-  onRatifyingVote,
-  onVoteCounted,
   onRollback,
   updateCachedProposal,
 }: Options) => {
@@ -193,20 +189,13 @@ export const useProposalVote = ({
       });
     }
     updateCachedProposal?.(updateProposal);
-
-    if (result.isRatifyingVote && !result.closedReason) {
-      onRatifyingVote?.();
-    }
   };
 
   const { mutate, isPending, variables } = useMutation({
     mutationFn: sendVote,
     onSuccess: (result) => {
       applyVoteResult(result);
-      if (result.action !== 'delete') {
-        onVoteCounted?.();
-      }
-      onVoteSuccess?.();
+      onVoteSuccess?.(result);
     },
     onError: (error, voteType) => {
       onRollback(voteType);
